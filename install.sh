@@ -9,9 +9,6 @@ sudo cp homeassistent/* ${HOME_ASSISTENT_DIR}/config
 # Change cron job
 sudo crontab crontab.sh
 
-cd ~
-rm -rf $TMP_DIR
-
 # Install selfoss
 cd ${SELFOSS_DIR}
 sudo chown www-data:www-data ${SELFOSS_DIR}
@@ -19,7 +16,6 @@ sudo -Hu www-data git clone ${SELFOSS_REPO} ${SELFOSS_DIR}
 sudo chmod -R 744 ${SELFOSS_DIR}/data
 
 # Create postgres databases
-export PGPASSWORD=${PSQL_PASSWORD}
 sudo -u ${PSQL_USER} psql -c "CREATE USER ${SELFOSS_PSQL_USER} WITH PASSWORD '${SELFOSS_PSQL_PASSWORD}';"
 sudo -u ${PSQL_USER} psql -c "CREATE DATABASE ${SELFOSS_PSQL_DB} WITH OWNER ${SELFOSS_PSQL_USER};"
 sudo -u ${PSQL_USER} psql -c "ALTER SCHEMA public OWNER TO ${SELFOSS_PSQL_USER};"

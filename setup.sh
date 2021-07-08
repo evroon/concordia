@@ -39,3 +39,5 @@ sudo cp $WORK_DIR/.env ~/
 python3 build.py $REPO_DIR
 
 ./install.sh
+
+rm -rf $TMP_DIR
