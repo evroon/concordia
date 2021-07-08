@@ -8,11 +8,10 @@ parser.add_argument('directory', metavar='d', type=str,
                     help='the directory in which files are replaced')
 
 args = parser.parse_args()
-dir = args.directory
 
 config = dotenv_values(".env")
 
-for file in Path().rglob(f'{dir}/*'):
+for file in Path(args.directory).rglob('*'):
     if not os.path.isfile(file) or '.git' in str(file):
         continue
 
