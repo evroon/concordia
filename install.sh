@@ -24,4 +24,6 @@ sudo -u ${PSQL_USER} psql -c "ALTER USER ${SELFOSS_PSQL_USER} WITH SUPERUSER;"
 # Request certificates
 # sudo certbot -d ${DOMAIN_NAME},${HOME_ASSISTENT_DOMAIN_NAME},${SELFOSS_DOMAIN_NAME},${MUNIN_DOMAIN_NAME}
 
+export PATH=/home/azure/bin:$PATH
+export DOCKER_HOST=unix:///run/user/1000/docker.sock
 cd ${DOCKER_DIR} && docker-compose up -d
