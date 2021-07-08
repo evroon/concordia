@@ -16,6 +16,7 @@ rm -rf $TMP_DIR
 cd ${SELFOSS_DIR}
 sudo chown www-data:www-data ${SELFOSS_DIR}
 sudo -Hu www-data git clone ${SELFOSS_REPO} ${SELFOSS_DIR}
+sudo chmod -R 744 ${SELFOSS_DIR}/data
 
 # Create postgres databases
 export PGPASSWORD=${PSQL_PASSWORD}
