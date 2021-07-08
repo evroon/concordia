@@ -8,7 +8,7 @@ parser.add_argument('directory', metavar='d', type=str,
                     help='the directory in which files are replaced')
 
 args = parser.parse_args()
-dir = args['directory']
+dir = args.directory
 
 config = dotenv_values(".env")
 
