@@ -35,6 +35,7 @@ cd $REPO_DIR
 git checkout feature-installation
 
 cp $WORK_DIR/.env ./
+sudo cp $WORK_DIR/.env ~/
 python3 build.py $REPO_DIR
 
 ./install.sh
