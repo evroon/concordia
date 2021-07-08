@@ -13,6 +13,7 @@ rm -rf $TMP_DIR
 
 # Install selfoss
 cd ${SELFOSS_DIR}
+sudo chown www-data:www-data ${SELFOSS_DIR}
 sudo -Hu www-data git clone ${SELFOSS_REPO} ${SELFOSS_DIR}
 
 # Create postgres databases
@@ -25,5 +26,4 @@ sudo -u ${PSQL_USER} psql -c "ALTER USER ${SELFOSS_PSQL_USER} WITH SUPERUSER;"
 # Request certificates
 sudo certbot -d ${DOMAIN_NAME},${HOME_ASSISTENT_DOMAIN_NAME},${SELFOSS_DOMAIN_NAME},${MUNIN_DOMAIN_NAME}
 
-cd ${PSQL_DIR} && docker-compose up -d
-cd ${HOME_ASSISTENT_DIR} && docker-compose up -d
+cd ${DOCKER_DIR} && docker-compose up -d
