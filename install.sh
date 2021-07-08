@@ -4,7 +4,7 @@ sudo cp etc/apache2/sites-available/* /etc/apache2/sites-available
 sudo cp home/.gitconfig ~/
 sudo cp selfoss/* ${CONCORDIA_DIR}
 sudo cp docker/* ${DOCKER_DIR}
-sudo cp homeassistent/config/* ${HOME_ASSISTENT_DIR}/config
+sudo cp homeassistent/* ${HOME_ASSISTENT_DIR}/config
 
 # Change cron job
 sudo crontab crontab.sh
