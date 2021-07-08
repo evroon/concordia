@@ -1,10 +1,18 @@
 import os
+import argparse
 from pathlib import Path
 from dotenv import dotenv_values
 
+parser = argparse.ArgumentParser(description='Substitute secrets in files.')
+parser.add_argument('directory', metavar='d', type=str,
+                    help='the directory in which files are replaced')
+
+args = parser.parse_args()
+dir = args['directory']
+
 config = dotenv_values(".env")
 
-for file in Path().rglob('*'):
+for file in Path().rglob(f'{dir}/*'):
     if not os.path.isfile(file) or '.git' in str(file):
         continue
 
