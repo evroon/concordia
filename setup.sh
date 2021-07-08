@@ -1,6 +1,6 @@
 # Install dependencies
 #sudo apt update && sudo apt upgrade
-sudo apt install \
+sudo apt install -y \
     wget curl python3 python3-pip certbot git make htop \
     docker docker-compose uidmap \
     munin munin-node libcgi-fast-perl libapache2-mod-fcgid \
