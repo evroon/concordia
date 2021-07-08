@@ -1,0 +1,16 @@
+version: '3.1'
+
+services:
+    postgres:
+        image: postgres
+        restart: always
+        env_file: ../.env
+        volumes:
+            - ${PSQL_DATA_DIR}:/var/lib/postgresql/data
+        environment:
+            POSTGRES_USER: ${PSQL_USER}
+            POSTGRES_PASSWORD: ${PSQL_PASSWORD}
+            TZ: "Europe/Amsterdam"
+            PGTZ: "Europe/Amsterdam"
+        ports:
+            - ${PSQL_PORT}:${PSQL_PORT}
