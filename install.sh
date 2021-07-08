@@ -1,5 +1,5 @@
 # Move files to correct locations
-sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR}
+sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR} ${DOCKER_DIR}
 sudo cp etc/apache2/sites-available/* /etc/apache2/sites-available
 sudo cp home/.* ~/
 sudo cp psql/* /var/lib/concordia
