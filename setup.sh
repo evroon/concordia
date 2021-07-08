@@ -4,7 +4,7 @@ sudo apt install \
     wget curl python3 python3-pip certbot git make htop \
     docker docker-compose uidmap \
     munin munin-node libcgi-fast-perl libapache2-mod-fcgid \
-    postgresql-client pgpdump \
+    postgresql postgresql-contrib postgresql-client pgpdump \
     tmux update-notifier-common php7.4
 
 python3 -m pip install -r requirements.txt
