@@ -1,9 +1,10 @@
 # Move files to correct locations
-sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR} ${DOCKER_DIR}
+sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR} ${DOCKER_DIR} ${HOME_ASSISTENT_DIR}/config
 sudo cp etc/apache2/sites-available/* /etc/apache2/sites-available
-sudo cp home/.* ~/
+sudo cp home/.gitconfig ~/
 sudo cp selfoss/* ${CONCORDIA_DIR}
 sudo cp docker/* ${DOCKER_DIR}
+sudo cp homeassistent/config/* ${HOME_ASSISTENT_DIR}/config
 
 # Change cron job
 sudo crontab crontab.sh
