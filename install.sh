@@ -59,5 +59,5 @@ psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER SCHEMA public OWNER 
 psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER USER ${SELFOSS_PSQL_USER} WITH SUPERUSER;"
 
 
-sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf
+sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-home-assistant.conf 003-munin.conf
 sudo systemctl restart apache2
