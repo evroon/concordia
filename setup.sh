@@ -6,7 +6,7 @@ sudo apt install -y \
     munin munin-node libcgi-fast-perl libapache2-mod-fcgid \
     postgresql-client pgpdump \
     tmux update-notifier-common php7.4 \
-    python3-certbot-apache
+    python3-certbot-apache python3-letsencrypt-apache
 
 
 # ssh-keygen -t ed25519
@@ -36,7 +36,7 @@ git checkout feature-installation
 python3 -m pip install -r requirements.txt
 
 cp $WORK_DIR/.env ./
-sudo cp $WORK_DIR/.env ~/
+sudo cp .env ~/
 python3 build.py $REPO_DIR
 
 ./install.sh
