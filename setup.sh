@@ -5,11 +5,11 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -y \
     wget curl python3 python3-pip git make htop \
     docker docker-compose uidmap \
-    munin munin-node libcgi-fast-perl libapache2-mod-fcgid \
+    munin libcgi-fast-perl libapache2-mod-fcgid \
     postgresql-client pgpdump \
     tmux update-notifier-common \
-    php php-gd php-mbstring php-common php-pgsql php-imagick php-xml libapache2-mod-php php-curl php-tidy php-zip npm \
-    certbot python3-certbot-apache
+    php php-gd php-mbstring php-common php-pgsql php-imagick php-xml php-curl php-tidy php-zip npm \
+    certbot python3-certbot-apache libcgi-fast-perl libapache2-mod-php libapache2-mod-fcgid \
 
 
 # ssh-keygen -t ed25519

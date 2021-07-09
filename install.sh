@@ -16,7 +16,7 @@ php -r "unlink('composer-setup.php');"
 sudo mv composer.phar /usr/local/bin/composer
 
 # Setup apache2
-sudo a2enmod rewrite proxy ssl
+sudo a2enmod rewrite proxy ssl fcgid
 sudo systemctl restart apache2
 
 # Change cron job
@@ -33,11 +33,9 @@ sudo chmod -R 744 data
 sudo cp $REPO_DIR/selfoss/config.ini ${SELFOSS_DIR}
 sudo chown www-data:www-data ${SELFOSS_DIR}/config.ini
 
-# sudo mkdir -p ${SELFOSS_DIR}/../.composer ${SELFOSS_DIR}/../.npm
-# sudo chown -R www-data:www-data /var/www
-# sudo -Hu www-data composer update --no-dev -vvv
-# sudo -Hu www-data npm install
-# sudo -Hu www-data npm run build
+# Install Munin
+sudo chown munin:munin ${MUNIN_DIR}
+sudo cp $REPO_DIR/munin/munin.conf /etc/munin/munin.conf
 
 # Set up certbot config file. See: https://gist.github.com/stevenvandervalk/130cba3488611d44390738dd86bb2ea5
 sudo mkdir -p /etc/letsencrypt
@@ -61,3 +59,4 @@ psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER USER ${SELFOSS_PSQL_
 
 sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-home-assistant.conf 003-munin.conf
 sudo systemctl restart apache2
+sudo systemctl restart munin-node
