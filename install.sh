@@ -28,8 +28,8 @@ psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER SCHEMA public OWNER 
 psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER USER ${SELFOSS_PSQL_USER} WITH SUPERUSER;"
 
 # Set up certbot config file. See: https://gist.github.com/stevenvandervalk/130cba3488611d44390738dd86bb2ea5
-mkdir -p /etc/letsencrypt
-cat > /etc/letsencrypt/cli.ini <<EOF
+sudo mkdir -p /etc/letsencrypt
+sudo cat > /etc/letsencrypt/cli.ini <<EOF
 # Use a 4096 bit RSA key instead of 2048.
 rsa-key-size = 4096
 # Set email and domains.
