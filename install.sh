@@ -1,3 +1,5 @@
+REPO_DIR=$(pwd)
+
 # Move files to correct locations
 sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR} ${DOCKER_COMPOSE_DIR} ${HOME_ASSISTENT_DIR}/config
 # sudo cp etc/apache2/sites-available/* /etc/apache2/sites-available
@@ -14,11 +16,12 @@ sudo systemctl restart apache2
 sudo crontab crontab.sh
 
 # Install selfoss
-cd ${SELFOSS_DIR}
 sudo chown www-data:www-data ${SELFOSS_DIR}
 sudo -Hu www-data git clone ${SELFOSS_REPO} ${SELFOSS_DIR}
-sudo chmod -R 744 ${SELFOSS_DIR}/data
-sudo cp selfoss/config.ini ${SELFOSS_DIR}
+
+cd ${SELFOSS_DIR}
+sudo chmod -R 744 data
+sudo cp $REPO_DIR/selfoss/config.ini ${SELFOSS_DIR}
 
 sudo mkdir -p ${SELFOSS_DIR}/../.composer
 sudo chown -R www-data:www-data ${SELFOSS_DIR}/../.composer
