@@ -25,8 +25,9 @@ sudo cp $REPO_DIR/selfoss/config.ini ${SELFOSS_DIR}
 sudo chown www-data:www-data ${SELFOSS_DIR}/config.ini
 
 sudo mkdir -p ${SELFOSS_DIR}/../.composer ${SELFOSS_DIR}/../.npm
-sudo chown -R www-data:www-data ${SELFOSS_DIR}/../.composer ${SELFOSS_DIR}/../.npm
+sudo chown -R www-data:www-data /var/www
 sudo -Hu www-data composer update --no-dev -vvv
+sudo -Hu www-data npm install
 sudo -Hu www-data npm run build
 
 # Create postgres databases
