@@ -5,7 +5,8 @@ sudo apt install -y \
     docker docker-compose uidmap \
     munin munin-node libcgi-fast-perl libapache2-mod-fcgid \
     postgresql-client pgpdump \
-    tmux update-notifier-common php7.4
+    tmux update-notifier-common php7.4 \
+    python3-certbot-apache
 
 
 # ssh-keygen -t ed25519
