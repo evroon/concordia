@@ -25,7 +25,7 @@ sudo cp $REPO_DIR/selfoss/config.ini ${SELFOSS_DIR}
 
 sudo mkdir -p ${SELFOSS_DIR}/../.composer
 sudo chown -R www-data:www-data ${SELFOSS_DIR}/../.composer
-sudo -Hu www-data composer update --no-dev
+sudo -Hu www-data composer update --no-dev -vvv
 sudo -Hu www-data npm run build
 
 # Create postgres databases
@@ -37,23 +37,7 @@ psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER USER ${SELFOSS_PSQL_
 
 # Set up certbot config file. See: https://gist.github.com/stevenvandervalk/130cba3488611d44390738dd86bb2ea5
 sudo mkdir -p /etc/letsencrypt
-cat > /tmp/cli.ini <<EOF
-# Use a 4096 bit RSA key instead of 2048.
-rsa-key-size = 4096
-# Set email and domains.
-email = ${EMAIL}
-domains = ${DOMAIN_NAME},www.${DOMAIN_NAME},${HOME_ASSISTENT_DOMAIN_NAME},${SELFOSS_DOMAIN_NAME},${MUNIN_DOMAIN_NAME}
-# Text interface.
-text = True
-# No prompts.
-non-interactive = True
-# Suppress the Terms of Service agreement interaction.
-agree-tos = True
-# Use the webroot authenticator.
-authenticator = webroot
-webroot-path = /var/www/html
-EOF
-sudo mv /tmp/cli.ini /etc/letsencrypt/cli.ini
+sudo mv $REPO_DIR/letsencrypt/cli.ini /etc/letsencrypt/cli.ini
 
 # Request certificates
 sudo certbot certonly
