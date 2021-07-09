@@ -1,3 +1,5 @@
+cd ~
+
 # Install dependencies
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y \
@@ -6,7 +8,7 @@ sudo apt install -y \
     munin munin-node libcgi-fast-perl libapache2-mod-fcgid \
     postgresql-client pgpdump \
     tmux update-notifier-common \
-    php php-gd php-mbstring php-common php-pgsql php-imagick php-xml libapache2-mod-php php-curl php-tidy php-zip composer npm \
+    php php-gd php-mbstring php-common php-pgsql php-imagick php-xml libapache2-mod-php php-curl php-tidy php-zip npm \
     certbot python3-certbot-apache
 
 
