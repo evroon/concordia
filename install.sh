@@ -33,11 +33,11 @@ sudo chmod -R 744 data
 sudo cp $REPO_DIR/selfoss/config.ini ${SELFOSS_DIR}
 sudo chown www-data:www-data ${SELFOSS_DIR}/config.ini
 
-sudo mkdir -p ${SELFOSS_DIR}/../.composer ${SELFOSS_DIR}/../.npm
-sudo chown -R www-data:www-data /var/www
-sudo -Hu www-data composer update --no-dev -vvv
-sudo -Hu www-data npm install
-sudo -Hu www-data npm run build
+# sudo mkdir -p ${SELFOSS_DIR}/../.composer ${SELFOSS_DIR}/../.npm
+# sudo chown -R www-data:www-data /var/www
+# sudo -Hu www-data composer update --no-dev -vvv
+# sudo -Hu www-data npm install
+# sudo -Hu www-data npm run build
 
 # Set up certbot config file. See: https://gist.github.com/stevenvandervalk/130cba3488611d44390738dd86bb2ea5
 sudo mkdir -p /etc/letsencrypt
