@@ -26,6 +26,7 @@ sudo cp $REPO_DIR/selfoss/config.ini ${SELFOSS_DIR}
 sudo mkdir -p ${SELFOSS_DIR}/../.composer
 sudo chown -R www-data:www-data ${SELFOSS_DIR}/../.composer
 sudo -Hu www-data composer update --no-dev
+sudo -Hu www-data npm run build
 
 # Create postgres databases
 export PGPASSWORD=${PSQL_PASSWORD}
