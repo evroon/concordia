@@ -7,7 +7,7 @@ sudo cp docker/* ${DOCKER_COMPOSE_DIR}
 sudo cp homeassistent/* ${HOME_ASSISTENT_DIR}/config
 
 # Setup apache2
-sudo a2enmod rewrite proxy
+sudo a2enmod rewrite proxy ssl
 sudo systemctl restart apache2
 
 # Change cron job
@@ -19,6 +19,7 @@ sudo chown www-data:www-data ${SELFOSS_DIR}
 sudo -Hu www-data git clone ${SELFOSS_REPO} ${SELFOSS_DIR}
 sudo chmod -R 744 ${SELFOSS_DIR}/data
 sudo cp selfoss/* ${SELFOSS_DIR}
+sudo -Hu www-data composer update
 
 # Create postgres databases
 export PGPASSWORD=${PSQL_PASSWORD}
@@ -34,7 +35,7 @@ cat > /tmp/cli.ini <<EOF
 rsa-key-size = 4096
 # Set email and domains.
 email = ${EMAIL}
-domains = ${DOMAIN_NAME},${HOME_ASSISTENT_DOMAIN_NAME},${SELFOSS_DOMAIN_NAME},${MUNIN_DOMAIN_NAME}
+domains = ${DOMAIN_NAME},www.${DOMAIN_NAME},${HOME_ASSISTENT_DOMAIN_NAME},${SELFOSS_DOMAIN_NAME},${MUNIN_DOMAIN_NAME}
 # Text interface.
 text = True
 # No prompts.
