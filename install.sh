@@ -27,9 +27,29 @@ psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "CREATE DATABASE ${SELFOSS_
 psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER SCHEMA public OWNER TO ${SELFOSS_PSQL_USER};"
 psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER USER ${SELFOSS_PSQL_USER} WITH SUPERUSER;"
 
-# Request certificates
-sudo certbot --apache -d ${DOMAIN_NAME},${HOME_ASSISTENT_DOMAIN_NAME},${SELFOSS_DOMAIN_NAME},${MUNIN_DOMAIN_NAME}
+# Set up certbot config file. See: https://gist.github.com/stevenvandervalk/130cba3488611d44390738dd86bb2ea5
+mkdir -p /etc/letsencrypt
+cat > /etc/letsencrypt/cli.ini <<EOF
+# Use a 4096 bit RSA key instead of 2048.
+rsa-key-size = 4096
+# Set email and domains.
+email = ${EMAIL}
+domains = ${DOMAIN_NAME},${HOME_ASSISTENT_DOMAIN_NAME},${SELFOSS_DOMAIN_NAME},${MUNIN_DOMAIN_NAME}
+# Text interface.
+text = True
+# No prompts.
+non-interactive = True
+# Suppress the Terms of Service agreement interaction.
+agree-tos = True
+# Use the webroot authenticator.
+authenticator = webroot
+webroot-path = /var/www/html
+EOF
 
+# Request certificates
+sudo certbot certonly
+
+# Start Docker containers.
 export PATH=/home/azure/bin:$PATH
 export DOCKER_HOST=unix:///run/user/1000/docker.sock
 cd ${DOCKER_COMPOSE_DIR} && docker-compose up -d
