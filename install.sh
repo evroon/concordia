@@ -18,11 +18,11 @@ cd ${SELFOSS_DIR}
 sudo chown www-data:www-data ${SELFOSS_DIR}
 sudo -Hu www-data git clone ${SELFOSS_REPO} ${SELFOSS_DIR}
 sudo chmod -R 744 ${SELFOSS_DIR}/data
-sudo cp selfoss/* ${SELFOSS_DIR}
+sudo cp selfoss/config.ini ${SELFOSS_DIR}
 
 sudo mkdir -p ${SELFOSS_DIR}/../.composer
 sudo chown -R www-data:www-data ${SELFOSS_DIR}/../.composer
-sudo -Hu www-data composer update
+sudo -Hu www-data composer update --no-dev
 
 # Create postgres databases
 export PGPASSWORD=${PSQL_PASSWORD}
