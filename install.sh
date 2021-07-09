@@ -6,6 +6,10 @@ sudo cp home/.gitconfig ~/
 sudo cp docker/* ${DOCKER_COMPOSE_DIR}
 sudo cp homeassistent/* ${HOME_ASSISTENT_DIR}/config
 
+# Setup apache2
+sudo a2enmod rewrite proxy
+sudo systemctl restart apache2
+
 # Change cron job
 sudo crontab crontab.sh
 
@@ -17,14 +21,17 @@ sudo chmod -R 744 ${SELFOSS_DIR}/data
 sudo cp selfoss/* ${SELFOSS_DIR}
 
 # Create postgres databases
-sudo -u ${PSQL_USER} psql -c "CREATE USER ${SELFOSS_PSQL_USER} WITH PASSWORD '${SELFOSS_PSQL_PASSWORD}';"
-sudo -u ${PSQL_USER} psql -c "CREATE DATABASE ${SELFOSS_PSQL_DB} WITH OWNER ${SELFOSS_PSQL_USER};"
-sudo -u ${PSQL_USER} psql -c "ALTER SCHEMA public OWNER TO ${SELFOSS_PSQL_USER};"
-sudo -u ${PSQL_USER} psql -c "ALTER USER ${SELFOSS_PSQL_USER} WITH SUPERUSER;"
+psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "CREATE USER ${SELFOSS_PSQL_USER} WITH PASSWORD '${SELFOSS_PSQL_PASSWORD}';"
+psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "CREATE DATABASE ${SELFOSS_PSQL_DB} WITH OWNER ${SELFOSS_PSQL_USER};"
+psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER SCHEMA public OWNER TO ${SELFOSS_PSQL_USER};"
+psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER USER ${SELFOSS_PSQL_USER} WITH SUPERUSER;"
 
 # Request certificates
-# sudo certbot -d ${DOMAIN_NAME},${HOME_ASSISTENT_DOMAIN_NAME},${SELFOSS_DOMAIN_NAME},${MUNIN_DOMAIN_NAME}
+sudo certbot -d ${DOMAIN_NAME},${HOME_ASSISTENT_DOMAIN_NAME},${SELFOSS_DOMAIN_NAME},${MUNIN_DOMAIN_NAME}
 
 export PATH=/home/azure/bin:$PATH
 export DOCKER_HOST=unix:///run/user/1000/docker.sock
 cd ${DOCKER_COMPOSE_DIR} && docker-compose up -d
+
+
+sudo systemctl restart apache2

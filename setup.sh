@@ -21,10 +21,10 @@ EOL
 
 # Prepare files for installation
 WORK_DIR=$(pwd)
-
 TMP_DIR=$(mktemp -d)
 echo "Using temporary directory:" $TMP_DIR
 
+# Clone repository
 cd $TMP_DIR
 git clone -q https://github.com/evroon/concordia
 REPO_DIR=$TMP_DIR/concordia
