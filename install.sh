@@ -29,7 +29,7 @@ psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER USER ${SELFOSS_PSQL_
 
 # Set up certbot config file. See: https://gist.github.com/stevenvandervalk/130cba3488611d44390738dd86bb2ea5
 sudo mkdir -p /etc/letsencrypt
-sudo cat > /etc/letsencrypt/cli.ini <<EOF
+cat > /tmp/cli.ini <<EOF
 # Use a 4096 bit RSA key instead of 2048.
 rsa-key-size = 4096
 # Set email and domains.
@@ -45,6 +45,7 @@ agree-tos = True
 authenticator = webroot
 webroot-path = /var/www/html
 EOF
+sudo mv /tmp/cli.ini /etc/letsencrypt/cli.ini
 
 # Request certificates
 sudo certbot certonly
