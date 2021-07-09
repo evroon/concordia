@@ -22,9 +22,10 @@ sudo -Hu www-data git clone ${SELFOSS_REPO} ${SELFOSS_DIR}
 cd ${SELFOSS_DIR}
 sudo chmod -R 744 data
 sudo cp $REPO_DIR/selfoss/config.ini ${SELFOSS_DIR}
+sudo chown www-data:www-data ${SELFOSS_DIR}/config.ini
 
-sudo mkdir -p ${SELFOSS_DIR}/../.composer
-sudo chown -R www-data:www-data ${SELFOSS_DIR}/../.composer
+sudo mkdir -p ${SELFOSS_DIR}/../.composer ${SELFOSS_DIR}/../.npm
+sudo chown -R www-data:www-data ${SELFOSS_DIR}/../.composer ${SELFOSS_DIR}/../.npm
 sudo -Hu www-data composer update --no-dev -vvv
 sudo -Hu www-data npm run build
 
