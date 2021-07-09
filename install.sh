@@ -20,6 +20,7 @@ sudo -Hu www-data git clone ${SELFOSS_REPO} ${SELFOSS_DIR}
 sudo chmod -R 744 ${SELFOSS_DIR}/data
 sudo cp selfoss/* ${SELFOSS_DIR}
 
+sudo mkdir -p ${SELFOSS_DIR}/../.composer
 sudo chown -R www-data:www-data ${SELFOSS_DIR}/../.composer
 sudo -Hu www-data composer update
 
