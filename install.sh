@@ -2,7 +2,7 @@ REPO_DIR=$(pwd)
 
 # Move files to correct locations
 sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR} ${DOCKER_COMPOSE_DIR} ${HOME_ASSISTENT_DIR}/config
-# sudo cp etc/apache2/sites-available/* /etc/apache2/sites-available
+sudo cp etc/apache2/sites-available/* /etc/apache2/sites-available
 sudo cp etc/apt/apt.conf.d/* /etc/apt/apt.conf.d
 sudo cp home/.gitconfig ~/
 sudo cp docker/* ${DOCKER_COMPOSE_DIR}
@@ -59,5 +59,5 @@ psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER SCHEMA public OWNER 
 psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER USER ${SELFOSS_PSQL_USER} WITH SUPERUSER;"
 
 
-sudo a2ensite 001-selfoss.conf
+sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf
 sudo systemctl restart apache2
