@@ -56,11 +56,11 @@ psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER SCHEMA public OWNER 
 psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER USER ${SELFOSS_PSQL_USER} WITH SUPERUSER;"
 
 # Request certificates
-if [ ! -f "/etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem" ]; then
+if sudo bash -c '[ ! -f "/etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem" ]'; then
     sudo certbot certonly
 fi
 
-if [ -f "/etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem" ]; then
+if sudo bash -c '[ -f "/etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem" ]'; then
     sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-home-assistant.conf 003-munin.conf
 fi
 
