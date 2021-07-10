@@ -6,10 +6,10 @@ services:
         restart: always
         env_file: ~/.env
         volumes:
-            - ${HOME_ASSISTENT_DIR}/config:/config
+            - ${HOME_ASSISTANT_DIR}/config:/config
             - /etc/localtime:/etc/localtime
         ports:
-            - ${HOME_ASSISTENT_PORT}:${HOME_ASSISTENT_PORT}
+            - ${HOME_ASSISTANT_PORT}:${HOME_ASSISTANT_PORT}
 
     postgres:
         image: postgres

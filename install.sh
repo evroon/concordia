@@ -1,13 +1,13 @@
 REPO_DIR=$(pwd)
 
 # Move files to correct locations
-sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR} ${DOCKER_COMPOSE_DIR} ${HOME_ASSISTENT_DIR}/config
+sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR} ${DOCKER_COMPOSE_DIR} ${HOME_ASSISTANT_DIR}/config
 sudo cp nginx/nginx.conf /etc/nginx
 sudo cp nginx/conf.d/* /etc/nginx/conf.d
 sudo cp etc/apt/apt.conf.d/* /etc/apt/apt.conf.d
 sudo cp home/.gitconfig ~/
 sudo cp docker/* ${DOCKER_COMPOSE_DIR}
-sudo cp homeassistant/* ${HOME_ASSISTENT_DIR}/config
+sudo cp homeassistant/* ${HOME_ASSISTANT_DIR}/config
 
 # Install composer
 if [ ! -f "/usr/local/bin/composer" ]; then

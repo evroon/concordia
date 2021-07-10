@@ -11,8 +11,8 @@ script: !include scripts.yaml
 scene: !include scenes.yaml
 
 homeassistant:
-  external_url: https://${HOME_ASSISTENT_DOMAIN_NAME}
-  internal_url: https://${HOME_ASSISTENT_DOMAIN_NAME}
+  external_url: https://${HOME_ASSISTANT_DOMAIN_NAME}
+  internal_url: https://${HOME_ASSISTANT_DOMAIN_NAME}
 
 camera:
   - platform: buienradar
