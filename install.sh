@@ -1,38 +1,62 @@
-# Install dependencies
-sudo apt update && sudo apt upgrade
-sudo apt install -y \
-    wget curl python3 certbot git make \
-    docker docker-compose uidmap \
-    php7.4 update-notifier-common \
-    munin munin-node libcgi-fast-perl libapache2-mod-fcgid \
-    postgresql-client pgpdump \
-    tmux
+REPO_DIR=$(pwd)
 
-# Install docker rootless
-curl -fsSL https://get.docker.com/rootless | sh
+# Move files to correct locations
+sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR} ${DOCKER_COMPOSE_DIR} ${HOME_ASSISTENT_DIR}/config
+sudo cp etc/apache2/sites-available/* /etc/apache2/sites-available
+sudo cp etc/apt/apt.conf.d/* /etc/apt/apt.conf.d
+sudo cp home/.gitconfig ~/
+sudo cp docker/* ${DOCKER_COMPOSE_DIR}
+sudo cp homeassistent/* ${HOME_ASSISTENT_DIR}/config
 
-cat >> ~/.bashrc <<EOL
-# Docker
-export PATH=/home/azure/bin:$PATH
-export DOCKER_HOST=unix:///run/user/1000/docker.sock
-EOL
+# Install composer
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php -r "if (hash_file('sha384', 'composer-setup.php') === '756890a4488ce9024fc62c56153228907f1545c228516cbf63f885e036d37e9a59d27d63f46af1d4d07ee0f76181c7d3') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+php composer-setup.php
+php -r "unlink('composer-setup.php');"
+sudo mv composer.phar /usr/local/bin/composer
 
-mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR}
+# Setup apache2
+sudo a2enmod rewrite proxy ssl fcgid
+sudo systemctl restart apache2
+
+# Change cron job
+sudo crontab crontab.sh
 
 # Install selfoss
 cd ${SELFOSS_DIR}
-sudo -Hu www-data git clone ${SELFOSS_REPO} ${SELFOSS_DIR}
+sudo wget ${SELFOSS_REPO} -O selfoss.zip
+sudo unzip selfoss.zip
+sudo rm selfoss.zip
+sudo chown www-data:www-data -R ${SELFOSS_DIR}
 
+sudo chmod -R 744 data
+sudo cp $REPO_DIR/selfoss/config.ini ${SELFOSS_DIR}
+sudo chown www-data:www-data ${SELFOSS_DIR}/config.ini
 
+# Install Munin
+sudo chown munin:munin ${MUNIN_DIR}
+sudo cp $REPO_DIR/munin/munin.conf /etc/munin/munin.conf
 
-# Create databases
+# Set up certbot config file. See: https://gist.github.com/stevenvandervalk/130cba3488611d44390738dd86bb2ea5
+sudo mkdir -p /etc/letsencrypt
+sudo mv $REPO_DIR/letsencrypt/cli.ini /etc/letsencrypt/cli.ini
+
+# Request certificates
+sudo certbot certonly
+
+# Start Docker containers.
+export PATH=/home/azure/bin:$PATH
+export DOCKER_HOST=unix:///run/user/1000/docker.sock
+cd ${DOCKER_COMPOSE_DIR} && docker-compose up -d
+
+# Create postgres databases
 export PGPASSWORD=${PSQL_PASSWORD}
 psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "CREATE USER ${SELFOSS_PSQL_USER} WITH PASSWORD '${SELFOSS_PSQL_PASSWORD}';"
 psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "CREATE DATABASE ${SELFOSS_PSQL_DB} WITH OWNER ${SELFOSS_PSQL_USER};"
 psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER SCHEMA public OWNER TO ${SELFOSS_PSQL_USER};"
 psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER USER ${SELFOSS_PSQL_USER} WITH SUPERUSER;"
 
-sudo certbot -d ${DOMAIN_NAME},${HOME_ASSISTENT_DOMAIN_NAME},${SELFOSS_DOMAIN_NAME},${MUNIN_DOMAIN_NAME}
 
-cd ${PSQL_DIR} && docker-compose up -d
-cd ${HOME_ASSISTENT_DIR} && docker-compose up -d
+sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-home-assistant.conf 003-munin.conf
+sudo systemctl restart apache2
+sudo systemctl restart munin-node

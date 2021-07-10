@@ -1,10 +1,20 @@
 version: '3.1'
 
 services:
+    homeassistant:
+        image: homeassistant/home-assistant:stable
+        restart: always
+        env_file: ~/.env
+        volumes:
+            - ${HOME_ASSISTENT_DIR}/config:/config
+            - /etc/localtime:/etc/localtime
+        ports:
+            - ${HOME_ASSISTENT_PORT}:${HOME_ASSISTENT_PORT}
+
     postgres:
         image: postgres
         restart: always
-        env_file: ../.env
+        env_file: ~/.env
         volumes:
             - ${PSQL_DATA_DIR}:/var/lib/postgresql/data
         environment:

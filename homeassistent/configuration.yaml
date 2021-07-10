@@ -1,0 +1,40 @@
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+homeassistant:
+  external_url: https://${HOME_ASSISTENT_DOMAIN_NAME}
+  internal_url: https://${HOME_ASSISTENT_DOMAIN_NAME}
+
+camera:
+  - platform: buienradar
+
+weather:
+  - platform: buienradar
+    name: "${LOCATION}"
+    latitude: ${LATITUDE}
+    longitude: ${LONGITUDE}
+    forecast: true
+
+sensor:
+  - platform: buienradar
+    name: "${LOCATION}"
+    latitude: ${LATITUDE}
+    longitude: ${LONGITUDE}
+    timeframe: 120 #s
+    monitored_conditions:
+      - symbol
+      - humidity
+      - temperature
+      - windspeed
+      - winddirection
+      - pressure
+      - precipitation_forecast_average
