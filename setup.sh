@@ -14,7 +14,7 @@ sudo apt install -y \
     postgresql-client pgpdump \
     tmux update-notifier-common \
     php php-gd php-mbstring php-common php-pgsql php-imagick php-xml php-curl php-tidy php-zip npm \
-    certbot python3-certbot-nginx libcgi-fast-perl \
+    nginx certbot python3-certbot-nginx libcgi-fast-perl \
 
 
 # ssh-keygen -t ed25519
