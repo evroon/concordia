@@ -1,9 +1,14 @@
-cd ~
+cd
+
+if [ ! -f ".env" ]; then
+    echo "Could not find .env file."
+    exit
+fi
 
 # Install dependencies
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y \
-    wget curl python3 python3-pip git make htop \
+    wget curl python3 python3-pip git make htop unzip \
     docker docker-compose uidmap \
     munin libcgi-fast-perl libapache2-mod-fcgid \
     postgresql-client pgpdump \
@@ -15,13 +20,15 @@ sudo apt install -y \
 # ssh-keygen -t ed25519
 
 # Install docker rootless
-curl -fsSL https://get.docker.com/rootless | sh
+if [ ! -f "~/bin/docker" ]; then
+    curl -fsSL https://get.docker.com/rootless | sh
 
-cat >> ~/.bashrc <<EOL
+    cat >> ~/.bashrc <<EOL
 # Docker
 export PATH=/home/azure/bin:$PATH
 export DOCKER_HOST=unix:///run/user/1000/docker.sock
 EOL
+fi
 
 # Prepare files for installation
 WORK_DIR=$(pwd)

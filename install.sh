@@ -6,14 +6,16 @@ sudo cp etc/apache2/sites-available/* /etc/apache2/sites-available
 sudo cp etc/apt/apt.conf.d/* /etc/apt/apt.conf.d
 sudo cp home/.gitconfig ~/
 sudo cp docker/* ${DOCKER_COMPOSE_DIR}
-sudo cp homeassistent/* ${HOME_ASSISTENT_DIR}/config
+sudo cp homeassistant/* ${HOME_ASSISTENT_DIR}/config
 
 # Install composer
-php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-php -r "if (hash_file('sha384', 'composer-setup.php') === '756890a4488ce9024fc62c56153228907f1545c228516cbf63f885e036d37e9a59d27d63f46af1d4d07ee0f76181c7d3') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-php composer-setup.php
-php -r "unlink('composer-setup.php');"
-sudo mv composer.phar /usr/local/bin/composer
+if [ ! -f "/usr/local/bin/composer" ]; then
+    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    php -r "if (hash_file('sha384', 'composer-setup.php') === '756890a4488ce9024fc62c56153228907f1545c228516cbf63f885e036d37e9a59d27d63f46af1d4d07ee0f76181c7d3') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+    php composer-setup.php
+    php -r "unlink('composer-setup.php');"
+    sudo mv composer.phar /usr/local/bin/composer
+fi
 
 # Setup apache2
 sudo a2enmod rewrite proxy ssl fcgid
@@ -41,9 +43,6 @@ sudo cp $REPO_DIR/munin/munin.conf /etc/munin/munin.conf
 sudo mkdir -p /etc/letsencrypt
 sudo mv $REPO_DIR/letsencrypt/cli.ini /etc/letsencrypt/cli.ini
 
-# Request certificates
-sudo certbot certonly
-
 # Start Docker containers.
 export PATH=/home/azure/bin:$PATH
 export DOCKER_HOST=unix:///run/user/1000/docker.sock
@@ -56,7 +55,14 @@ psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "CREATE DATABASE ${SELFOSS_
 psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER SCHEMA public OWNER TO ${SELFOSS_PSQL_USER};"
 psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER USER ${SELFOSS_PSQL_USER} WITH SUPERUSER;"
 
+# Request certificates
+if [ ! -f "/etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem" ]; then
+    sudo certbot certonly
+fi
 
-sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-home-assistant.conf 003-munin.conf
-sudo systemctl restart apache2
+if [ -f "/etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem" ]; then
+    sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-home-assistant.conf 003-munin.conf
+fi
+
 sudo systemctl restart munin-node
+sudo systemctl restart apache2
