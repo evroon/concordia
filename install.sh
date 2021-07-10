@@ -2,7 +2,7 @@ REPO_DIR=$(pwd)
 
 # Move files to correct locations
 sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR} ${DOCKER_COMPOSE_DIR} ${HOME_ASSISTENT_DIR}/config
-sudo cp etc/apache2/sites-available/* /etc/apache2/sites-available
+sudo cp nginx/* /etc/nginx/conf.d/
 sudo cp etc/apt/apt.conf.d/* /etc/apt/apt.conf.d
 sudo cp home/.gitconfig ~/
 sudo cp docker/* ${DOCKER_COMPOSE_DIR}
@@ -16,10 +16,6 @@ if [ ! -f "/usr/local/bin/composer" ]; then
     php -r "unlink('composer-setup.php');"
     sudo mv composer.phar /usr/local/bin/composer
 fi
-
-# Setup apache2
-sudo a2enmod rewrite proxy ssl fcgid
-sudo systemctl restart apache2
 
 # Change cron job
 sudo crontab crontab.sh
@@ -57,7 +53,7 @@ psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER USER ${SELFOSS_PSQL_
 
 # Request certificates
 if sudo bash -c '[ ! -f "/etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem" ]'; then
-    sudo certbot --apache
+    sudo certbot --nginx
 fi
 
 if sudo bash -c '[ -f "/etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem" ]'; then
@@ -65,4 +61,3 @@ if sudo bash -c '[ -f "/etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem" ]'; t
 fi
 
 sudo systemctl restart munin-node
-sudo systemctl restart apache2
