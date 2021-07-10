@@ -57,7 +57,7 @@ psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER USER ${SELFOSS_PSQL_
 
 # Request certificates
 if sudo bash -c '[ ! -f "/etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem" ]'; then
-    sudo certbot certonly
+    sudo certbot --apache
 fi
 
 if sudo bash -c '[ -f "/etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem" ]'; then
