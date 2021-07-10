@@ -2,7 +2,8 @@ REPO_DIR=$(pwd)
 
 # Move files to correct locations
 sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR} ${DOCKER_COMPOSE_DIR} ${HOME_ASSISTENT_DIR}/config
-sudo cp nginx/* /etc/nginx/conf.d/
+sudo cp nginx/nginx.conf /etc/nginx
+sudo cp nginx/conf.d/* /etc/nginx/conf.d
 sudo cp etc/apt/apt.conf.d/* /etc/apt/apt.conf.d
 sudo cp home/.gitconfig ~/
 sudo cp docker/* ${DOCKER_COMPOSE_DIR}
@@ -54,10 +55,6 @@ psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER USER ${SELFOSS_PSQL_
 # Request certificates
 if sudo bash -c '[ ! -f "/etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem" ]'; then
     sudo certbot --nginx
-fi
-
-if sudo bash -c '[ -f "/etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem" ]'; then
-    sudo nginx_ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-home-assistant.conf 003-munin.conf
 fi
 
 sudo systemctl restart munin-node
