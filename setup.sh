@@ -46,7 +46,6 @@ git checkout feature-installation
 python3 -m pip install -r requirements.txt
 
 cp $WORK_DIR/.env ./
-sudo cp .env ~/
 python3 build.py $REPO_DIR
 
 ./install.sh
