@@ -58,3 +58,4 @@ if sudo bash -c '[ ! -f "/etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem" ]';
 fi
 
 sudo systemctl restart munin-node
+sudo systemctl restart nginx
