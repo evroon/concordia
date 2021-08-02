@@ -59,3 +59,7 @@ sudo -u postgres psql -c "ALTER USER ${SELFOSS_PSQL_USER} WITH SUPERUSER;"
 sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-gitea.conf 003-munin.conf 004-nextcloud.conf
 sudo systemctl restart apache2
 sudo systemctl restart munin-node
+
+cd $REPO_DIR
+sudo cp nextcloud/install.sh /usr/bin/nextcloud-install
+sudo cp gitea/install.sh /usr/bin/gitea-install
