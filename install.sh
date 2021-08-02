@@ -46,8 +46,6 @@ sudo mv $REPO_DIR/letsencrypt/cli.ini /etc/letsencrypt/cli.ini
 sudo certbot certonly
 
 # Start Docker containers.
-# export PATH=/home/azure/bin:$PATH
-# export DOCKER_HOST=unix:///run/user/1000/docker.sock
 cd ${DOCKER_COMPOSE_DIR} && sudo docker-compose up -d
 
 # Create postgres databases
@@ -58,6 +56,6 @@ sudo -u postgres psql -c "ALTER SCHEMA public OWNER TO ${SELFOSS_PSQL_USER};"
 sudo -u postgres psql -c "ALTER USER ${SELFOSS_PSQL_USER} WITH SUPERUSER;"
 
 
-sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-home-assistant.conf 003-munin.conf
+sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-gitea.conf 003-munin.conf 004-nextcloud.conf
 sudo systemctl restart apache2
 sudo systemctl restart munin-node

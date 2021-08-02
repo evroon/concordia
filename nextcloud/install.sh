@@ -10,6 +10,6 @@ sha256sum -c nextcloud-${NEXTCLOUD_VERSION}.zip.sha256 < nextcloud-${NEXTCLOUD_V
 sudo gpg --import nextcloud.asc
 sudo gpg --verify nextcloud-${NEXTCLOUD_VERSION}.zip.asc nextcloud-${NEXTCLOUD_VERSION}.zip
 
-sudo unzip -o nextcloud-${NEXTCLOUD_VERSION}.zip
+sudo unzip -qo nextcloud-${NEXTCLOUD_VERSION}.zip
 sudo cp -rf nextcloud /var/www
 sudo chown -R www-data:www-data /var/www/nextcloud

@@ -1,5 +1,8 @@
 cd ~
 
+PURPLE='\033[0;35m'
+NC='\033[0m' # No Color
+
 # Install dependencies
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y \
@@ -13,19 +16,10 @@ sudo apt install -y \
 
 # ssh-keygen -t ed25519
 
-# # Install docker rootless
-# curl -fsSL https://get.docker.com/rootless | sh
-
-# cat >> ~/.bashrc <<EOL
-# # Docker
-# export PATH=/home/azure/bin:$PATH
-# export DOCKER_HOST=unix:///run/user/1000/docker.sock
-# EOL
-
 # Prepare files for installation
 WORK_DIR=$(pwd)
 TMP_DIR=$(mktemp -d)
-echo "Using temporary directory:" $TMP_DIR
+echo -e "${PURPLE}Using temporary directory: $TMP_DIR/concordia${NC}"
 
 # Clone repository
 cd $TMP_DIR
