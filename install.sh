@@ -17,7 +17,7 @@ php -r "unlink('composer-setup.php');"
 sudo mv composer.phar /usr/local/bin/composer
 
 # Setup apache2
-sudo a2enmod rewrite proxy ssl fcgid
+sudo a2enmod rewrite proxy proxy_http ssl fcgid
 sudo systemctl restart apache2
 
 # Change cron job
