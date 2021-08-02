@@ -24,7 +24,7 @@ sudo crontab crontab.sh
 
 # Install selfoss
 cd ${SELFOSS_DIR}
-sudo wget ${SELFOSS_REPO} -O selfoss.zip
+sudo wget ${SELFOSS_RELEASE} -O selfoss.zip
 sudo unzip selfoss.zip
 sudo rm selfoss.zip
 sudo chown www-data:www-data -R ${SELFOSS_DIR}
