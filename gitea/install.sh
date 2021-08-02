@@ -1,5 +1,6 @@
-wget -O gitea https://dl.gitea.io/gitea/${GITEA_VERSION}/gitea-${GITEA_VERSION}-linux-amd64
-chmod +x gitea
+sudo wget -O /usr/bin/gitea https://dl.gitea.io/gitea/${GITEA_VERSION}/gitea-${GITEA_VERSION}-linux-amd64
+sudo chown git:git /usr/bin/gitea
+sudo chmod 744 /usr/bin/gitea
 
 gpg --keyserver keys.openpgp.org --recv 7C9E68152594688862D62AF62D9AE806EC1592E2
 gpg --verify gitea-${GITEA_VERSION}-linux-amd64.asc gitea-${GITEA_VERSION}-linux-amd64
