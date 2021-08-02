@@ -53,7 +53,14 @@ export PGPASSWORD=${PSQL_PASSWORD}
 sudo -u postgres psql -c "CREATE USER ${SELFOSS_PSQL_USER} WITH PASSWORD '${SELFOSS_PSQL_PASSWORD}';"
 sudo -u postgres psql -c "CREATE DATABASE ${SELFOSS_PSQL_DB} WITH OWNER ${SELFOSS_PSQL_USER};"
 sudo -u postgres psql -c "ALTER SCHEMA public OWNER TO ${SELFOSS_PSQL_USER};"
-sudo -u postgres psql -c "ALTER USER ${SELFOSS_PSQL_USER} WITH SUPERUSER;"
+
+sudo -u postgres psql -c "CREATE USER ${GITEA_PSQL_USER} WITH PASSWORD '${GITEA_PSQL_PASSWORD}';"
+sudo -u postgres psql -c "CREATE DATABASE ${GITEA_PSQL_DB} WITH OWNER ${GITEA_PSQL_USER};"
+sudo -u postgres psql -c "ALTER SCHEMA public OWNER TO ${GITEA_PSQL_USER};"
+
+sudo -u postgres psql -c "CREATE USER ${NEXTCLOUD_PSQL_USER} WITH PASSWORD '${NEXTCLOUD_PSQL_PASSWORD}';"
+sudo -u postgres psql -c "CREATE DATABASE ${NEXTCLOUD_PSQL_DB} WITH OWNER ${NEXTCLOUD_PSQL_USER};"
+sudo -u postgres psql -c "ALTER SCHEMA public OWNER TO ${NEXTCLOUD_PSQL_USER};"
 
 
 sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-gitea.conf 003-munin.conf 004-nextcloud.conf
