@@ -1,0 +1,7 @@
+[Unit]
+Description=Background tasks for Nextcloud
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/php -f ${NEXTCLOUD_DIR}/cron.php
+User=www-data
