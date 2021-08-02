@@ -33,7 +33,7 @@ git clone -q https://github.com/evroon/concordia
 REPO_DIR=$TMP_DIR/concordia
 cd $REPO_DIR
 
-git checkout feature-installation
+git checkout feature-rpi
 
 python3 -m pip install -r requirements.txt
 
