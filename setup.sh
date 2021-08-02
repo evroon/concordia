@@ -38,7 +38,7 @@ git checkout feature-rpi
 python3 -m pip install -r requirements.txt
 
 cp $WORK_DIR/.env ./
-sudo cp .env ~/
+sudo cp .env /root/.env
 python3 build.py $REPO_DIR
 
 ./install.sh
