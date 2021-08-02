@@ -45,16 +45,16 @@ sudo mv $REPO_DIR/letsencrypt/cli.ini /etc/letsencrypt/cli.ini
 sudo certbot certonly
 
 # Start Docker containers.
-export PATH=/home/azure/bin:$PATH
-export DOCKER_HOST=unix:///run/user/1000/docker.sock
-cd ${DOCKER_COMPOSE_DIR} && docker-compose up -d
+# export PATH=/home/azure/bin:$PATH
+# export DOCKER_HOST=unix:///run/user/1000/docker.sock
+cd ${DOCKER_COMPOSE_DIR} && sudo docker-compose up -d
 
 # Create postgres databases
 export PGPASSWORD=${PSQL_PASSWORD}
-psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "CREATE USER ${SELFOSS_PSQL_USER} WITH PASSWORD '${SELFOSS_PSQL_PASSWORD}';"
-psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "CREATE DATABASE ${SELFOSS_PSQL_DB} WITH OWNER ${SELFOSS_PSQL_USER};"
-psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER SCHEMA public OWNER TO ${SELFOSS_PSQL_USER};"
-psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER USER ${SELFOSS_PSQL_USER} WITH SUPERUSER;"
+sudo -u postgres psql -c "CREATE USER ${SELFOSS_PSQL_USER} WITH PASSWORD '${SELFOSS_PSQL_PASSWORD}';"
+sudo -u postgres psql -c "CREATE DATABASE ${SELFOSS_PSQL_DB} WITH OWNER ${SELFOSS_PSQL_USER};"
+sudo -u postgres psql -c "ALTER SCHEMA public OWNER TO ${SELFOSS_PSQL_USER};"
+sudo -u postgres psql -c "ALTER USER ${SELFOSS_PSQL_USER} WITH SUPERUSER;"
 
 
 sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-home-assistant.conf 003-munin.conf
