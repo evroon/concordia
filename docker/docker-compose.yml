@@ -6,21 +6,7 @@ services:
         restart: always
         env_file: ~/.env
         volumes:
-            - ${HOME_ASSISTENT_DIR}/config:/config
+            - ${HOME_ASSISTANT_DIR}/config:/config
             - /etc/localtime:/etc/localtime
         ports:
-            - ${HOME_ASSISTENT_PORT}:${HOME_ASSISTENT_PORT}
-
-    postgres:
-        image: postgres
-        restart: always
-        env_file: ~/.env
-        volumes:
-            - ${PSQL_DATA_DIR}:/var/lib/postgresql/data
-        environment:
-            POSTGRES_USER: ${PSQL_USER}
-            POSTGRES_PASSWORD: ${PSQL_PASSWORD}
-            TZ: "Europe/Amsterdam"
-            PGTZ: "Europe/Amsterdam"
-        ports:
-            - ${PSQL_PORT}:${PSQL_PORT}
+            - ${HOME_ASSISTANT_PORT}:${HOME_ASSISTANT_PORT}
