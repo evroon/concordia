@@ -1,0 +1,7 @@
+[Unit]
+Description=Updates the RSS feed of Selfoss
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/php ${SELFOSS_DIR}/cliupdate.php && sudo -Hu ${USERNAME} /usr/bin/python3 ${DISCORD_DIR}/selfoss.py https://${SELFOSS_DOMAIN_NAME} ${DISCORD_DIR}/last-update
+User=www-data

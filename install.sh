@@ -1,12 +1,13 @@
 REPO_DIR=$(pwd)
 
 # Move files to correct locations
-sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR} ${DOCKER_COMPOSE_DIR} ${HOME_ASSISTENT_DIR}/config
+sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR} ${DOCKER_COMPOSE_DIR} ${HOME_ASSISTANT_DIR}/config
+sudo cp lib/systemd/system/* /lib/systemd/system
 sudo cp etc/apache2/sites-available/* /etc/apache2/sites-available
 sudo cp etc/apt/apt.conf.d/* /etc/apt/apt.conf.d
 sudo cp home/.gitconfig ~/
 sudo cp docker/* ${DOCKER_COMPOSE_DIR}
-sudo cp homeassistent/* ${HOME_ASSISTENT_DIR}/config
+sudo cp homeassistant/* ${HOME_ASSISTANT_DIR}/config
 
 # Install composer
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
@@ -16,7 +17,7 @@ php -r "unlink('composer-setup.php');"
 sudo mv composer.phar /usr/local/bin/composer
 
 # Setup apache2
-sudo a2enmod rewrite proxy ssl fcgid
+sudo a2enmod rewrite proxy proxy_http ssl fcgid
 sudo systemctl restart apache2
 
 # Change cron job
@@ -24,8 +25,8 @@ sudo crontab crontab.sh
 
 # Install selfoss
 cd ${SELFOSS_DIR}
-sudo wget ${SELFOSS_REPO} -O selfoss.zip
-sudo unzip selfoss.zip
+sudo wget ${SELFOSS_RELEASE} -O selfoss.zip
+sudo unzip -qo selfoss.zip
 sudo rm selfoss.zip
 sudo chown www-data:www-data -R ${SELFOSS_DIR}
 
@@ -45,18 +46,27 @@ sudo mv $REPO_DIR/letsencrypt/cli.ini /etc/letsencrypt/cli.ini
 sudo certbot certonly
 
 # Start Docker containers.
-export PATH=/home/azure/bin:$PATH
-export DOCKER_HOST=unix:///run/user/1000/docker.sock
-cd ${DOCKER_COMPOSE_DIR} && docker-compose up -d
+cd ${DOCKER_COMPOSE_DIR} && sudo docker-compose up -d
 
 # Create postgres databases
 export PGPASSWORD=${PSQL_PASSWORD}
-psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "CREATE USER ${SELFOSS_PSQL_USER} WITH PASSWORD '${SELFOSS_PSQL_PASSWORD}';"
-psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "CREATE DATABASE ${SELFOSS_PSQL_DB} WITH OWNER ${SELFOSS_PSQL_USER};"
-psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER SCHEMA public OWNER TO ${SELFOSS_PSQL_USER};"
-psql -h localhost -p ${PSQL_PORT} -U ${PSQL_USER} -c "ALTER USER ${SELFOSS_PSQL_USER} WITH SUPERUSER;"
+sudo -u postgres psql -c "CREATE USER ${SELFOSS_PSQL_USER} WITH PASSWORD '${SELFOSS_PSQL_PASSWORD}';"
+sudo -u postgres psql -c "CREATE DATABASE ${SELFOSS_PSQL_DB} WITH OWNER ${SELFOSS_PSQL_USER};"
+sudo -u postgres psql -c "ALTER SCHEMA public OWNER TO ${SELFOSS_PSQL_USER};"
+
+sudo -u postgres psql -c "CREATE USER ${GITEA_PSQL_USER} WITH PASSWORD '${GITEA_PSQL_PASSWORD}';"
+sudo -u postgres psql -c "CREATE DATABASE ${GITEA_PSQL_DB} WITH OWNER ${GITEA_PSQL_USER};"
+sudo -u postgres psql -c "ALTER SCHEMA public OWNER TO ${GITEA_PSQL_USER};"
+
+sudo -u postgres psql -c "CREATE USER ${NEXTCLOUD_PSQL_USER} WITH PASSWORD '${NEXTCLOUD_PSQL_PASSWORD}';"
+sudo -u postgres psql -c "CREATE DATABASE ${NEXTCLOUD_PSQL_DB} WITH OWNER ${NEXTCLOUD_PSQL_USER};"
+sudo -u postgres psql -c "ALTER SCHEMA public OWNER TO ${NEXTCLOUD_PSQL_USER};"
 
 
-sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-home-assistant.conf 003-munin.conf
+sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-gitea.conf 003-munin.conf 004-nextcloud.conf
 sudo systemctl restart apache2
 sudo systemctl restart munin-node
+
+cd $REPO_DIR
+sudo cp nextcloud/install.sh /usr/bin/nextcloud-install
+sudo cp gitea/install.sh /usr/bin/gitea-install

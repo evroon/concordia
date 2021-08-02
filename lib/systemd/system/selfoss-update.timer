@@ -1,0 +1,9 @@
+[Unit]
+Description=Updates the RSS feed of Selfoss
+
+[Timer]
+OnBootSec=30min
+OnUnitActiveSec=30min
+
+[Install]
+WantedBy=timers.target
