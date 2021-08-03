@@ -5,3 +5,6 @@ Description=Background tasks for Nextcloud
 Type=oneshot
 ExecStart=/usr/bin/php -f ${NEXTCLOUD_DIR}/cron.php
 User=www-data
+
+[Install]
+WantedBy=multi-user.target
