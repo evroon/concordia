@@ -1,2 +1,3 @@
 python-dotenv
 python-dateutil
+psycopg2
