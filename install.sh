@@ -72,6 +72,10 @@ sudo -u postgres psql -c "CREATE USER ${NEXTCLOUD_PSQL_USER} WITH PASSWORD '${NE
 sudo -u postgres psql -c "CREATE DATABASE ${NEXTCLOUD_PSQL_DB} WITH OWNER ${NEXTCLOUD_PSQL_USER};"
 sudo -u postgres psql -c "ALTER SCHEMA public OWNER TO ${NEXTCLOUD_PSQL_USER};"
 
+sudo -u postgres psql -c "CREATE USER ${FR24_PSQL_USER} WITH PASSWORD '${FR24_PSQL_PASSWORD}';"
+sudo -u postgres psql -c "CREATE DATABASE ${FR24_PSQL_DB} WITH OWNER ${FR24_PSQL_USER};"
+sudo -u postgres psql -c "ALTER SCHEMA public OWNER TO ${FR24_PSQL_USER};"
+
 # Create backup directory.
 sudo mkdir -p ${PSQL_BACKUP_DIR}
 sudo chown postgres:postgres ${PSQL_BACKUP_DIR}

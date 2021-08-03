@@ -17,7 +17,7 @@ services:
         image: tooljet/tooljet-client-ce:latest
         restart: always
         depends_on:
-            - server
+            - tooljet-server
         volumes:
             - logs:/var/log/openresty/
             - certs:/etc/resty-auto-ssl/

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import psycopg2
+import datetime
 
 con = psycopg2.connect(database="${FR24_PSQL_DB}", user="${FR24_PSQL_USER}", password="${FR24_PSQL_PASSWORD}", host="127.0.0.1", port="${PSQL_PORT}")
 print("Database opened successfully")
@@ -46,8 +47,8 @@ def insert_data() -> None:
         columns_keys = ','.join(columns.keys())
 
         for aircraft in content['aircraft']:
-            aircraft['datetime'] = content['now']
             aircraft['flight'] = aircraft['flight'].strip()
+            aircraft['date_time'] = datetime.datetime.fromisoformat(content['now'])
 
             data_values = ', '.join([f'%({x})' for x in aircraft.keys()])
 
