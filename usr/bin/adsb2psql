@@ -35,7 +35,6 @@ columns = {
 def table_exists() -> bool:
     cur = con.cursor()
     cur.execute("select * from information_schema.tables where table_name=%s", ('flightdata',))
-    print(cur.rowcount)
     return cur.rowcount > 0
 
 
@@ -48,13 +47,12 @@ def create_table() -> None:
 
 
 def store_data(aggregated_data: list) -> None:
-    cur = con.cursor()
+    print(f'Writing {len(aggregated_data)} entries to database.')
     data_values = ','.join([f'%({x})s' for x in columns.keys()])
     columns_keys = ','.join(columns.keys())
-
-    print(f'Writing {len(aggregated_data)} entries to database.')
-
     args_str = ','.join(['(' + cur.mogrify(data_values, x).decode("utf-8") + ')' for x in aggregated_data])
+
+    cur = con.cursor()
     cur.execute(f"INSERT INTO flightdata ({columns_keys}) VALUES {args_str}")
     con.commit()
 
