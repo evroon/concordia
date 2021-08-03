@@ -16,14 +16,14 @@ databases = [
 def print_config() -> None:
     print("graph_title Postgres backups")
     print("graph_vlabel hours")
-    print("graph_args --upper-limit 1 -l 0")
+    print("graph_args --upper-limit 24 -l 0")
     print("graph_category postgres")
     print("graph_info Number of hours since last postgres backup per database.")
 
     for db in databases:
         print(f"{db}.label {db}")
-        print(f"{db}.warning 0:1")
-        print(f"{db}.critical 0:2")
+        print(f"{db}.warning 0:24")
+        print(f"{db}.critical 0:48")
 
 
 def print_value() -> None:
