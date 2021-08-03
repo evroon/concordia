@@ -6,4 +6,4 @@ python3 ${DISCORD_DIR}/selfoss.py \
     https://${SELFOSS_DOMAIN_NAME} \
     ${DISCORD_DIR}/last-update \
     --token=${DISCORD_TOKEN} \
-    --server_id=${DISCORD_SERVER_ID}
+    --server-id=${DISCORD_SERVER_ID}

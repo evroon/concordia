@@ -87,5 +87,7 @@ sudo cp selfoss-discord/install.sh /usr/bin/selfoss-discord-install
 sudo chown www-data:www-data /usr/bin/update-selfoss
 sudo chmod 700 /usr/bin/update-selfoss
 
+sudo chown www-data:www-data /var/www/
+
 sudo systemctl enable --now gitea nextcloudcron selfoss-update certs-update
 sudo systemctl enable --now postgres-backup@gitea postgres-backup@nextcloud postgres-backup@selfoss

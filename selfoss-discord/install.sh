@@ -2,7 +2,7 @@
 
 
 if cd ${DISCORD_DIR}; then
-    git pull;
+    sudo -Hu www-data git pull;
 else
     sudo mkdir -p ${DISCORD_DIR}
     sudo chown -R www-data:www-data ${DISCORD_DIR}
