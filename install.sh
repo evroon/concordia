@@ -3,6 +3,7 @@ REPO_DIR=$(pwd)
 # Move files to correct locations
 sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR} ${DOCKER_COMPOSE_DIR} ${HOME_ASSISTANT_DIR}/config
 sudo cp lib/systemd/system/* /lib/systemd/system
+sudo cp etc/msmtprc /etc
 sudo cp etc/apache2/sites-available/* /etc/apache2/sites-available
 sudo cp etc/apt/apt.conf.d/* /etc/apt/apt.conf.d
 sudo cp home/.gitconfig ~/
