@@ -1,0 +1,10 @@
+[Unit]
+Description=Letsencrypt certificate update
+Requires=network.target
+After=network.target
+OnFailure=unit-status-mailer@%n.service apache2.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/certbot renew
+ExecStartPost=/bin/systemctl reload apache2
