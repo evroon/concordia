@@ -20,7 +20,3 @@
 # For more information see the manual pages of crontab(5) and cron(8)
 #
 # m h  dom mon dow   command
-
-*/30 * * * * sudo -Hu www-data php ${SELFOSS_DIR}/cliupdate.php && sudo -Hu ${USERNAME} python3 ${DISCORD_DIR}/selfoss.py https://${SELFOSS_DOMAIN_NAME} ${DISCORD_DIR}/last-update
-0 0 * * 0 pg_dump -U postgres ${SELFOSS_PSQL_DB} > ${PSQL_BACKUP_DIR}/selfoss.bak
-# */10 * * * * sudo -Hu ${USERNAME} tmux ls | grep "no server running" || sudo -Hu ${USERNAME} tmux new -ds azure-docker
