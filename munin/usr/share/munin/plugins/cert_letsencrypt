@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+
+import subprocess
+import sys
+import json
+
+domains = [
+    '${DOMAIN_NAME}',
+    '${SELFOSS_DOMAIN_NAME}',
+    '${GITEA_DOMAIN_NAME}',
+    '${MUNIN_DOMAIN_NAME}',
+    '${NEXTCLOUD_DOMAIN}',
+]
+
+
+def print_config() -> None:
+    print("graph_title Certificate Validity")
+    print("graph_vlabel days")
+    print("graph_args --upper-limit 100 -l 0")
+    print("graph_category certs")
+    print("graph_info Certificate remaining valid days")
+
+    for domain in domains:
+        print("{0}.label {0}".format(domain))
+        print("{}.warning 20:92".format(domain))
+        print("{}.critical 10:92".format(domain))
+
+
+def print_value() -> None:
+    for domain in domains:
+        valid_date = subprocess.check_output('/usr/bin/openssl x509 -noout -dates -in /etc/letsencrypt/live/{}/cert.pem'.format(domain), shell=True, stderr=subprocess.STDOUT).decode('ascii')
+        remaining_days = subprocess.check_output('datediff() { d1=$(date -d "$1" +%s); d2=$(date -d "$2" +%s); echo $(( (d2 - d1) / 86400 )); }; datediff $date $date -d "' + valid_date.split('=')[-1] + '"', shell=True, stderr=subprocess.STDOUT)
+
+        print(domain + '.value ' + remaining_days.strip().decode('ascii'))
+
+
+if len(sys.argv) > 1 and sys.argv[1] == 'config':
+    print_config()
+else:
+    print_value()
