@@ -15,10 +15,10 @@ databases = [
 
 def print_config() -> None:
     print("graph_title Postgres backups")
-    print("graph_vlabel days")
-    print("graph_args --upper-limit 3 -l 0")
+    print("graph_vlabel hours")
+    print("graph_args --upper-limit 1 -l 0")
     print("graph_category postgres")
-    print("graph_info Number of days since last postgres backup per database.")
+    print("graph_info Number of hours since last postgres backup per database.")
 
     for db in databases:
         print(f"{db}.label {db}")
@@ -29,14 +29,13 @@ def print_config() -> None:
 def print_value() -> None:
     for db in databases:
         backups = glob.glob(f'${PSQL_BACKUP_DIR}/{db}-*.zip')
-        min_time = 1e4 # days
+        min_time = 1e4 # hours
 
         for backup in backups:
-            print(backup)
             date_str = backup.replace('.zip', '').replace(f'${PSQL_BACKUP_DIR}/{db}-', '')
             date = datetime.strptime(date_str, '%d-%m-%Y_%H-%M-%S')
             tdelta = relativedelta(datetime.now(), date)
-            diff = tdelta.days + tdelta.hours / 24 + tdelta.minutes / (24 * 60)
+            diff = tdelta.hours + tdelta.minutes / 60
 
             if diff < min_time:
                 min_time = diff
