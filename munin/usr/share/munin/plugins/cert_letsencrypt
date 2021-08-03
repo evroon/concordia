@@ -6,10 +6,6 @@ import json
 
 domains = [
     '${DOMAIN_NAME}',
-    '${SELFOSS_DOMAIN_NAME}',
-    '${GITEA_DOMAIN_NAME}',
-    '${MUNIN_DOMAIN_NAME}',
-    '${NEXTCLOUD_DOMAIN_NAME}',
 ]
 
 
@@ -21,9 +17,11 @@ def print_config() -> None:
     print("graph_info Certificate remaining valid days")
 
     for domain in domains:
-        print("{0}.label {0}".format(domain))
-        print("{}.warning 20:92".format(domain))
-        print("{}.critical 10:92".format(domain))
+        domain_only = domain.split('.')[-1]
+
+        print("{0}.label {0}".format(domain_only))
+        print("{}.warning 20:92".format(domain_only))
+        print("{}.critical 10:92".format(domain_only))
 
 
 def print_value() -> None:
@@ -31,7 +29,8 @@ def print_value() -> None:
         valid_date = subprocess.check_output('/usr/bin/openssl x509 -noout -dates -in /etc/letsencrypt/live/{}/cert.pem'.format(domain), shell=True, stderr=subprocess.STDOUT).decode('ascii')
         remaining_days = subprocess.check_output('datediff() { d1=$(date -d "$1" +%s); d2=$(date -d "$2" +%s); echo $(( (d2 - d1) / 86400 )); }; datediff $date $date -d "' + valid_date.split('=')[-1] + '"', shell=True, stderr=subprocess.STDOUT)
 
-        print(domain + '.value ' + remaining_days.strip().decode('ascii'))
+        domain_only = domain.split('.')[-1]
+        print(domain_only + '.value ' + remaining_days.strip().decode('ascii'))
 
 
 if len(sys.argv) > 1 and sys.argv[1] == 'config':
