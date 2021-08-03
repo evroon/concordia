@@ -43,6 +43,7 @@ sudo cp $REPO_DIR/munin/usr/share/munin/plugins/* /usr/share/munin/plugins
 
 sudo ln -s /usr/share/munin/plugins/cert_letsencrypt /etc/munin/plugins
 sudo ln -s /usr/share/munin/plugins/fr24_aircraft /etc/munin/plugins
+sudo ln -s /usr/share/munin/plugins/postgres_backup /etc/munin/plugins
 
 # Set up certbot config file. See: https://gist.github.com/stevenvandervalk/130cba3488611d44390738dd86bb2ea5
 sudo mkdir -p /etc/letsencrypt
