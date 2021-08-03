@@ -19,7 +19,7 @@ def print_config() -> None:
     for domain in domains:
         domain_only = domain.split('.')[0]
 
-        print("{0}.label {0}".format(domain))
+        print("{}.label {}".format(domain_only, domain))
         print("{}.warning 20:92".format(domain_only))
         print("{}.critical 10:92".format(domain_only))
 
