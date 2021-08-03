@@ -17,9 +17,9 @@ def print_config() -> None:
     print("graph_info Certificate remaining valid days")
 
     for domain in domains:
-        domain_only = domain.split('.')[-1]
+        domain_only = domain.split('.')[0]
 
-        print("{0}.label {0}".format(domain_only))
+        print("{0}.label {0}".format(domain))
         print("{}.warning 20:92".format(domain_only))
         print("{}.critical 10:92".format(domain_only))
 
@@ -29,7 +29,7 @@ def print_value() -> None:
         valid_date = subprocess.check_output('/usr/bin/openssl x509 -noout -dates -in /etc/letsencrypt/live/{}/cert.pem'.format(domain), shell=True, stderr=subprocess.STDOUT).decode('ascii')
         remaining_days = subprocess.check_output('datediff() { d1=$(date -d "$1" +%s); d2=$(date -d "$2" +%s); echo $(( (d2 - d1) / 86400 )); }; datediff $date $date -d "' + valid_date.split('=')[-1] + '"', shell=True, stderr=subprocess.STDOUT)
 
-        domain_only = domain.split('.')[-1]
+        domain_only = domain.split('.')[0]
         print(domain_only + '.value ' + remaining_days.strip().decode('ascii'))
 
 
