@@ -9,7 +9,7 @@ domains = [
     '${SELFOSS_DOMAIN_NAME}',
     '${GITEA_DOMAIN_NAME}',
     '${MUNIN_DOMAIN_NAME}',
-    '${NEXTCLOUD_DOMAIN}',
+    '${NEXTCLOUD_DOMAIN_NAME}',
 ]
 
 
