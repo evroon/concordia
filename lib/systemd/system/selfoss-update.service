@@ -1,5 +1,6 @@
 [Unit]
 Description=Updates the RSS feed of Selfoss
+OnFailure=unit-status-mailer@%n.service
 
 [Service]
 Type=oneshot

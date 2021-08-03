@@ -1,5 +1,6 @@
 [Unit]
 Description=Creates a backup of postgres database %i
+OnFailure=unit-status-mailer@%n.service
 
 [Service]
 Type=oneshot

@@ -1,5 +1,6 @@
 [Unit]
 Description=Background tasks for Nextcloud
+OnFailure=unit-status-mailer@%n.service
 
 [Service]
 Type=oneshot

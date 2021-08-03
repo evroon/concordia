@@ -1,0 +1,36 @@
+#!/bin/bash
+MAILTO="${EMAIL}"
+MAILFROM="unit-status-mailer"
+UNIT="$1"
+
+EXTRA=""
+for e in "${@:2}"; do
+  EXTRA+="$e"
+  EXTRA+=$'<br>\n'
+done
+
+UNITSTATUS=$(script -qc "systemctl status --no-pager --full -n 20 $UNIT" | aha -n)
+
+LASTSTART=$(date -d "$(systemctl show -p ExecMainStartTimestamp "$UNIT" | cut -d= -f2)" +"%Y-%m-%d %H:%M:%S")
+UNITLOGS=$(script -qc "journalctl --no-pager -u \"$UNIT\" --since \"$LASTSTART\"" | aha -n)
+
+sendmail "$MAILTO" <<EOF
+From: $MAILFROM
+To: <$MAILTO>
+Subject: Status mail for unit: $UNIT
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+
+<html>
+    <h1>Status report for unit: $UNIT</h1>
+    <p>$EXTRA</p>
+
+    <h2>Current unit status</h2>
+    <p><pre>$UNITSTATUS</pre></p>
+
+    <h2>Logs from last time unit ran</h2>
+    <p><pre>$UNITLOGS</pre></p>
+</html>
+EOF
+
+echo "Status mail sent to: '$MAILTO' for unit: '$UNIT'"
