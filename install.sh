@@ -39,6 +39,7 @@ sudo chown www-data:www-data ${SELFOSS_DIR}/config.ini
 # Install Munin
 sudo chown munin:munin ${MUNIN_DIR}
 sudo cp $REPO_DIR/munin/munin.conf /etc/munin/munin.conf
+sudo cp $REPO_DIR/munin/munin-node /etc/munin/plugin-conf.d/munin-node
 sudo cp $REPO_DIR/munin/usr/share/munin/plugins/* /usr/share/munin/plugins
 
 sudo ln -s /usr/share/munin/plugins/cert_letsencrypt /etc/munin/plugins
