@@ -4,7 +4,7 @@ OnFailure=unit-status-mailer@%n.service
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/php ${SELFOSS_DIR}/cliupdate.php && sudo -Hu ${USERNAME} /usr/bin/python3 ${DISCORD_DIR}/selfoss.py https://${SELFOSS_DOMAIN_NAME} ${DISCORD_DIR}/last-update
+ExecStart=/usr/bin/update-selfoss
 User=www-data
 
 [Install]
