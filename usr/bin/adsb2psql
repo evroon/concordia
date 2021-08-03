@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+
+import psycopg2
+
+con = psycopg2.connect(database="${FR24_PSQL_DB}", user="${FR24_PSQL_USER}", password="${FR24_PSQL_PASSWORD}", host="127.0.0.1", port="${PSQL_PORT}")
+print("Database opened successfully")
+
+columns = {
+    'date_time': 'TIMESTAMP',
+    'hex': 'TEXT',
+    'squawk': 'NUMERIC',
+    'flight': 'TEXT',
+    'lat': 'NUMERIC',
+    'lon': 'NUMERIC',
+    'nucp': 'NUMERIC',
+    'seen_pos': 'NUMERIC',
+    'altitude': 'NUMERIC',
+    'vert_rate': 'NUMERIC',
+    'track': 'NUMERIC',
+    'speed': 'NUMERIC',
+    'category': 'TEXT',
+    'mlat': 'TEXT',
+    'tisb': 'TEXT',
+    'messages': 'NUMERIC',
+    'seen': 'NUMERIC',
+    'rssi': 'NUMERIC',
+}
+
+def table_exists() -> bool:
+    cur = conn.cursor()
+    cur.execute("select exists(select * from information_schema.tables where table_name=%s)", ('flightdata',))
+    return cur.rowcount
+
+def create_table() -> None:
+    columns_query = ', '.join([f'{k} {v}' for k, v in columns.items()])
+
+    cur = con.cursor()
+    cur.execute(f'CREATE TABLE flightdata({columns_query});')
+    con.commit()
+
+def insert_data() -> None:
+    response = requests.get('${FR24_ADDRESS}')
+    if response.ok:
+        content = json.loads(response.content)
+        num_aircraft = len(data['aircraft'])
+        columns_keys = ','.join(columns.keys())
+
+        for aircraft in content['aircraft']:
+            aircraft['datetime'] = content['now']
+            aircraft['flight'] = aircraft['flight'].strip()
+
+            data_values = ', '.join([f'%({x})' for x in aircraft.keys()])
+
+            cur.execute(f"""INSERT INTO flightdata ({columns_keys}) VALUES ({data_values})""", aircraft)
+            con.commit()
+
+
+if __name__ == "__main__":
+    if not table_exists():
+        create_table()
+
+    insert_data()
+    con.close()
