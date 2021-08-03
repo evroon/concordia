@@ -52,6 +52,8 @@ def store_data(aggregated_data: list) -> None:
     data_values = ','.join([f'%({x})s' for x in columns.keys()])
     columns_keys = ','.join(columns.keys())
 
+    print(f'Writing {len(aggregated_data)} entries to database.')
+
     args_str = ','.join(['(' + cur.mogrify(data_values, x).decode("utf-8") + ')' for x in aggregated_data])
     cur.execute(f"INSERT INTO flightdata ({columns_keys}) VALUES {args_str}")
     con.commit()
@@ -59,7 +61,7 @@ def store_data(aggregated_data: list) -> None:
 
 def insert_data() -> None:
     aggregated_data = []
-    batch_size = 2
+    batch_size = 100
     wait_period = 1
 
     while True:
