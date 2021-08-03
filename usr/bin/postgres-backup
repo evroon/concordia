@@ -5,10 +5,8 @@ backupfolder=${PSQL_BACKUP_DIR}
 recipient_email=${EMAIL}
 keep_day=30
 
-sqlfile=$backupfolder/all-database-$(date +%d-%m-%Y_%H-%M-%S).sql
-zipfile=$backupfolder/all-database-$(date +%d-%m-%Y_%H-%M-%S).zip
-
-mkdir -p $backupfolder
+sqlfile=$backupfolder/$DB_NAME-$(date +%d-%m-%Y_%H-%M-%S).sql
+zipfile=$backupfolder/$DB_NAME-$(date +%d-%m-%Y_%H-%M-%S).zip
 
 # Create a backup
 if pg_dump $db_name > $sqlfile ; then

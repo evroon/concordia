@@ -3,8 +3,9 @@ Description=Creates a backup of postgres database %i
 
 [Service]
 Type=oneshot
-ExecStart=DB_NAME=%i /usr/bin/postgres-backup
+ExecStart=/usr/bin/postgres-backup
 User=postgres
+Environment=DB_NAME=%i
 
 [Install]
 WantedBy=multi-user.target

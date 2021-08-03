@@ -68,6 +68,9 @@ sudo -u postgres psql -c "CREATE USER ${NEXTCLOUD_PSQL_USER} WITH PASSWORD '${NE
 sudo -u postgres psql -c "CREATE DATABASE ${NEXTCLOUD_PSQL_DB} WITH OWNER ${NEXTCLOUD_PSQL_USER};"
 sudo -u postgres psql -c "ALTER SCHEMA public OWNER TO ${NEXTCLOUD_PSQL_USER};"
 
+# Create backup directory.
+sudo mkdir -p ${PSQL_BACKUP_DIR}
+sudo chown postgres:postgres ${PSQL_BACKUP_DIR}
 
 sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-gitea.conf 003-munin.conf 004-nextcloud.conf
 sudo systemctl restart apache2
