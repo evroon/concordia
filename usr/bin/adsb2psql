@@ -11,7 +11,6 @@ con = psycopg2.connect(database="${FR24_PSQL_DB}", user="${FR24_PSQL_USER}", pas
 print("Database opened successfully")
 
 columns = {
-    'id': 'SERIAL PRIMARY KEY',
     'date_time': 'TIMESTAMP',
     'hex': 'TEXT',
     'squawk': 'NUMERIC',
@@ -35,7 +34,7 @@ columns = {
 
 def table_exists() -> bool:
     cur = con.cursor()
-    cur.execute("select exists(select * from information_schema.tables where table_name=%s)", ('flightdata',))
+    cur.execute("select * from information_schema.tables where table_name=%s", ('flightdata',))
     print(cur.rowcount)
     return cur.rowcount > 0
 
@@ -44,7 +43,7 @@ def create_table() -> None:
     columns_query = ', '.join([f'{k} {v}' for k, v in columns.items()])
 
     cur = con.cursor()
-    cur.execute(f'CREATE TABLE flightdata({columns_query});')
+    cur.execute(f'CREATE TABLE flightdata(id SERIAL PRIMARY KEY, {columns_query});')
     con.commit()
 
 
@@ -53,7 +52,7 @@ def store_data(aggregated_data: list) -> None:
     data_values = ','.join([f'%({x})s' for x in columns.keys()])
     columns_keys = ','.join(columns.keys())
 
-    args_str = ','.join(['(' + cur.mogrify(data_values, x) + ')' for x in aggregated_data])
+    args_str = ','.join(['(' + cur.mogrify(data_values, x).decode("utf-8") + ')' for x in aggregated_data])
     cur.execute(f"INSERT INTO flightdata ({columns_keys}) VALUES {args_str}")
     con.commit()
 
