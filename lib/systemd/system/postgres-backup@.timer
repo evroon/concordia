@@ -2,8 +2,8 @@
 Description=Creates a backup of postgres database %i
 
 [Timer]
-OnBootSec=30min
-OnUnitActiveSec=30min
+OnBootSec=15min
+OnUnitActiveSec=12h
 
 [Install]
 WantedBy=timers.target
