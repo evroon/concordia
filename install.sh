@@ -83,5 +83,5 @@ cd $REPO_DIR
 sudo cp nextcloud/install.sh /usr/bin/nextcloud-install
 sudo cp gitea/install.sh /usr/bin/gitea-install
 
-sudo systemctl enable --now gitea nextcloudcron selfoss-update
+sudo systemctl enable --now gitea nextcloudcron selfoss-update certs-update
 sudo systemctl enable --now postgres-backup@gitea postgres-backup@nextcloud postgres-backup@selfoss
