@@ -1,9 +1,11 @@
+#!/bin/sh -
+
 # Source: https://sqlbak.com/blog/how-to-automate-postgresql-database-backups-in-linux
 
 db_name=$DB_NAME
 backupfolder=${PSQL_BACKUP_DIR}
 recipient_email=${EMAIL}
-keep_day=30
+keep_days=30
 
 psqlfile=$backupfolder/$DB_NAME-$(date +%d-%m-%Y_%H-%M-%S).psql
 zipfile=$backupfolder/$DB_NAME-$(date +%d-%m-%Y_%H-%M-%S).zip
@@ -12,7 +14,7 @@ zipfile=$backupfolder/$DB_NAME-$(date +%d-%m-%Y_%H-%M-%S).zip
 if pg_dump $db_name > $psqlfile ; then
    echo 'Psql dump created'
 else
-   echo 'pg_dump return non-zero code'# | mailx -s 'No backup was created!' $recipient_email
+   echo 'pg_dump return non-zero code'
    exit
 fi
 
@@ -20,11 +22,11 @@ fi
 if gzip -c $psqlfile > $zipfile; then
    echo 'The backup was successfully compressed'
 else
-   echo 'Error compressing backup'# | mailx -s 'Backup was not created!' $recipient_email
+   echo 'Error compressing backup'
    exit
 fi
 
 rm $psqlfile
 
 # Delete old backups
-find $backupfolder -mtime +$keep_day -delete
+find $backupfolder -mtime +$keep_days -delete
