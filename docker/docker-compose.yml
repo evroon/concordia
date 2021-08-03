@@ -10,3 +10,35 @@ services:
             - /etc/localtime:/etc/localtime
         ports:
             - ${HOME_ASSISTANT_PORT}:${HOME_ASSISTANT_PORT}
+
+    tooljet-client:
+        tty: true
+        stdin_open: true
+        image: tooljet/tooljet-client-ce:latest
+        restart: always
+        depends_on:
+            - server
+        volumes:
+            - logs:/var/log/openresty/
+            - certs:/etc/resty-auto-ssl/
+            - fallbackcerts:/etc/fallback-certs
+        ports:
+            - 5001:443
+        command: openresty -g "daemon off;"
+
+    tooljet-server:
+        image: tooljet/tooljet-server-ce:latest
+        tty: true
+        stdin_open: true
+        restart: always
+        ports:
+            - 5000
+        env_file: .env
+        environment:
+        RAILS_LOG_TO_STDOUT: "true"
+        command: ["bundle", "exec", "rails", "s", "-p", "5000", "-b", "0.0.0.0"]
+
+volumes:
+    certs:
+    logs:
+    fallbackcerts:
