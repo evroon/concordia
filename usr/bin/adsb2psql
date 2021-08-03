@@ -2,11 +2,16 @@
 
 import psycopg2
 import datetime
+import requests
+import json
+import time
+
 
 con = psycopg2.connect(database="${FR24_PSQL_DB}", user="${FR24_PSQL_USER}", password="${FR24_PSQL_PASSWORD}", host="127.0.0.1", port="${PSQL_PORT}")
 print("Database opened successfully")
 
 columns = {
+    'id': 'SERIAL PRIMARY KEY',
     'date_time': 'TIMESTAMP',
     'hex': 'TEXT',
     'squawk': 'NUMERIC',
@@ -27,10 +32,13 @@ columns = {
     'rssi': 'NUMERIC',
 }
 
+
 def table_exists() -> bool:
-    cur = conn.cursor()
+    cur = con.cursor()
     cur.execute("select exists(select * from information_schema.tables where table_name=%s)", ('flightdata',))
-    return cur.rowcount
+    print(cur.rowcount)
+    return cur.rowcount > 0
+
 
 def create_table() -> None:
     columns_query = ', '.join([f'{k} {v}' for k, v in columns.items()])
@@ -39,21 +47,47 @@ def create_table() -> None:
     cur.execute(f'CREATE TABLE flightdata({columns_query});')
     con.commit()
 
+
+def store_data(aggregated_data: list) -> None:
+    cur = con.cursor()
+    data_values = ','.join([f'%({x})s' for x in columns.keys()])
+    columns_keys = ','.join(columns.keys())
+
+    args_str = ','.join(['(' + cur.mogrify(data_values, x) + ')' for x in aggregated_data])
+    cur.execute(f"INSERT INTO flightdata ({columns_keys}) VALUES {args_str}")
+    con.commit()
+
+
 def insert_data() -> None:
-    response = requests.get('${FR24_ADDRESS}')
-    if response.ok:
-        content = json.loads(response.content)
-        num_aircraft = len(data['aircraft'])
-        columns_keys = ','.join(columns.keys())
+    aggregated_data = []
+    batch_size = 2
+    wait_period = 1
 
-        for aircraft in content['aircraft']:
-            aircraft['flight'] = aircraft['flight'].strip()
-            aircraft['date_time'] = datetime.datetime.fromisoformat(content['now'])
+    while True:
+        response = requests.get('${FR24_ADDRESS}')
+        if response.ok:
+            content = json.loads(response.content)
 
-            data_values = ', '.join([f'%({x})' for x in aircraft.keys()])
+            for aircraft in content['aircraft']:
+                # Store only entries with an altitude or location.
+                if 'altitude' not in aircraft and 'lat' not in aircraft:
+                    continue
 
-            cur.execute(f"""INSERT INTO flightdata ({columns_keys}) VALUES ({data_values})""", aircraft)
-            con.commit()
+                if 'flight' in aircraft:
+                    aircraft['flight'] = aircraft['flight'].strip()
+
+                for key in columns.keys():
+                    if key not in aircraft:
+                        aircraft[key] = None
+
+                aircraft['date_time'] = datetime.datetime.utcfromtimestamp(content['now'])
+                aggregated_data.append(aircraft)
+
+                if len(aggregated_data) >= batch_size:
+                    store_data(aggregated_data)
+                    aggregated_data = []
+
+        time.sleep(wait_period)
 
 
 if __name__ == "__main__":

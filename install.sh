@@ -94,5 +94,5 @@ sudo chmod 700 /usr/bin/update-selfoss
 
 sudo chown www-data:www-data /var/www/
 
-sudo systemctl enable --now gitea nextcloudcron selfoss-update certs-update
-sudo systemctl enable --now postgres-backup@gitea postgres-backup@nextcloud postgres-backup@selfoss
+sudo systemctl enable --now gitea nextcloudcron.timer selfoss-update.timer certs-update.timer
+sudo systemctl enable --now postgres-backup@gitea.timer postgres-backup@nextcloud.timer postgres-backup@selfoss.timer
