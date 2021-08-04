@@ -48,18 +48,19 @@ def create_table() -> None:
 
 def store_data(aggregated_data: list) -> None:
     print(f'Writing {len(aggregated_data)} entries to database.')
+
+    cur = con.cursor()
     data_values = ','.join([f'%({x})s' for x in columns.keys()])
     columns_keys = ','.join(columns.keys())
     args_str = ','.join(['(' + cur.mogrify(data_values, x).decode("utf-8") + ')' for x in aggregated_data])
 
-    cur = con.cursor()
     cur.execute(f"INSERT INTO flightdata ({columns_keys}) VALUES {args_str}")
     con.commit()
 
 
 def insert_data() -> None:
     aggregated_data = []
-    batch_size = 100
+    batch_size = 1e3
     wait_period = 1
 
     while True:
