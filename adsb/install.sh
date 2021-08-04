@@ -13,3 +13,6 @@ sudo systemctl restart piaware
 
 sudo apt-get install -y dump1090-fa
 # sudo reboot
+
+wget -O ${PIAWARE_CSV_PATH} https://github.com/flightaware/dump1090/blob/master/tools/flightaware-20200924.csv.xz?raw=true
+unxz ${PIAWARE_CSV_PATH}

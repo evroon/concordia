@@ -5,44 +5,100 @@ import datetime
 import requests
 import json
 import time
+import csv
 
 
 con = psycopg2.connect(database="${FR24_PSQL_DB}", user="${FR24_PSQL_USER}", password="${FR24_PSQL_PASSWORD}", host="127.0.0.1", port="${PSQL_PORT}")
 print("Database opened successfully")
 
-columns = {
+
+flightdata_columns = {
     'date_time': 'TIMESTAMP',
     'hex': 'TEXT',
-    'squawk': 'NUMERIC',
     'flight': 'TEXT',
+    'alt_baro': 'NUMERIC',
+    'alt_geom': 'NUMERIC',
+    'gs': 'NUMERIC',
+    'ias': 'NUMERIC',
+    'tas': 'NUMERIC',
+    'mach': 'NUMERIC',
+    'track': 'NUMERIC',
+    'track_rate': 'NUMERIC',
+    'roll': 'NUMERIC',
+    'mag_heading': 'NUMERIC',
+    'baro_rate': 'NUMERIC',
+    'geom_rate': 'NUMERIC',
+    'squawk': 'TEXT',
+    'emergency': 'TEXT',
+    'category': 'TEXT',
+    'nav_qnh': 'NUMERIC',
+    'nav_altitude_mcp': 'NUMERIC',
+    'nav_heading': 'NUMERIC',
     'lat': 'NUMERIC',
     'lon': 'NUMERIC',
-    'nucp': 'NUMERIC',
+    'nic': 'NUMERIC',
+    'rc': 'NUMERIC',
     'seen_pos': 'NUMERIC',
-    'altitude': 'NUMERIC',
-    'vert_rate': 'NUMERIC',
-    'track': 'NUMERIC',
-    'speed': 'NUMERIC',
-    'category': 'TEXT',
+    'version': '2',
+    'nic_baro': 'NUMERIC',
+    'nac_p': 'NUMERIC',
+    'nac_v': 'NUMERIC',
+    'sil': 'NUMERIC',
+    'sil_type': 'TEXT',
+    'gva': 'NUMERIC',
+    'sda': 'NUMERIC',
     'mlat': 'TEXT',
     'tisb': 'TEXT',
     'messages': 'NUMERIC',
     'seen': 'NUMERIC',
     'rssi': 'NUMERIC',
+
+    'registration': 'TEXT',
+    'aircrafttype': 'TEXT',
+}
+
+aircraftdata_columns = {
+    'icao': 'TEXT',
+    'registration': 'TEXT',
+    'type': 'TEXT',
 }
 
 
-def table_exists() -> bool:
+def store_aircraftdate() -> None:
+    print('Storing aircraft data in postgres...')
+
+    with open('${PIAWARE_CSV_PATH}', 'r') as f:
+        reader = csv.reader(f, delimiter=',')
+        print(f'Found {len(reader)} aircraft.')
+        aggregated_data = []
+
+        for aircraft in reader:
+            aggregated_data.append({
+                'icao': aircraft[0],
+                'registration': aircraft[1],
+                'type': aircraft[2],
+            })
+
+        cur = con.cursor()
+        data_values = ','.join([f'%({x})s' for x in aircraftdata_columns.keys()])
+        columns_keys = ','.join(aircraftdata_columns.keys())
+        args_str = ','.join(['(' + cur.mogrify(data_values, x).decode("utf-8") + ')' for x in aggregated_data])
+
+        cur.execute(f"INSERT INTO aircraftdata ({columns_keys}) VALUES {args_str}")
+        con.commit()
+
+
+def table_exists(table_name: str) -> bool:
     cur = con.cursor()
-    cur.execute("select * from information_schema.tables where table_name=%s", ('flightdata',))
+    cur.execute("select * from information_schema.tables where table_name=%s", (table_name))
     return cur.rowcount > 0
 
 
-def create_table() -> None:
+def create_table(table_name: str, columns: dict) -> None:
     columns_query = ', '.join([f'{k} {v}' for k, v in columns.items()])
 
     cur = con.cursor()
-    cur.execute(f'CREATE TABLE flightdata(id SERIAL PRIMARY KEY, {columns_query});')
+    cur.execute(f'CREATE TABLE {table_name}(id SERIAL PRIMARY KEY, {columns_query});')
     con.commit()
 
 
@@ -50,8 +106,8 @@ def store_data(aggregated_data: list) -> None:
     print(f'Writing {len(aggregated_data)} entries to database.')
 
     cur = con.cursor()
-    data_values = ','.join([f'%({x})s' for x in columns.keys()])
-    columns_keys = ','.join(columns.keys())
+    data_values = ','.join([f'%({x})s' for x in flightdata_columns.keys()])
+    columns_keys = ','.join(flightdata_columns.keys())
     args_str = ','.join(['(' + cur.mogrify(data_values, x).decode("utf-8") + ')' for x in aggregated_data])
 
     cur.execute(f"INSERT INTO flightdata ({columns_keys}) VALUES {args_str}")
@@ -70,13 +126,13 @@ def insert_data() -> None:
 
             for aircraft in content['aircraft']:
                 # Store only entries with an altitude or location.
-                if 'altitude' not in aircraft and 'lat' not in aircraft:
+                if 'alt_baro' not in aircraft and 'lat' not in aircraft:
                     continue
 
                 if 'flight' in aircraft:
                     aircraft['flight'] = aircraft['flight'].strip()
 
-                for key in columns.keys():
+                for key in flightdata_columns.keys():
                     if key not in aircraft:
                         aircraft[key] = None
 
@@ -91,8 +147,11 @@ def insert_data() -> None:
 
 
 if __name__ == "__main__":
-    if not table_exists():
-        create_table()
+    if not table_exists('aircraftdata'):
+        create_table('aircraftdata', aircraftdata_columns)
+
+    if not table_exists('flightdata'):
+        create_table('flightdata', flightdata_columns)
 
     insert_data()
     con.close()
