@@ -38,6 +38,7 @@ flightdata_columns = {
     'nav_qnh': 'NUMERIC',
     'nav_altitude_mcp': 'NUMERIC',
     'nav_heading': 'NUMERIC',
+    'nav_modes': 'TEXT',
     'lat': 'NUMERIC',
     'lon': 'NUMERIC',
     'nic': 'NUMERIC',
@@ -96,11 +97,11 @@ def store_aircraftdata() -> None:
 def get_aircraftdata(hexcode: str) -> dict:
     cur = con.cursor()
     cur.execute(f"SELECT * FROM {AIRCRAFTDATA_DB} WHERE icao=%(hex)s", {'hex': hexcode})
+    rows = cur.fetchone()
 
-    if cur.rowcount < 1:
+    if rows is None:
         return {}
 
-    rows = cur.fetchone()
     return {
         'registration': rows[2],
         'aircrafttype': rows[3],
@@ -151,8 +152,12 @@ def insert_data(batch_size: int, wait_period: float) -> None:
                 if 'flight' in aircraft:
                     aircraft['flight'] = aircraft['flight'].strip()
 
+                if 'nav_modes' in aircraft:
+                    aircraft['nav_modes'] = ','.join(aircraft['nav_modes'])
+
                 aircraft['date_time'] = datetime.datetime.utcfromtimestamp(content['now'])
 
+                print(aircraft['hex'])
                 acdata = get_aircraftdata(aircraft['hex'])
 
                 if 'aircrafttype' in acdata:
