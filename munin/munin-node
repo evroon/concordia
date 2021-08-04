@@ -44,3 +44,6 @@ user root
 
 [cert_letsencrypt]
 user root
+
+[piaware*]
+user pi
