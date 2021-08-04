@@ -60,7 +60,7 @@ flightdata_columns = {
 aircraftdata_columns = {
     'icao': 'TEXT',
     'registration': 'TEXT',
-    'type': 'TEXT',
+    'aircrafttype': 'TEXT',
 }
 
 
@@ -69,14 +69,13 @@ def store_aircraftdata() -> None:
 
     with open('${PIAWARE_CSV_PATH}', 'r') as f:
         reader = csv.reader(f, delimiter=',')
-        print(f'Found {len(reader)} aircraft.')
         aggregated_data = []
 
         for aircraft in reader:
             aggregated_data.append({
                 'icao': aircraft[0],
                 'registration': aircraft[1],
-                'type': aircraft[2],
+                'aircrafttype': aircraft[2],
             })
 
         cur = con.cursor()
@@ -84,8 +83,24 @@ def store_aircraftdata() -> None:
         columns_keys = ','.join(aircraftdata_columns.keys())
         args_str = ','.join(['(' + cur.mogrify(data_values, x).decode("utf-8") + ')' for x in aggregated_data])
 
+        print(f'Found {len(aggregated_data)} aircraft.')
         cur.execute(f"INSERT INTO aircraftdata ({columns_keys}) VALUES {args_str}")
         con.commit()
+        print('Aircraft data is stored.')
+
+
+def get_aircraftdata(hexcode: str) -> dict:
+    cur = con.cursor()
+    cur.execute(f"SELECT * FROM aircraftdata WHERE icao=%(hex)s", {'hex': hexcode})
+
+    if cur.rowcount < 1:
+        return {}
+
+    rows = cur.fetchall()[0]
+    return {
+        'registration': rows[1],
+        'aircrafttype': rows[2],
+    }
 
 
 def table_exists(table_name: str) -> bool:
@@ -133,11 +148,18 @@ def insert_data() -> None:
                 if 'flight' in aircraft:
                     aircraft['flight'] = aircraft['flight'].strip()
 
+                aircraft['date_time'] = datetime.datetime.utcfromtimestamp(content['now'])
+
+                acdata = get_aircraftdata(aircraft['hex'])
+
+                if 'aircrafttype' in acdata:
+                    aircraft['aircrafttype'] = acdata['aircrafttype']
+                    aircraft['registration'] = acdata['registration']
+
                 for key in flightdata_columns.keys():
                     if key not in aircraft:
                         aircraft[key] = None
 
-                aircraft['date_time'] = datetime.datetime.utcfromtimestamp(content['now'])
                 aggregated_data.append(aircraft)
 
                 if len(aggregated_data) >= batch_size:
