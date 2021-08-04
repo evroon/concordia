@@ -26,7 +26,7 @@ def print_value() -> None:
     cur = con.cursor()
 
     cur.execute("select count(*) from flightdata")
-    entries = cur.fetchone()
+    entries = cur.fetchone()[0]
 
     print(f'entries.value {entries}')
 

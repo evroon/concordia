@@ -28,13 +28,13 @@ def print_value() -> None:
     cur = con.cursor()
 
     cur.execute("select count(distinct flight) from flightdata")
-    flights = cur.fetchone()
+    flights = cur.fetchone()[0]
 
     cur.execute("select count(distinct aircrafttype) from flightdata")
-    aircrafttypes = cur.fetchone()
+    aircrafttypes = cur.fetchone()[0]
 
     cur.execute("select count(distinct registration) from flightdata")
-    registrations = cur.fetchone()
+    registrations = cur.fetchone()[0]
 
     print(f'flights.value {flights}')
     print(f'registrations.value {registrations}')
