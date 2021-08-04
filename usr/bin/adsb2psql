@@ -39,7 +39,7 @@ flightdata_columns = {
     'nic': 'NUMERIC',
     'rc': 'NUMERIC',
     'seen_pos': 'NUMERIC',
-    'version': '2',
+    'version': 'NUMERIC',
     'nic_baro': 'NUMERIC',
     'nac_p': 'NUMERIC',
     'nac_v': 'NUMERIC',
@@ -64,7 +64,7 @@ aircraftdata_columns = {
 }
 
 
-def store_aircraftdate() -> None:
+def store_aircraftdata() -> None:
     print('Storing aircraft data in postgres...')
 
     with open('${PIAWARE_CSV_PATH}', 'r') as f:
@@ -90,11 +90,12 @@ def store_aircraftdate() -> None:
 
 def table_exists(table_name: str) -> bool:
     cur = con.cursor()
-    cur.execute("select * from information_schema.tables where table_name=%s", (table_name))
+    cur.execute("select * from information_schema.tables where table_name=%s", (table_name,))
     return cur.rowcount > 0
 
 
 def create_table(table_name: str, columns: dict) -> None:
+    print(f'Creating table {table_name}')
     columns_query = ', '.join([f'{k} {v}' for k, v in columns.items()])
 
     cur = con.cursor()
@@ -149,6 +150,7 @@ def insert_data() -> None:
 if __name__ == "__main__":
     if not table_exists('aircraftdata'):
         create_table('aircraftdata', aircraftdata_columns)
+        store_aircraftdata()
 
     if not table_exists('flightdata'):
         create_table('flightdata', flightdata_columns)
