@@ -38,6 +38,35 @@ services:
             RAILS_LOG_TO_STDOUT: "true"
         command: ["bundle", "exec", "rails", "s", "-p", "5000", "-b", "0.0.0.0"]
 
+    mc:
+        image: itzg/minecraft-server
+        ports:
+            - 25565:25565
+        environment:
+            EULA: "TRUE"
+        tty: true
+        stdin_open: true
+        restart: unless-stopped
+        volumes:
+            - /var/lib/minecraft-data:/data
+
+    dashy:
+        image: lissy93/dashy
+        container_name: Dashy
+        volumes:
+            - /etc/dashy-config.yml:/app/public/conf.yml
+        ports:
+            - 4000:80
+        environment:
+            - NODE_ENV=production
+        restart: unless-stopped
+        healthcheck:
+            test: ['CMD', 'node', '/app/services/healthcheck']
+            interval: 1m30s
+            timeout: 10s
+            retries: 3
+            start_period: 40s
+
 volumes:
     certs:
     logs:

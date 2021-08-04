@@ -6,7 +6,7 @@ NC='\033[0m' # No Color
 # Install dependencies
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y \
-    wget curl python3 python3-pip git make htop tmux \
+    wget curl python3 python3-pip git make htop tmux pwgen \
     docker docker-compose uidmap \
     munin libcgi-fast-perl libapache2-mod-fcgid \
     postgresql postgresql-contrib postgresql-client pgpdump \
