@@ -178,13 +178,13 @@ if __name__ == "__main__":
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
-        'batch-size',
+        '--batch-size',
         type=int,
         help='Number of entries to store in database per insertion.',
         default=1e3
     )
     parser.add_argument(
-        'wait-period',
+        '--wait-period',
         type=float,
         help='Update interval between dump1090 requests (s).',
         default=1
