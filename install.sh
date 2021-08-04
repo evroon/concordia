@@ -45,6 +45,7 @@ sudo cp $REPO_DIR/munin/usr/share/munin/plugins/* /usr/share/munin/plugins
 sudo ln -s /usr/share/munin/plugins/cert_letsencrypt /etc/munin/plugins
 sudo ln -s /usr/share/munin/plugins/fr24_aircraft /etc/munin/plugins
 sudo ln -s /usr/share/munin/plugins/postgres_backup /etc/munin/plugins
+sudo ln -s /usr/share/munin/plugins/piaware* /etc/munin/plugins
 
 sudo -Hu postgres pip3 install python-dateutil
 
