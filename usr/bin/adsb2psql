@@ -96,10 +96,10 @@ def get_aircraftdata(hexcode: str) -> dict:
     if cur.rowcount < 1:
         return {}
 
-    rows = cur.fetchall()[0]
+    rows = cur.fetchone()
     return {
-        'registration': rows[1],
-        'aircrafttype': rows[2],
+        'registration': rows[2],
+        'aircrafttype': rows[3],
     }
 
 
@@ -135,6 +135,7 @@ def insert_data() -> None:
     batch_size = 1e3
     wait_period = 1
 
+    print('Start collecting data...')
     while True:
         response = requests.get('${FR24_ADDRESS}')
         if response.ok:
