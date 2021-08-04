@@ -157,8 +157,8 @@ def insert_data(batch_size: int, wait_period: float) -> None:
 
                 aircraft['date_time'] = datetime.datetime.utcfromtimestamp(content['now'])
 
-                print(aircraft['hex'])
                 acdata = get_aircraftdata(aircraft['hex'])
+                print(aircraft['hex'], acdata)
 
                 if 'aircrafttype' in acdata:
                     aircraft['aircrafttype'] = acdata['aircrafttype']
@@ -194,6 +194,11 @@ if __name__ == "__main__":
         help='Update interval between dump1090 requests (s).',
         default=1
     )
+    parser.add_argument(
+        '--get-aircraft-type',
+        type=str,
+        help='Get the aircraft type given a hexcode.'
+    )
     args = parser.parse_args()
 
     if not table_exists(AIRCRAFTDATA_DB):
@@ -203,5 +208,8 @@ if __name__ == "__main__":
     if not table_exists(FLIGHTDATA_DB):
         create_table(FLIGHTDATA_DB, flightdata_columns)
 
-    insert_data(args.batch_size, args.wait_period)
-    con.close()
+    if args.get_aircraft_type is not None:
+        print(get_aircraftdata(args.get_aircraft_type))
+    else:
+        insert_data(args.batch_size, args.wait_period)
+        con.close()
