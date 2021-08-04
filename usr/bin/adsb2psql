@@ -6,11 +6,15 @@ import requests
 import json
 import time
 import csv
+import argparse
 
 
 con = psycopg2.connect(database="${FR24_PSQL_DB}", user="${FR24_PSQL_USER}", password="${FR24_PSQL_PASSWORD}", host="127.0.0.1", port="${PSQL_PORT}")
 print("Database opened successfully")
 
+
+FLIGHTDATA_DB='flightdata'
+AIRCRAFTDATA_DB='aircraftdata'
 
 flightdata_columns = {
     'date_time': 'TIMESTAMP',
@@ -84,14 +88,14 @@ def store_aircraftdata() -> None:
         args_str = ','.join(['(' + cur.mogrify(data_values, x).decode("utf-8") + ')' for x in aggregated_data])
 
         print(f'Found {len(aggregated_data)} aircraft.')
-        cur.execute(f"INSERT INTO aircraftdata ({columns_keys}) VALUES {args_str}")
+        cur.execute(f"INSERT INTO {AIRCRAFTDATA_DB} ({columns_keys}) VALUES {args_str}")
         con.commit()
         print('Aircraft data is stored.')
 
 
 def get_aircraftdata(hexcode: str) -> dict:
     cur = con.cursor()
-    cur.execute(f"SELECT * FROM aircraftdata WHERE icao=%(hex)s", {'hex': hexcode})
+    cur.execute(f"SELECT * FROM {AIRCRAFTDATA_DB} WHERE icao=%(hex)s", {'hex': hexcode})
 
     if cur.rowcount < 1:
         return {}
@@ -126,14 +130,12 @@ def store_data(aggregated_data: list) -> None:
     columns_keys = ','.join(flightdata_columns.keys())
     args_str = ','.join(['(' + cur.mogrify(data_values, x).decode("utf-8") + ')' for x in aggregated_data])
 
-    cur.execute(f"INSERT INTO flightdata ({columns_keys}) VALUES {args_str}")
+    cur.execute(f"INSERT INTO {FLIGHTDATA_DB} ({columns_keys}) VALUES {args_str}")
     con.commit()
 
 
-def insert_data() -> None:
+def insert_data(batch_size: int, wait_period: float) -> None:
     aggregated_data = []
-    batch_size = 1e3
-    wait_period = 1
 
     print('Start collecting data...')
     while True:
@@ -171,12 +173,30 @@ def insert_data() -> None:
 
 
 if __name__ == "__main__":
-    if not table_exists('aircraftdata'):
-        create_table('aircraftdata', aircraftdata_columns)
+    parser = argparse.ArgumentParser(
+        description='Stores ADS-B data in postgres database.',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument(
+        'batch-size',
+        type=int,
+        help='Number of entries to store in database per insertion.',
+        default=1e3
+    )
+    parser.add_argument(
+        'wait-period',
+        type=float,
+        help='Update interval between dump1090 requests (s).',
+        default=1
+    )
+    args = parser.parse_args()
+
+    if not table_exists(AIRCRAFTDATA_DB):
+        create_table(AIRCRAFTDATA_DB, aircraftdata_columns)
         store_aircraftdata()
 
-    if not table_exists('flightdata'):
-        create_table('flightdata', flightdata_columns)
+    if not table_exists(FLIGHTDATA_DB):
+        create_table(FLIGHTDATA_DB, flightdata_columns)
 
-    insert_data()
+    insert_data(args.batch_size, args.wait_period)
     con.close()
