@@ -38,21 +38,21 @@ sudo certbot certonly
 
 # Create postgres databases
 export PGPASSWORD=${PSQL_PASSWORD}
-sudo -u postgres psql -c "CREATE USER ${SELFOSS_PSQL_USER} WITH PASSWORD '${SELFOSS_PSQL_PASSWORD}';"
-sudo -u postgres psql -c "CREATE DATABASE ${SELFOSS_PSQL_DB} WITH OWNER ${SELFOSS_PSQL_USER};"
-sudo -u postgres psql -c "ALTER SCHEMA public OWNER TO ${SELFOSS_PSQL_USER};"
+sudo -Hu postgres psql -c "CREATE USER ${SELFOSS_PSQL_USER} WITH PASSWORD '${SELFOSS_PSQL_PASSWORD}';"
+sudo -Hu postgres psql -c "CREATE DATABASE ${SELFOSS_PSQL_DB} WITH OWNER ${SELFOSS_PSQL_USER};"
+sudo -Hu postgres psql -c "ALTER SCHEMA public OWNER TO ${SELFOSS_PSQL_USER};"
 
-sudo -u postgres psql -c "CREATE USER ${GITEA_PSQL_USER} WITH PASSWORD '${GITEA_PSQL_PASSWORD}';"
-sudo -u postgres psql -c "CREATE DATABASE ${GITEA_PSQL_DB} WITH OWNER ${GITEA_PSQL_USER};"
-sudo -u postgres psql -c "ALTER SCHEMA public OWNER TO ${GITEA_PSQL_USER};"
+sudo -Hu postgres psql -c "CREATE USER ${GITEA_PSQL_USER} WITH PASSWORD '${GITEA_PSQL_PASSWORD}';"
+sudo -Hu postgres psql -c "CREATE DATABASE ${GITEA_PSQL_DB} WITH OWNER ${GITEA_PSQL_USER};"
+sudo -Hu postgres psql -c "ALTER SCHEMA public OWNER TO ${GITEA_PSQL_USER};"
 
-sudo -u postgres psql -c "CREATE USER ${NEXTCLOUD_PSQL_USER} WITH PASSWORD '${NEXTCLOUD_PSQL_PASSWORD}';"
-sudo -u postgres psql -c "CREATE DATABASE ${NEXTCLOUD_PSQL_DB} WITH OWNER ${NEXTCLOUD_PSQL_USER};"
-sudo -u postgres psql -c "ALTER SCHEMA public OWNER TO ${NEXTCLOUD_PSQL_USER};"
+sudo -Hu postgres psql -c "CREATE USER ${NEXTCLOUD_PSQL_USER} WITH PASSWORD '${NEXTCLOUD_PSQL_PASSWORD}';"
+sudo -Hu postgres psql -c "CREATE DATABASE ${NEXTCLOUD_PSQL_DB} WITH OWNER ${NEXTCLOUD_PSQL_USER};"
+sudo -Hu postgres psql -c "ALTER SCHEMA public OWNER TO ${NEXTCLOUD_PSQL_USER};"
 
-sudo -u postgres psql -c "CREATE USER ${FR24_PSQL_USER} WITH PASSWORD '${FR24_PSQL_PASSWORD}';"
-sudo -u postgres psql -c "CREATE DATABASE ${FR24_PSQL_DB} WITH OWNER ${FR24_PSQL_USER};"
-sudo -u postgres psql -c "ALTER SCHEMA public OWNER TO ${FR24_PSQL_USER};"
+sudo -Hu postgres psql -c "CREATE USER ${FR24_PSQL_USER} WITH PASSWORD '${FR24_PSQL_PASSWORD}';"
+sudo -Hu postgres psql -c "CREATE DATABASE ${FR24_PSQL_DB} WITH OWNER ${FR24_PSQL_USER};"
+sudo -Hu postgres psql -c "ALTER SCHEMA public OWNER TO ${FR24_PSQL_USER};"
 
 # Start Docker containers.
 cd ${DOCKER_COMPOSE_DIR} && sudo docker-compose up -d
