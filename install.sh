@@ -29,7 +29,7 @@ sudo ln -s /usr/share/munin/plugins/piaware* /etc/munin/plugins
 
 sudo -Hu postgres pip3 install python-dateutil
 
-# Set up certbot config file. See: https://gist.github.com/stevenvandervalk/130cba3488611d44390738dd86bb2ea5
+# Set up certbot config file.
 sudo mkdir -p /etc/letsencrypt
 sudo mv $REPO_DIR/letsencrypt/cli.ini /etc/letsencrypt/cli.ini
 
@@ -37,6 +37,7 @@ sudo mv $REPO_DIR/letsencrypt/cli.ini /etc/letsencrypt/cli.ini
 sudo certbot certonly
 
 # Create postgres databases
+cd
 export PGPASSWORD=${PSQL_PASSWORD}
 sudo -Hu postgres psql -c "CREATE USER ${SELFOSS_PSQL_USER} WITH PASSWORD '${SELFOSS_PSQL_PASSWORD}';"
 sudo -Hu postgres psql -c "CREATE DATABASE ${SELFOSS_PSQL_DB} WITH OWNER ${SELFOSS_PSQL_USER};"
