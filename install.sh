@@ -10,33 +10,13 @@ sudo cp etc/apt/apt.conf.d/* /etc/apt/apt.conf.d
 sudo cp home/.gitconfig ~/
 sudo cp docker/* ${DOCKER_COMPOSE_DIR}
 sudo cp homeassistant/* ${HOME_ASSISTANT_DIR}/config
-
-# Install composer
-php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-php -r "if (hash_file('sha384', 'composer-setup.php') === '756890a4488ce9024fc62c56153228907f1545c228516cbf63f885e036d37e9a59d27d63f46af1d4d07ee0f76181c7d3') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-php composer-setup.php
-php -r "unlink('composer-setup.php');"
-sudo mv composer.phar /usr/local/bin/composer
+sudo cp selfoss/config.ini ${SELFOSS_DIR}
 
 # Setup apache2
 sudo a2enmod rewrite proxy proxy_http ssl fcgid
 sudo systemctl restart apache2
 
-# Change cron job
-sudo crontab crontab.sh
-
-# Install selfoss
-cd ${SELFOSS_DIR}
-sudo wget ${SELFOSS_RELEASE} -O selfoss.zip
-sudo unzip -qo selfoss.zip
-sudo rm selfoss.zip
-sudo chown www-data:www-data -R ${SELFOSS_DIR}
-
-sudo chmod -R 744 data
-sudo cp $REPO_DIR/selfoss/config.ini ${SELFOSS_DIR}
-sudo chown www-data:www-data ${SELFOSS_DIR}/config.ini
-
-# Install Munin
+# Setup Munin
 sudo chown munin:munin ${MUNIN_DIR}
 sudo cp $REPO_DIR/munin/munin.conf /etc/munin/munin.conf
 sudo cp $REPO_DIR/munin/munin-node /etc/munin/plugin-conf.d/munin-node
@@ -56,9 +36,6 @@ sudo mv $REPO_DIR/letsencrypt/cli.ini /etc/letsencrypt/cli.ini
 # Request certificates
 sudo certbot certonly
 
-# Start Docker containers.
-cd ${DOCKER_COMPOSE_DIR} && sudo docker-compose up -d
-
 # Create postgres databases
 export PGPASSWORD=${PSQL_PASSWORD}
 sudo -u postgres psql -c "CREATE USER ${SELFOSS_PSQL_USER} WITH PASSWORD '${SELFOSS_PSQL_PASSWORD}';"
@@ -77,24 +54,23 @@ sudo -u postgres psql -c "CREATE USER ${FR24_PSQL_USER} WITH PASSWORD '${FR24_PS
 sudo -u postgres psql -c "CREATE DATABASE ${FR24_PSQL_DB} WITH OWNER ${FR24_PSQL_USER};"
 sudo -u postgres psql -c "ALTER SCHEMA public OWNER TO ${FR24_PSQL_USER};"
 
+# Start Docker containers.
+cd ${DOCKER_COMPOSE_DIR} && sudo docker-compose up -d
+
 # Create backup directory.
 sudo mkdir -p ${PSQL_BACKUP_DIR}
 sudo chown postgres:postgres ${PSQL_BACKUP_DIR}
 
-sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-gitea.conf 003-munin.conf 004-nextcloud.conf
+sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-gitea.conf 003-munin.conf 004-nextcloud.conf 005-web1090.conf 006-web1090-api.conf
 sudo systemctl restart apache2
 sudo systemctl restart munin-node
 
-cd $REPO_DIR
-sudo cp nextcloud/install.sh /usr/bin/nextcloud-install
-sudo cp gitea/install.sh /usr/bin/gitea-install
-sudo cp selfoss-discord/install.sh /usr/bin/selfoss-discord-install
+sudo chown www-data:www-data /var/www
 
 sudo chown www-data:www-data /usr/bin/update-selfoss
 sudo chmod 700 /usr/bin/update-selfoss
 
-sudo chown www-data:www-data /var/www/
-
+# Enable services
 sudo systemctl enable --now gitea adsb2psql
 sudo systemctl enable nextcloudcron.timer selfoss-update.timer certs-update.timer
 sudo systemctl enable postgres-backup@gitea.timer postgres-backup@nextcloud.timer postgres-backup@selfoss.timer

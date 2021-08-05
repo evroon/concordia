@@ -13,6 +13,7 @@ con = psycopg2.connect(database="${FR24_PSQL_DB}", user="${FR24_PSQL_USER}", pas
 print("Database opened successfully")
 
 
+ROUTESDATA_DB='routesdata'
 FLIGHTDATA_DB='flightdata'
 AIRCRAFTDATA_DB='aircraftdata'
 
@@ -67,6 +68,83 @@ aircraftdata_columns = {
     'registration': 'TEXT',
     'aircrafttype': 'TEXT',
 }
+
+routesdata_columns = {
+    'number': 'TEXT',
+    'airline': 'TEXT',
+    'callsign': 'TEXT',
+    'icao': 'TEXT',
+    'iata': 'TEXT',
+
+    'dep_airport': 'TEXT',
+    'dep_timezone': 'TEXT',
+    'dep_terminal': 'TEXT',
+    'dep_icao': 'TEXT',
+    'dep_iata': 'TEXT',
+    'dep_time': 'TEXT',
+
+    'arr_airport': 'TEXT',
+    'arr_timezone': 'TEXT',
+    'arr_terminal': 'TEXT',
+    'arr_icao': 'TEXT',
+    'arr_iata': 'TEXT',
+    'arr_time': 'TEXT',
+}
+
+def store_routedata() -> None:
+    total = 1e8
+    pagination = 100
+    cur = con.cursor()
+
+    while i < total:
+        params = {
+            'access_key': '${AVIATIONSTACK_KEY}',
+            'offset': i,
+        }
+        api_result = requests.get('http://api.aviationstack.com/v1/routes', params)
+
+        if not api_result.ok:
+            return
+
+        api_response = api_result.json()
+        total = api_response['pagination']['total']
+
+        aggregated_data = []
+
+        for flight in api_response['data']:
+            aggregated_data.append({
+                'number': flight['flight']['number'],
+                'airline': flight['airline']['name'],
+                'callsign': flight['airline']['callsign'],
+                'icao': flight['airline']['icao'],
+                'iata': flight['airline']['iata'],
+
+                'dep_airport': flight['departure']['airport'],
+                'dep_timezone': flight['departure']['timezone'],
+                'dep_terminal': flight['departure']['terminal'],
+                'dep_icao': flight['departure']['airport'],
+                'dep_iata': flight['departure']['iata'],
+                'dep_time': flight['departure']['icao'],
+
+                'arr_airport': flight['arrival']['airport'],
+                'arr_timezone': flight['arrival']['timezone'],
+                'arr_terminal': flight['arrival']['terminal'],
+                'arr_icao': flight['arrival']['airport'],
+                'arr_iata': flight['arrival']['iata'],
+                'arr_time': flight['arrival']['icao'],
+            })
+
+        data_values = ','.join([f'%({x})s' for x in routesdata_columns.keys()])
+        columns_keys = ','.join(routesdata_columns.keys())
+        args_str = ','.join(['(' + cur.mogrify(data_values, x).decode("utf-8") + ')' for x in aggregated_data])
+
+        print(f'Adding {len(aggregated_data)} routes (offset: {i}).')
+        cur.execute(f"INSERT INTO {ROUTES_DB} ({columns_keys}) VALUES {args_str}")
+        con.commit()
+
+        i += pagination
+
+    print('Route data is stored.')
 
 
 def store_aircraftdata() -> None:
@@ -140,7 +218,7 @@ def insert_data(batch_size: int, wait_period: float) -> None:
 
     print('Start collecting data...')
     while True:
-        response = requests.get('${FR24_ADDRESS}')
+        response = requests.get('${DUMP1090_ADDRESS}')
         if response.ok:
             content = json.loads(response.content)
 
@@ -204,6 +282,10 @@ if __name__ == "__main__":
     if not table_exists(AIRCRAFTDATA_DB):
         create_table(AIRCRAFTDATA_DB, aircraftdata_columns)
         store_aircraftdata()
+
+    if not table_exists(ROUTESDATA_DB):
+        create_table(ROUTESDATA_DB, routesdata_columns)
+        store_routedata()
 
     if not table_exists(FLIGHTDATA_DB):
         create_table(FLIGHTDATA_DB, flightdata_columns)

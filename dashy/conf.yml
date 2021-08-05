@@ -1,0 +1,57 @@
+appConfig:
+  theme: "thebe"
+  fontAwesomeKey: "0821c65656"
+  layout: "horizontal"
+  iconSize: "medium"
+  language: "en"
+
+pageInfo:
+  title: "Dashy"
+  navLinks:
+    - title: "Home"
+      path: "/"
+  description: ""
+  footerText: ""
+
+sections:
+  - name: "Server"
+    items:
+      - title: "Gitea"
+        description: "Gitea"
+        icon: "fab fa-git-square"
+        url: "https://git.familievroon.nl"
+
+      - title: "Munin"
+        description: "Munin"
+        icon: "fas fa-chart-bar"
+        url: "https://munin.familievroon.nl"
+
+      - title: "Selfoss"
+        description: "Selfoss RSS Reader"
+        icon: "fas fa-rss"
+        url: "https://selfoss.familievroon.nl"
+
+      - title: "Nextcloud"
+        description: "Nextcloud"
+        icon: "fas fa-cloud"
+        url: "https://cloud.familievroon.nl"
+
+
+  - name: "ADS-B"
+    items:
+      - title: "FlightAware"
+        description: "FlightAware"
+        icon: "fas fa-plane"
+        url: "https://uk.flightaware.com/adsb/stats/user/evroon#stats-157992"
+
+      - title: "FR24"
+        description: "FR24"
+        icon: "fas fa-globe-europe"
+        url: "https://www.flightradar24.com/account/feed-stats/?id=10970"
+
+  - name: "Personal"
+    items:
+      - title: "Blog"
+        description: "Blog on Github Pages"
+        icon: "fas fa-blog"
+        url: "https://evroon.github.io/"

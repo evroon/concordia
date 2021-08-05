@@ -16,5 +16,7 @@ The following (web) services are installed and configured:
 First, rename `sample.env` to `.env` and fill in the necessary values. Then, start the `setup.sh` script:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/evroon/concordia/feature-installation/setup.sh | sh
+git clone git@github.com:evroon/concordia.git
+cd concordia
+./setup.sh
 ```

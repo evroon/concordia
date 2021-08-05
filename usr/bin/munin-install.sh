@@ -1,4 +1,5 @@
 TMP_DIR=$(mktemp -d)
+
 cd $TMP_DIR
 git clone https://github.com/munin-monitoring/contrib.git
 

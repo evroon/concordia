@@ -1,5 +1,3 @@
-cd ~
-
 PURPLE='\033[0;35m'
 NC='\033[0m' # No Color
 
@@ -19,18 +17,16 @@ WORK_DIR=$(pwd)
 TMP_DIR=$(mktemp -d)
 echo -e "${PURPLE}Using temporary directory: $TMP_DIR/concordia${NC}"
 
-# Clone repository
-cd $TMP_DIR
-git clone -q https://github.com/evroon/concordia
+# Copy repository
+cp -r . $TMP_DIR
 REPO_DIR=$TMP_DIR/concordia
 cd $REPO_DIR
 
-git checkout feature-rpi
+sudo cp .env /root/.env
 
 python3 -m pip install -r requirements.txt
 
-cp $WORK_DIR/.env ./
-sudo cp .env /root/.env
+python3 check-dotenv.py
 python3 build.py $REPO_DIR
 
 ./install.sh
