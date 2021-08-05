@@ -14,9 +14,6 @@ sudo apt install -y \
     certbot python3-certbot-apache libcgi-fast-perl libapache2-mod-php libapache2-mod-fcgid \
     mailutils msmtp msmtp-mta
 
-
-# ssh-keygen -t ed25519
-
 # Prepare files for installation
 WORK_DIR=$(pwd)
 TMP_DIR=$(mktemp -d)

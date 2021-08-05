@@ -4,21 +4,22 @@ import sys
 import json
 import requests
 
+
 def print_config() -> None:
-    print("graph_title FR24 aircraft")
+    print("graph_title dump1090 aircraft")
     print("graph_vlabel aircraft")
     print("graph_args --upper-limit 20 -l 0")
-    print("graph_category fr24")
+    print("graph_category adsb")
     print("graph_info Number of aircraft detected by ADS-B receiver.")
-    print("fr24.label FR24")
+    print("dump1090.label dump1090")
 
 
 def print_value() -> None:
-    response = requests.get('${FR24_ADDRESS}')
+    response = requests.get('${DUMP1090_ADDRESS}')
     if response.ok:
         data = json.loads(response.content)
         num_aircraft = len(data['aircraft'])
-        print(f'fr24.value {num_aircraft}')
+        print(f'dump1090.value {num_aircraft}')
 
 
 if __name__ == '__main__':
