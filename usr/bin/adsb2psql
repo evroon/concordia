@@ -16,8 +16,10 @@ print("Database opened successfully")
 ROUTESDATA_DB='routesdata'
 FLIGHTDATA_DB='flightdata'
 AIRCRAFTDATA_DB='aircraftdata'
+AIRPORTDATA_DB='airportdata'
 
 flightdata_columns = {
+    'id': 'SERIAL PRIMARY KEY',
     'date_time': 'TIMESTAMP',
     'hex': 'TEXT',
     'flight': 'TEXT',
@@ -64,46 +66,163 @@ flightdata_columns = {
 }
 
 aircraftdata_columns = {
-    'icao': 'TEXT',
+    'icao': 'TEXT PRIMARY KEY',
     'registration': 'TEXT',
     'aircrafttype': 'TEXT',
 }
 
-routesdata_columns = {
-    'number': 'TEXT',
-    'airline': 'TEXT',
-    'callsign': 'TEXT',
-    'icao': 'TEXT',
+airportdata_columns = {
+    'icao': 'TEXT PRIMARY KEY',
+    'name': 'TEXT',
     'iata': 'TEXT',
+    'lat': 'TEXT',
+    'lon': 'TEXT',
+    'geoname_id': 'TEXT',
+    'timezone': 'TEXT',
+    'gmt': 'TEXT',
+    'country_name': 'TEXT',
+    'country_iso2': 'TEXT',
+    'city_iata_code': 'TEXT',
+}
+
+routesdata_columns = {
+    'icao': 'TEXT PRIMARY KEY',
+    'number': 'TEXT',
+    'iata': 'TEXT',
+
+    'airline_name': 'TEXT',
+    'airline_iata': 'TEXT',
+    'airline_icao': 'TEXT',
 
     'dep_airport': 'TEXT',
     'dep_timezone': 'TEXT',
     'dep_terminal': 'TEXT',
+    'dep_gate': 'TEXT',
     'dep_icao': 'TEXT',
     'dep_iata': 'TEXT',
-    'dep_time': 'TEXT',
+    'dep_time': 'TIMESTAMP',
 
     'arr_airport': 'TEXT',
     'arr_timezone': 'TEXT',
     'arr_terminal': 'TEXT',
+    'arr_gate': 'TEXT',
     'arr_icao': 'TEXT',
     'arr_iata': 'TEXT',
-    'arr_time': 'TEXT',
+    'arr_time': 'TIMESTAMP',
 }
 
+def insert_in_table(cur, columns, aggregated_data, table_name, id=None) -> None:
+    if len(aggregated_data) < 1:
+        return
+
+    data_values = ','.join([f'%({x})s' for x in columns.keys()])
+    columns_keys = ','.join(columns.keys())
+    args_str = ','.join(['(' + cur.mogrify(data_values, x).decode("utf-8") + ')' for x in aggregated_data])
+    on_conflict = ''
+
+    # Overwrite columns if key already exists in table.
+    if id is not None:
+        args = []
+        for col in columns:
+            if col != 'id':
+                args.append(f'{col} = excluded.{col}')
+
+        on_conflict = f"ON CONFLICT ({id}) DO UPDATE SET {', '.join(args)}"
+
+    print(f'Adding {len(aggregated_data)} entries in {table_name}.')
+    cur.execute(f"INSERT INTO {table_name} ({columns_keys}) VALUES {args_str} {on_conflict}")
+    con.commit()
+
+
 def store_routedata() -> None:
+    print('Storing routes...')
     total = 1e8
     pagination = 100
     cur = con.cursor()
+    i = 0
 
     while i < total:
         params = {
             'access_key': '${AVIATIONSTACK_KEY}',
             'offset': i,
         }
-        api_result = requests.get('http://api.aviationstack.com/v1/routes', params)
+        api_result = requests.get('http://api.aviationstack.com/v1/flights', params)
 
         if not api_result.ok:
+            print(api_result.content)
+            return
+
+        api_response = api_result.json()
+        total = api_response['pagination']['total']
+
+        aggregated_route_data = []
+        aggregated_aircraft_data = []
+        flight_icaos = []
+        aircraft_icaos = []
+
+        for flight in api_response['data']:
+            if flight['flight']['icao'] is None or flight['flight']['icao'] in flight_icaos:
+                continue
+
+            aggregated_route_data.append({
+                'number': flight['flight']['number'],
+                'icao': flight['flight']['icao'],
+                'iata': flight['flight']['iata'],
+
+                'airline_name': flight['airline']['name'],
+                'airline_iata': flight['airline']['iata'],
+                'airline_icao': flight['airline']['icao'],
+
+                'dep_airport': flight['departure']['airport'],
+                'dep_timezone': flight['departure']['timezone'],
+                'dep_terminal': flight['departure']['terminal'],
+                'dep_gate': flight['departure']['gate'],
+                'dep_icao': flight['departure']['icao'],
+                'dep_iata': flight['departure']['iata'],
+                'dep_time': flight['departure']['scheduled'],
+
+                'arr_airport': flight['arrival']['airport'],
+                'arr_timezone': flight['arrival']['timezone'],
+                'arr_terminal': flight['arrival']['terminal'],
+                'arr_gate': flight['arrival']['gate'],
+                'arr_icao': flight['arrival']['icao'],
+                'arr_iata': flight['arrival']['iata'],
+                'arr_time': flight['arrival']['scheduled'],
+            })
+            flight_icaos.append(flight['flight']['icao'])
+
+            if flight['aircraft'] is not None and flight['aircraft']['icao24'] is not None and flight['aircraft']['icao24'] not in aircraft_icaos:
+                aggregated_aircraft_data.append({
+                    'icao': flight['aircraft']['icao24'],
+                    'registration': flight['aircraft']['registration'],
+                    'aircrafttype': flight['aircraft']['iata'],
+                })
+                aircraft_icaos.append(flight['aircraft']['icao24'])
+
+        insert_in_table(cur, routesdata_columns, aggregated_route_data, ROUTESDATA_DB, 'icao')
+        insert_in_table(cur, aircraftdata_columns, aggregated_aircraft_data, AIRCRAFTDATA_DB, 'icao')
+
+        i += pagination
+
+    print('Route data is stored.')
+
+
+def store_airportdata() -> None:
+    print('Storing airports...')
+    total = 1e8
+    pagination = 100
+    cur = con.cursor()
+    i = 0
+
+    while i < total:
+        params = {
+            'access_key': '${AVIATIONSTACK_KEY}',
+            'offset': i,
+        }
+        api_result = requests.get('http://api.aviationstack.com/v1/airports', params)
+
+        if not api_result.ok:
+            print(api_result.content)
             return
 
         api_response = api_result.json()
@@ -111,44 +230,33 @@ def store_routedata() -> None:
 
         aggregated_data = []
 
-        for flight in api_response['data']:
+        for airport in api_response['data']:
             aggregated_data.append({
-                'number': flight['flight']['number'],
-                'airline': flight['airline']['name'],
-                'callsign': flight['airline']['callsign'],
-                'icao': flight['airline']['icao'],
-                'iata': flight['airline']['iata'],
-
-                'dep_airport': flight['departure']['airport'],
-                'dep_timezone': flight['departure']['timezone'],
-                'dep_terminal': flight['departure']['terminal'],
-                'dep_icao': flight['departure']['airport'],
-                'dep_iata': flight['departure']['iata'],
-                'dep_time': flight['departure']['icao'],
-
-                'arr_airport': flight['arrival']['airport'],
-                'arr_timezone': flight['arrival']['timezone'],
-                'arr_terminal': flight['arrival']['terminal'],
-                'arr_icao': flight['arrival']['airport'],
-                'arr_iata': flight['arrival']['iata'],
-                'arr_time': flight['arrival']['icao'],
+                'name': airport['airport_name'],
+                'iata': airport['iata_code'],
+                'icao': airport['icao_code'],
+                'lat': airport['latitude'],
+                'lon': airport['longitude'],
+                'geoname_id': airport['geoname_id'],
+                'timezone': airport['timezone'],
+                'gmt': airport['gmt'],
+                'country_name': airport['country_name'],
+                'country_iso2': airport['country_iso2'],
+                'city_iata_code': airport['city_iata_code'],
             })
 
-        data_values = ','.join([f'%({x})s' for x in routesdata_columns.keys()])
-        columns_keys = ','.join(routesdata_columns.keys())
-        args_str = ','.join(['(' + cur.mogrify(data_values, x).decode("utf-8") + ')' for x in aggregated_data])
-
-        print(f'Adding {len(aggregated_data)} routes (offset: {i}).')
-        cur.execute(f"INSERT INTO {ROUTES_DB} ({columns_keys}) VALUES {args_str}")
-        con.commit()
+        insert_in_table(cur, airportdata_columns, aggregated_data, AIRPORTDATA_DB, 'icao')
 
         i += pagination
+        break
 
-    print('Route data is stored.')
+    print('Airport data is stored.')
 
 
 def store_aircraftdata() -> None:
     print('Storing aircraft data in postgres...')
+    cur = con.cursor()
+    batch_size = 10000
 
     with open('${PIAWARE_CSV_PATH}', 'r') as f:
         reader = csv.reader(f, delimiter=',')
@@ -161,14 +269,9 @@ def store_aircraftdata() -> None:
                 'aircrafttype': aircraft[2],
             })
 
-        cur = con.cursor()
-        data_values = ','.join([f'%({x})s' for x in aircraftdata_columns.keys()])
-        columns_keys = ','.join(aircraftdata_columns.keys())
-        args_str = ','.join(['(' + cur.mogrify(data_values, x).decode("utf-8") + ')' for x in aggregated_data])
+        for i in range(0, len(aggregated_data), batch_size):
+            insert_in_table(cur, aircraftdata_columns, aggregated_data[i:i+batch_size], AIRCRAFTDATA_DB, 'icao')
 
-        print(f'Found {len(aggregated_data)} aircraft.')
-        cur.execute(f"INSERT INTO {AIRCRAFTDATA_DB} ({columns_keys}) VALUES {args_str}")
-        con.commit()
         print('Aircraft data is stored.')
 
 
@@ -181,8 +284,8 @@ def get_aircraftdata(hexcode: str) -> dict:
         return {}
 
     return {
-        'registration': rows[2],
-        'aircrafttype': rows[3],
+        'registration': rows[1],
+        'aircrafttype': rows[2],
     }
 
 
@@ -197,16 +300,19 @@ def create_table(table_name: str, columns: dict) -> None:
     columns_query = ', '.join([f'{k} {v}' for k, v in columns.items()])
 
     cur = con.cursor()
-    cur.execute(f'CREATE TABLE {table_name}(id SERIAL PRIMARY KEY, {columns_query});')
+    cur.execute(f'CREATE TABLE {table_name}({columns_query});')
     con.commit()
 
 
 def store_data(aggregated_data: list) -> None:
     print(f'Writing {len(aggregated_data)} entries to database.')
+    columns_without_id = flightdata_columns
+    if 'id' in columns_without_id:
+        del columns_without_id['id']
 
     cur = con.cursor()
-    data_values = ','.join([f'%({x})s' for x in flightdata_columns.keys()])
-    columns_keys = ','.join(flightdata_columns.keys())
+    data_values = ','.join([f'%({x})s' for x in columns_without_id.keys()])
+    columns_keys = ','.join(columns_without_id.keys())
     args_str = ','.join(['(' + cur.mogrify(data_values, x).decode("utf-8") + ')' for x in aggregated_data])
 
     cur.execute(f"INSERT INTO {FLIGHTDATA_DB} ({columns_keys}) VALUES {args_str}")
@@ -286,6 +392,10 @@ if __name__ == "__main__":
     if not table_exists(ROUTESDATA_DB):
         create_table(ROUTESDATA_DB, routesdata_columns)
         store_routedata()
+
+    if not table_exists(AIRPORTDATA_DB):
+        create_table(AIRPORTDATA_DB, airportdata_columns)
+        store_airportdata()
 
     if not table_exists(FLIGHTDATA_DB):
         create_table(FLIGHTDATA_DB, flightdata_columns)
