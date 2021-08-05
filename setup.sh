@@ -8,7 +8,7 @@ sudo apt install -y \
     docker docker-compose uidmap \
     munin libcgi-fast-perl libapache2-mod-fcgid \
     postgresql postgresql-contrib postgresql-client pgpdump \
-    php php-gd php-mbstring php-common php-pgsql php-imagick php-xml php-curl php-tidy php-zip npm \
+    php php-gd php-mbstring php-common php-pgsql php-imagick php-xml php-curl php-tidy php-zip \
     certbot python3-certbot-apache libcgi-fast-perl libapache2-mod-php libapache2-mod-fcgid \
     mailutils msmtp msmtp-mta
 
