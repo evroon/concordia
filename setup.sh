@@ -13,13 +13,12 @@ sudo apt install -y \
     mailutils msmtp msmtp-mta
 
 # Prepare files for installation
-WORK_DIR=$(pwd)
 TMP_DIR=$(mktemp -d)
-echo -e "${PURPLE}Using temporary directory: $TMP_DIR/concordia${NC}"
+echo -e "${PURPLE}Using temporary directory: $TMP_DIR${NC}"
 
 # Copy repository
 cp -r . $TMP_DIR
-REPO_DIR=$TMP_DIR/concordia
+REPO_DIR=$TMP_DIR
 cd $REPO_DIR
 
 sudo cp .env /root/.env
