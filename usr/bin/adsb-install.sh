@@ -9,10 +9,17 @@ sudo dpkg -i piaware-repository_3.7.1_all.deb
 sudo apt-get update
 
 sudo apt-get install -y piaware
-sudo systemctl restart piaware
+sudo systemctl restart piaware fr24feed
 
 sudo apt-get install -y dump1090-fa
 # sudo reboot
 
 wget -O ${PIAWARE_CSV_PATH} https://github.com/flightaware/dump1090/blob/master/tools/flightaware-20200924.csv.xz?raw=true
 unxz ${PIAWARE_CSV_PATH}
+
+# Fetch VirtualRadar SQLite db.
+sudo touch ${VIRTUALRADAR_SQLITE_DB_PATH}.gz
+sudo chown pi:pi ${VIRTUALRADAR_SQLITE_DB_PATH}.gz
+
+wget -O ${VIRTUALRADAR_SQLITE_DB_PATH}.gz https://www.virtualradarserver.co.uk/Files/StandingData.sqb.gz
+sudo gunzip -f ${VIRTUALRADAR_SQLITE_DB_PATH}.gz

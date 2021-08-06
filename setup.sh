@@ -1,6 +1,3 @@
-PURPLE='\033[0;35m'
-NC='\033[0m' # No Color
-
 # Install dependencies
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y \
@@ -12,22 +9,7 @@ sudo apt install -y \
     certbot python3-certbot-apache libcgi-fast-perl libapache2-mod-php libapache2-mod-fcgid \
     mailutils msmtp msmtp-mta
 
-# Prepare files for installation
-TMP_DIR=$(mktemp -d)
-echo -e "${PURPLE}Using temporary directory: $TMP_DIR${NC}"
-
-# Copy repository
-cp -r . $TMP_DIR
-REPO_DIR=$TMP_DIR
-cd $REPO_DIR
-
-sudo cp .env /root/.env
-
+sudo pip3 install docker-compose python-dateutil
 python3 -m pip install -r requirements.txt
 
-python3 check-dotenv.py
-python3 build.py $REPO_DIR
-
-./install.sh
-
-# rm -rf $TMP_DIR
+./build.sh

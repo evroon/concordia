@@ -1,5 +1,3 @@
-REPO_DIR=$(pwd)
-
 # Move files to correct locations
 sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR} ${DOCKER_COMPOSE_DIR} ${HOME_ASSISTANT_DIR}/config
 sudo cp usr/bin/* /usr/bin
@@ -18,23 +16,21 @@ sudo systemctl restart apache2
 
 # Setup Munin
 sudo chown munin:munin ${MUNIN_DIR}
-sudo cp $REPO_DIR/munin/munin.conf /etc/munin/munin.conf
-sudo cp $REPO_DIR/munin/munin-node /etc/munin/plugin-conf.d/munin-node
-sudo cp $REPO_DIR/munin/usr/share/munin/plugins/* /usr/share/munin/plugins
+sudo cp munin/munin.conf /etc/munin/munin.conf
+sudo cp munin/munin-node /etc/munin/plugin-conf.d/munin-node
+sudo cp munin/usr/share/munin/plugins/* /usr/share/munin/plugins
 
-sudo ln -s /usr/share/munin/plugins/cert_letsencrypt /etc/munin/plugins
-sudo ln -s /usr/share/munin/plugins/fr24_aircraft /etc/munin/plugins
-sudo ln -s /usr/share/munin/plugins/postgres_backup /etc/munin/plugins
-sudo ln -s /usr/share/munin/plugins/piaware* /etc/munin/plugins
-
-sudo -Hu postgres pip3 install python-dateutil
+sudo ln -sf /usr/share/munin/plugins/cert_letsencrypt /etc/munin/plugins
+sudo ln -sf /usr/share/munin/plugins/fr24_aircraft /etc/munin/plugins
+sudo ln -sf /usr/share/munin/plugins/postgres_backup /etc/munin/plugins
+sudo ln -sf /usr/share/munin/plugins/piaware* /etc/munin/plugins
 
 # Set up certbot config file.
 sudo mkdir -p /etc/letsencrypt
-sudo mv $REPO_DIR/letsencrypt/cli.ini /etc/letsencrypt/cli.ini
+sudo mv letsencrypt/cli.ini /etc/letsencrypt/cli.ini
 
 # Request certificates
-sudo certbot certonly
+# sudo certbot certonly
 
 # Create postgres databases
 cd
@@ -75,3 +71,6 @@ sudo chmod 700 /usr/bin/update-selfoss
 sudo systemctl enable --now gitea adsb2psql
 sudo systemctl enable nextcloudcron.timer selfoss-update.timer certs-update.timer
 sudo systemctl enable postgres-backup@gitea.timer postgres-backup@nextcloud.timer postgres-backup@selfoss.timer
+
+
+# rm -rf $TMP_DIR
