@@ -7,6 +7,8 @@ import json
 import time
 import csv
 import argparse
+import sqlite3
+import pycountry
 
 
 con = psycopg2.connect(database="${FR24_PSQL_DB}", user="${FR24_PSQL_USER}", password="${FR24_PSQL_PASSWORD}", host="127.0.0.1", port="${PSQL_PORT}")
@@ -88,28 +90,72 @@ airportdata_columns = {
 routesdata_columns = {
     'icao': 'TEXT PRIMARY KEY',
     'number': 'TEXT',
-    'iata': 'TEXT',
 
     'airline_name': 'TEXT',
     'airline_iata': 'TEXT',
     'airline_icao': 'TEXT',
 
     'dep_airport': 'TEXT',
-    'dep_timezone': 'TEXT',
-    'dep_terminal': 'TEXT',
-    'dep_gate': 'TEXT',
     'dep_icao': 'TEXT',
     'dep_iata': 'TEXT',
-    'dep_time': 'TIMESTAMP',
+    'dep_lat': 'NUMERIC',
+    'dep_lon': 'NUMERIC',
+    'dep_alt': 'NUMERIC',
+    'dep_loc': 'TEXT',
+    'dep_country': 'TEXT',
+    'dep_country_id': 'TEXT',
 
     'arr_airport': 'TEXT',
-    'arr_timezone': 'TEXT',
-    'arr_terminal': 'TEXT',
-    'arr_gate': 'TEXT',
     'arr_icao': 'TEXT',
     'arr_iata': 'TEXT',
-    'arr_time': 'TIMESTAMP',
+    'arr_lat': 'NUMERIC',
+    'arr_lon': 'NUMERIC',
+    'arr_alt': 'NUMERIC',
+    'arr_loc': 'TEXT',
+    'arr_country': 'TEXT',
+    'arr_country_id': 'TEXT',
 }
+
+country_aliases = {
+    'South Korea': 'Korea, Republic of',
+    'Macau': 'Macao',
+    'Cape Verde': 'Cabo Verde',
+    'Congo (Kinshasa)': 'Congo, The Democratic Republic of the',
+    'Congo (Brazzaville)': 'Congo, The Democratic Republic of the',
+    'U.S. Virgin Islands': 'Virgin Islands, U.S.',
+    'North Korea': 'Korea, Democratic People\'s Republic of',
+    'Caribbean Netherlands': 'Bonaire, Sint Eustatius and Saba',
+    'Laos': 'Lao People\'s Democratic Republic',
+}
+
+country_ids = {}
+
+
+def get_country_id(name: str) -> str:
+    if name in country_aliases.keys():
+        name = country_aliases[name]
+
+    # Retrieve from cache.
+    if name in country_ids:
+        return country_ids[name]
+
+    country = pycountry.countries.get(name=name)
+
+    if country is None:
+        country = pycountry.countries.get(official_name=name)
+    if country is None:
+        try:
+            country = pycountry.countries.search_fuzzy(name)[0]
+        except LookupError:
+            pass
+
+    if country is None:
+        print(f'Error: Could not resolve country "{name}"')
+        return None
+
+    country_ids[name] = country.alpha_2
+    return country.alpha_2
+
 
 def insert_in_table(cur, columns, aggregated_data, table_name, id=None) -> None:
     if len(aggregated_data) < 1:
@@ -134,7 +180,56 @@ def insert_in_table(cur, columns, aggregated_data, table_name, id=None) -> None:
     con.commit()
 
 
-def store_routedata() -> None:
+def store_routedata_virtualradar() -> None:
+    print('Storing routes...')
+    conn = sqlite3.connect('${VIRTUALRADAR_SQLITE_DB_PATH}')
+    cur_in = conn.execute('select * from RouteView')
+    cur = con.cursor()
+    aggregated_route_data = []
+    routes = cur_in.fetchall()
+    batch_size = 10000
+
+    for i, route in enumerate(routes):
+        if i % int(len(routes) / 10) == 0:
+            print(f'Progress: {i} / {len(routes)} ({i/len(routes)*100:.0f}%)')
+
+        aggregated_route_data.append({
+            'icao': route[1],
+            'airline_icao': route[3],
+            'airline_iata': route[4],
+            'airline_name': route[5],
+            'number': route[6],
+
+            'dep_icao': route[8],
+            'dep_iata': route[9],
+            'dep_airport': route[10],
+            'dep_lat': route[11],
+            'dep_lon': route[12],
+            'dep_alt': route[13],
+            'dep_loc': route[14],
+            'dep_country': route[16],
+            'dep_country_id': get_country_id(route[16]),
+
+            'arr_icao': route[18],
+            'arr_iata': route[19],
+            'arr_airport': route[20],
+            'arr_lat': route[21],
+            'arr_lon': route[22],
+            'arr_alt': route[23],
+            'arr_loc': route[24],
+            'arr_country': route[26],
+            'arr_country_id': get_country_id(route[26]),
+        })
+
+    for i in range(0, len(aggregated_route_data), batch_size):
+        insert_in_table(cur, routesdata_columns, aggregated_route_data[i:i+batch_size], ROUTESDATA_DB, 'icao')
+
+    print('Finished loading routes.')
+    conn.close()
+
+
+def store_routedata_aviationstack() -> None:
+    # TODO: Outdated.
     print('Storing routes...')
     total = 1e8
     pagination = 100
@@ -391,11 +486,11 @@ if __name__ == "__main__":
 
     if not table_exists(ROUTESDATA_DB):
         create_table(ROUTESDATA_DB, routesdata_columns)
-        store_routedata()
+        store_routedata_virtualradar()
 
-    if not table_exists(AIRPORTDATA_DB):
-        create_table(AIRPORTDATA_DB, airportdata_columns)
-        store_airportdata()
+    # if not table_exists(AIRPORTDATA_DB):
+    #     create_table(AIRPORTDATA_DB, airportdata_columns)
+    #     store_airportdata()
 
     if not table_exists(FLIGHTDATA_DB):
         create_table(FLIGHTDATA_DB, flightdata_columns)
