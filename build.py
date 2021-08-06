@@ -12,7 +12,7 @@ args = parser.parse_args()
 config = dotenv_values(".env")
 
 for file in Path(args.directory).rglob('*'):
-    if not os.path.isfile(file) or '.git' in str(file):
+    if not os.path.isfile(file) or '.git/' in str(file):
         continue
 
     with open(file, 'r') as f:
