@@ -2,17 +2,14 @@
 sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR} ${DOCKER_COMPOSE_DIR} ${HOME_ASSISTANT_DIR}/config
 sudo cp usr/bin/* /usr/bin
 sudo cp lib/systemd/system/* /lib/systemd/system
+sudo cp etc/* /etc
 sudo cp etc/msmtprc /etc
-sudo cp etc/apache2/sites-available/* /etc/apache2/sites-available
+sudo cp etc/nginx/sites-available/* /etc/nginx/sites-available
 sudo cp etc/apt/apt.conf.d/* /etc/apt/apt.conf.d
 sudo cp home/.gitconfig ~/
 sudo cp docker/* ${DOCKER_COMPOSE_DIR}
 sudo cp homeassistant/* ${HOME_ASSISTANT_DIR}/config
 sudo cp selfoss/config.ini ${SELFOSS_DIR}
-
-# Setup apache2
-sudo a2enmod rewrite proxy proxy_http ssl fcgid
-sudo systemctl restart apache2
 
 # Setup Munin
 sudo chown munin:munin ${MUNIN_DIR}
@@ -21,7 +18,7 @@ sudo cp munin/munin-node /etc/munin/plugin-conf.d/munin-node
 sudo cp munin/usr/share/munin/plugins/* /usr/share/munin/plugins
 
 sudo ln -sf /usr/share/munin/plugins/cert_letsencrypt /etc/munin/plugins
-sudo ln -sf /usr/share/munin/plugins/fr24_aircraft /etc/munin/plugins
+sudo ln -sf /usr/share/munin/plugins/dump1090_aircraft /etc/munin/plugins
 sudo ln -sf /usr/share/munin/plugins/postgres_backup /etc/munin/plugins
 sudo ln -sf /usr/share/munin/plugins/piaware* /etc/munin/plugins
 
@@ -58,8 +55,10 @@ cd ${DOCKER_COMPOSE_DIR} && sudo docker-compose up -d
 sudo mkdir -p ${PSQL_BACKUP_DIR}
 sudo chown postgres:postgres ${PSQL_BACKUP_DIR}
 
+sudo ln -sf /etc/nginx/sites-available/* /etc/nginx/sites-enabled
+
 sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-gitea.conf 003-munin.conf 004-nextcloud.conf 005-web1090.conf 006-web1090-api.conf
-sudo systemctl restart apache2
+sudo systemctl restart nginx
 sudo systemctl restart munin-node
 
 sudo chown www-data:www-data /var/www
@@ -68,9 +67,8 @@ sudo chown www-data:www-data /usr/bin/update-selfoss
 sudo chmod 700 /usr/bin/update-selfoss
 
 # Enable services
-sudo systemctl enable --now gitea adsb2psql
+sudo systemctl enable --now gitea adsb2psql web1090api
 sudo systemctl enable nextcloudcron.timer selfoss-update.timer certs-update.timer
 sudo systemctl enable postgres-backup@gitea.timer postgres-backup@nextcloud.timer postgres-backup@selfoss.timer
-
 
 # rm -rf $TMP_DIR
