@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 from dotenv import dotenv_values
 
 class bcolors:
@@ -16,10 +17,11 @@ class bcolors:
 
 config = dotenv_values(".env")
 sample_config = dotenv_values("sample.env")
-diff = len(config) - len(sample_config)
+diff = len(sample_config) - len(config)
 
-if diff < 0:
+if diff > 0:
     print(f'{bcolors.FAIL}Error: .env has {diff} less entries than sample.env.{bcolors.ENDC}')
     print(f'{bcolors.FAIL}This will likely produce errors.{bcolors.ENDC}')
+    sys.exit(1)
 else:
     print(f'{bcolors.OKGREEN}.env file is valid.{bcolors.ENDC}')

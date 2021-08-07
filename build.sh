@@ -13,7 +13,7 @@ cd $REPO_DIR
 
 sudo cp .env /root/.env
 
-python3 check-dotenv.py
+python3 check-dotenv.py || exit 1
 python3 build.py $REPO_DIR
 
 ./install.sh
