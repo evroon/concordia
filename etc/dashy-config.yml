@@ -1,9 +1,14 @@
 appConfig:
-  theme: "thebe"
+  theme: "colorful"
   fontAwesomeKey: "0821c65656"
   layout: "horizontal"
   iconSize: "medium"
   language: "en"
+  allowConfigEdit: false
+  customColors:
+    default:
+      primary: "#985ceb"
+      backgroundDarker: "#141b33"
 
 pageInfo:
   title: "Dashy"

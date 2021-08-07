@@ -26,7 +26,7 @@ services:
             - minecraft # Start mc server only when needed
 
     dashy:
-        image: lissy93/dashy
+        image: lissy93/dashy:arm32v7
         container_name: Dashy
         volumes:
             - /etc/dashy-config.yml:/app/public/conf.yml
