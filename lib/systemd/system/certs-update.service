@@ -2,9 +2,9 @@
 Description=Letsencrypt certificate update
 Requires=network.target
 After=network.target
-OnFailure=unit-status-mailer@%n.service apache2.service
+OnFailure=unit-status-mailer@%n.service nginx.service
 
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/certbot renew
-ExecStartPost=/bin/systemctl reload apache2
+ExecStartPost=/bin/systemctl reload nginx
