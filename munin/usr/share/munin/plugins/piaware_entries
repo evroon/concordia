@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+
+import psycopg2
+import sys
+import json
+import requests
+
+
+def print_config() -> None:
+    print("graph_title PiAware entries")
+    print("graph_vlabel count")
+    print("graph_category adsb")
+    print("graph_info Number of ADS-B entries stored in postgres.")
+
+    print("entries.label Entries")
+
+
+def print_value() -> None:
+    con = psycopg2.connect(
+        database="${FR24_PSQL_DB}",
+        user="${FR24_PSQL_USER}",
+        password="${FR24_PSQL_PASSWORD}",
+        host="127.0.0.1",
+        port="${PSQL_PORT}"
+    )
+    cur = con.cursor()
+
+    cur.execute("select count(*) from flightdata")
+    entries = cur.fetchone()[0]
+
+    print(f'entries.value {entries}')
+
+
+if __name__ == '__main__':
+    if len(sys.argv) > 1 and sys.argv[1] == 'config':
+        print_config()
+    else:
+        print_value()

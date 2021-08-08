@@ -10,3 +10,49 @@ services:
             - /etc/localtime:/etc/localtime
         ports:
             - ${HOME_ASSISTANT_PORT}:${HOME_ASSISTANT_PORT}
+
+    mc:
+        image: itzg/minecraft-server
+        ports:
+            - 25565:25565
+        environment:
+            EULA: "TRUE"
+        tty: true
+        stdin_open: true
+        restart: unless-stopped
+        volumes:
+            - /var/lib/minecraft-data:/data
+        profiles:
+            - minecraft # Start mc server only when needed
+
+    dashy:
+        image: lissy93/dashy:arm32v7
+        container_name: Dashy
+        volumes:
+            - /etc/dashy-config.yml:/app/public/conf.yml
+        ports:
+            - 4000:80
+        environment:
+            - NODE_ENV=production
+        restart: unless-stopped
+        healthcheck:
+            test: ['CMD', 'node', '/app/services/healthcheck']
+            interval: 1m30s
+            timeout: 10s
+            retries: 3
+            start_period: 40s
+
+    metube:
+        image: alexta69/metube
+        container_name: metube
+        restart: unless-stopped
+        user: "1001:1001"
+        ports:
+            - "8096:8081"
+        volumes:
+            - ~/Downloads:/downloads
+
+volumes:
+    certs:
+    logs:
+    fallbackcerts:

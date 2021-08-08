@@ -1,0 +1,15 @@
+[Unit]
+Description=Stores ADS-B data in Postgres.
+After=syslog.target
+After=network.target
+
+[Service]
+RestartSec=2s
+Type=simple
+User=pi
+WorkingDirectory=/home/pi
+ExecStart=/usr/bin/adsb2psql
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

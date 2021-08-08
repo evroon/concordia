@@ -1,7 +1,11 @@
 [Unit]
 Description=Background tasks for Nextcloud
+OnFailure=unit-status-mailer@%n.service
 
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/php -f ${NEXTCLOUD_DIR}/cron.php
 User=www-data
+
+[Install]
+WantedBy=multi-user.target

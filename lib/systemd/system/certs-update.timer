@@ -1,0 +1,10 @@
+[Unit]
+Description=Scheduled certificate renewal
+
+[Timer]
+OnCalendar=daily
+RandomizedDelaySec=2h
+Persistent=true
+
+[Install]
+WantedBy=timers.target

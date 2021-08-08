@@ -1,0 +1,62 @@
+appConfig:
+  theme: "colorful"
+  fontAwesomeKey: "0821c65656"
+  layout: "horizontal"
+  iconSize: "medium"
+  language: "en"
+  allowConfigEdit: false
+  customColors:
+    default:
+      primary: "#985ceb"
+      backgroundDarker: "#141b33"
+
+pageInfo:
+  title: "Dashy"
+  navLinks:
+    - title: "Home"
+      path: "/"
+  description: ""
+  footerText: ""
+
+sections:
+  - name: "Server"
+    items:
+      - title: "Gitea"
+        description: "Gitea"
+        icon: "fab fa-git-square"
+        url: "https://${GITEA_DOMAIN_NAME}"
+
+      - title: "Munin"
+        description: "Munin"
+        icon: "fas fa-chart-bar"
+        url: "https://${MUNIN_DOMAIN_NAME}"
+
+      - title: "Selfoss"
+        description: "Selfoss RSS Reader"
+        icon: "fas fa-rss"
+        url: "https://${SELFOSS_DOMAIN_NAME}"
+
+      - title: "Nextcloud"
+        description: "Nextcloud"
+        icon: "fas fa-cloud"
+        url: "https://${NEXTCLOUD_DOMAIN_NAME}"
+
+
+  - name: "ADS-B"
+    items:
+      - title: "FlightAware"
+        description: "FlightAware"
+        icon: "fas fa-plane"
+        url: "${FLIGHTAWARE_URL}"
+
+      - title: "FR24"
+        description: "FR24"
+        icon: "fas fa-globe-europe"
+        url: "${FR24_URL}"
+
+  - name: "Personal"
+    items:
+      - title: "Blog"
+        description: "Blog on Github Pages"
+        icon: "fas fa-blog"
+        url: "https://evroon.github.io/"

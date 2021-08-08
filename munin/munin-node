@@ -1,0 +1,49 @@
+[apt]
+user root
+
+[cps*]
+user root
+
+[df*]
+env.warning 92
+env.critical 98
+env.exclude_re ^/run/user
+
+[fw_conntrack]
+user root
+
+[fw_forwarded_local]
+user root
+
+[if_*]
+user root
+
+[if_err_*]
+user nobody
+
+[ip_*]
+user root
+
+[sendmail_*]
+user smmta
+
+[smart_*]
+user root
+
+[munin_stats]
+user munin
+group munin
+
+[postgres_*]
+user postgres
+env.PGUSER postgres
+env.PGPORT 5432
+
+[fail2ban]
+user root
+
+[cert_letsencrypt]
+user root
+
+[piaware*]
+user pi

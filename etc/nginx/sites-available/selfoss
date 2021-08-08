@@ -1,0 +1,44 @@
+# please make sure all directories/files in public/ are readable to your webserver, as well as data/favicons
+# If it still doesn't work look into your log files at /var/log/nginx/rss.error.log
+upstream backend {
+    server unix:/var/run/php-fpm.sock;
+}
+
+server {
+    server_name ${SELFOSS_DOMAIN_NAME};
+
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    root /var/www/selfoss;
+
+    access_log /var/log/nginx/rss.access.log;
+    error_log /var/log/nginx/rss.error.log;
+
+    location ~* \ (gif|jpg|png) {
+        expires 30d;
+    }
+
+    location ~ ^/favicons/.*$ {
+        try_files $uri /data/$uri;
+    }
+
+    location ~* ^/(data\/logs|data\/sqlite|config\.ini|\.ht) {
+        deny all;
+    }
+
+    location / {
+        index index.php index.html index.htm;
+        try_files $uri /public/$uri /index.php$is_args$args;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php/php7.3-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root/$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    ssl_certificate /etc/letsencrypt/live/${DOMAIN_NAME}/cert.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem;
+}
