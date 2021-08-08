@@ -35,7 +35,10 @@ def print_value() -> None:
             date_str = backup.replace('.zip', '').replace(f'${PSQL_BACKUP_DIR}/{db}-', '')
             date = datetime.strptime(date_str, '%d-%m-%Y_%H-%M-%S')
             tdelta = relativedelta(datetime.now(), date)
-            diff_large = tdelta.years * (365 * 12 * 24) + tdelta.months * (12 * 24) + tdelta.days * 24
+
+            # May be off by a few years, but should be much larger than the minimum
+            # tdelta we are looking for anyway.
+            diff_large = tdelta.years * (365 * 24) + tdelta.months * (30 * 24) + tdelta.days * 24
             diff = diff_large + tdelta.hours + tdelta.minutes / 60
 
             if diff < min_time:
