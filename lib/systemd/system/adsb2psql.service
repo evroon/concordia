@@ -7,9 +7,10 @@ After=network.target
 RestartSec=2s
 Type=simple
 User=pi
-WorkingDirectory=/home/pi
-ExecStart=/usr/bin/adsb2psql
+WorkingDirectory=/usr/share/web1090/api
+ExecStart=python3 /usr/share/web1090/api/adsb2psql.py
 Restart=always
+Environment=AVIATIONSTACK_KEY=${AVIATIONSTACK_KEY} DUMP1090_ADDRESS=${DUMP1090_ADDRESS} PSQL_DB=${FR24_PSQL_DB} PSQL_PORT=${PSQL_PORT} PSQL_USER=${FR24_PSQL_USER} PSQL_PASSWORD=${FR24_PSQL_PASSWORD}
 
 [Install]
 WantedBy=multi-user.target
