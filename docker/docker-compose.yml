@@ -62,6 +62,14 @@ services:
             - "389:389"
             - "636:636"
 
+    uptime-kuma:
+        image: louislam/uptime-kuma
+        container_name: uptime-kuma
+        volumes:
+            - /var/lib/uptime-kuma:/app/data
+        ports:
+            - 3001:3001
+
 volumes:
     certs:
     logs:
