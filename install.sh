@@ -29,21 +29,23 @@ sudo mv letsencrypt/cli.ini /etc/letsencrypt/cli.ini
 # Create postgres databases
 cd
 export PGPASSWORD=${PSQL_PASSWORD}
-sudo -Hu postgres psql -c "CREATE USER ${SELFOSS_PSQL_USER} WITH PASSWORD '${SELFOSS_PSQL_PASSWORD}';"
-sudo -Hu postgres psql -c "CREATE DATABASE ${SELFOSS_PSQL_DB} WITH OWNER ${SELFOSS_PSQL_USER};"
-sudo -Hu postgres psql -c "ALTER SCHEMA public OWNER TO ${SELFOSS_PSQL_USER};"
 
-sudo -Hu postgres psql -c "CREATE USER ${GITEA_PSQL_USER} WITH PASSWORD '${GITEA_PSQL_PASSWORD}';"
-sudo -Hu postgres psql -c "CREATE DATABASE ${GITEA_PSQL_DB} WITH OWNER ${GITEA_PSQL_USER};"
-sudo -Hu postgres psql -c "ALTER SCHEMA public OWNER TO ${GITEA_PSQL_USER};"
+create_db () {
+    if [ "$( sudo -Hu postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname='$3'" )" = '1' ]
+    then
+        echo "Database $3 already exists, skipping..."
+    else
+        sudo -Hu postgres psql -c "CREATE USER $1 WITH PASSWORD '$2';"
+        sudo -Hu postgres psql -c "CREATE DATABASE $3 WITH OWNER $1;"
+        sudo -Hu postgres psql -c "ALTER SCHEMA public OWNER TO $1;"
+    fi
+}
 
-sudo -Hu postgres psql -c "CREATE USER ${NEXTCLOUD_PSQL_USER} WITH PASSWORD '${NEXTCLOUD_PSQL_PASSWORD}';"
-sudo -Hu postgres psql -c "CREATE DATABASE ${NEXTCLOUD_PSQL_DB} WITH OWNER ${NEXTCLOUD_PSQL_USER};"
-sudo -Hu postgres psql -c "ALTER SCHEMA public OWNER TO ${NEXTCLOUD_PSQL_USER};"
-
-sudo -Hu postgres psql -c "CREATE USER ${FR24_PSQL_USER} WITH PASSWORD '${FR24_PSQL_PASSWORD}';"
-sudo -Hu postgres psql -c "CREATE DATABASE ${FR24_PSQL_DB} WITH OWNER ${FR24_PSQL_USER};"
-sudo -Hu postgres psql -c "ALTER SCHEMA public OWNER TO ${FR24_PSQL_USER};"
+create_db "${SELFOSS_PSQL_USER}" "${SELFOSS_PSQL_PASSWORD}" "${SELFOSS_PSQL_DB}"
+create_db "${GITEA_PSQL_USER}" "${GITEA_PSQL_PASSWORD}" "${GITEA_PSQL_DB}"
+create_db "${NEXTCLOUD_PSQL_USER}" "${NEXTCLOUD_PSQL_PASSWORD}" "${NEXTCLOUD_PSQL_DB}"
+create_db "${FR24_PSQL_USER}" "${FR24_PSQL_PASSWORD}" "${FR24_PSQL_DB}"
+create_db "${GOTIFY_PSQL_USER}" "${GOTIFY_PSQL_PASSWORD}" "${GOTIFY_PSQL_DB}"
 
 # Start Docker containers.
 cd ${DOCKER_COMPOSE_DIR} && sudo docker-compose up -d

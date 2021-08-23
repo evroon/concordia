@@ -62,6 +62,15 @@ services:
         ports:
             - 3001:3001
 
+    gotify:
+        image: gotify/server-arm7
+        container_name: gotify
+        ports:
+            - 8082:80
+        volumes:
+            - /var/lib/gotify_data:/app/data
+            - /etc/gotify-config.yml:/etc/gotify/config.yml
+
 volumes:
     certs:
     logs:
