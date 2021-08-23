@@ -13,7 +13,6 @@ The following (web) services are installed and configured:
 * Fail2ban
 * Homeassistant
 * Dashy
-* MeTube
 
 The following ADS-B feeders are installed:
 * FR24
