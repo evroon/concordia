@@ -52,6 +52,16 @@ services:
         volumes:
             - ~/Downloads:/downloads
 
+    openldap:
+        image: osixia/openldap:1.5.0
+        environment:
+            - LDAP_ORGANISATION=${LDAP_ORGANISATION}
+            - LDAP_DOMAIN=${LDAP_DOMAIN}
+            - LDAP_ADMIN_PASSWORD=${LDAP_ADMIN_PASSWORD}
+        ports:
+            - "389:389"
+            - "636:636"
+
 volumes:
     certs:
     logs:
