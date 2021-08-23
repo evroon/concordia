@@ -21,6 +21,11 @@ pageInfo:
 sections:
   - name: "Server"
     items:
+      - title: "Uptime Kuma"
+        description: "Uptime Kuma"
+        icon: "fas fa-check-circle"
+        url: "https://${UPTIME_KUMA_DOMAIN_NAME}"
+
       - title: "Gitea"
         description: "Gitea"
         icon: "fab fa-git-square"
@@ -41,6 +46,11 @@ sections:
         icon: "fas fa-cloud"
         url: "https://${NEXTCLOUD_DOMAIN_NAME}"
 
+      - title: "Home Assistant"
+        description: "Home Assistant"
+        icon: "fas fa-home"
+        url: "${HOME_ASSISTANT_URL}"
+
 
   - name: "ADS-B"
     items:
@@ -53,6 +63,18 @@ sections:
         description: "FR24"
         icon: "fas fa-globe-europe"
         url: "${FR24_URL}"
+
+      - title: "RadarBox"
+        description: "RadarBox"
+        icon: "fas fa-box"
+        url: "${RADARBOX_URL}"
+
+      - title: "PlaneFinder"
+        description: "PlaneFinder"
+        icon: "fas fa-location-arrow"
+        url: "${PLANEFINDER_URL}"
+
+
 
   - name: "Personal"
     items:
