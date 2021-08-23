@@ -46,7 +46,7 @@ sudo -Hu postgres psql -c "CREATE DATABASE ${FR24_PSQL_DB} WITH OWNER ${FR24_PSQ
 sudo -Hu postgres psql -c "ALTER SCHEMA public OWNER TO ${FR24_PSQL_USER};"
 
 # Start Docker containers.
-update-docker-services.sh
+cd ${DOCKER_COMPOSE_DIR} && sudo docker-compose up -d
 
 # Create backup directory.
 sudo mkdir -p ${PSQL_BACKUP_DIR}

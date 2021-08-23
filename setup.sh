@@ -7,7 +7,7 @@ sudo apt install -y \
     postgresql postgresql-contrib postgresql-client pgpdump \
     php php-gd php-mbstring php-common php-pgsql php-imagick php-xml php-curl php-tidy php-zip \
     certbot python3-certbot-nginx \
-    mailutils msmtp msmtp-mta
+    mailutils msmtp msmtp-mta aha
 
 sudo pip3 install docker-compose python-dateutil
 python3 -m pip install -r requirements.txt

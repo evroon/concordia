@@ -4,7 +4,7 @@ OnFailure=unit-status-mailer@%n.service
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/update-docker-service.sh
+ExecStart=/usr/bin/update-docker-services.sh
 
 [Install]
 WantedBy=multi-user.target
