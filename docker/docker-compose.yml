@@ -3,6 +3,7 @@ version: '3.1'
 services:
     homeassistant:
         image: homeassistant/home-assistant:stable
+        container_name: homeassistant
         restart: always
         env_file: ~/.env
         volumes:
@@ -27,7 +28,7 @@ services:
 
     dashy:
         image: lissy93/dashy:arm32v7
-        container_name: Dashy
+        container_name: dashy
         volumes:
             - /etc/dashy-config.yml:/app/public/conf.yml
         ports:
@@ -44,6 +45,7 @@ services:
 
     openldap:
         image: osixia/openldap:1.5.0
+        container_name: openldap
         environment:
             - LDAP_ORGANISATION=${LDAP_ORGANISATION}
             - LDAP_DOMAIN=${LDAP_DOMAIN}

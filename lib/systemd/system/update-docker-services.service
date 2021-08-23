@@ -1,0 +1,10 @@
+[Unit]
+Description=Pulls new Docker images and recreates Docker containers
+OnFailure=unit-status-mailer@%n.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/update-docker-service.sh
+
+[Install]
+WantedBy=multi-user.target

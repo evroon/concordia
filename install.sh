@@ -26,9 +26,6 @@ sudo ln -sf /usr/share/munin/plugins/piaware* /etc/munin/plugins
 sudo mkdir -p /etc/letsencrypt
 sudo mv letsencrypt/cli.ini /etc/letsencrypt/cli.ini
 
-# Request certificates
-# sudo certbot certonly
-
 # Create postgres databases
 cd
 export PGPASSWORD=${PSQL_PASSWORD}
@@ -49,7 +46,7 @@ sudo -Hu postgres psql -c "CREATE DATABASE ${FR24_PSQL_DB} WITH OWNER ${FR24_PSQ
 sudo -Hu postgres psql -c "ALTER SCHEMA public OWNER TO ${FR24_PSQL_USER};"
 
 # Start Docker containers.
-cd ${DOCKER_COMPOSE_DIR} && sudo docker-compose up -d
+update-docker-services.sh
 
 # Create backup directory.
 sudo mkdir -p ${PSQL_BACKUP_DIR}
@@ -68,7 +65,7 @@ sudo chmod 700 /usr/bin/update-selfoss
 
 # Enable services
 sudo systemctl enable --now gitea adsb2psql web1090api
-sudo systemctl enable nextcloudcron.timer selfoss-update.timer certs-update.timer
+sudo systemctl enable nextcloudcron.timer selfoss-update.timer certs-update.timer update-docker-services.timer
 sudo systemctl enable postgres-backup@gitea.timer postgres-backup@nextcloud.timer postgres-backup@selfoss.timer
 
 # rm -rf $TMP_DIR

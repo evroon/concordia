@@ -13,6 +13,9 @@ The following (web) services are installed and configured:
 * Fail2ban
 * Homeassistant
 * Dashy
+* Uptime Kuma
+* WEB1090
+
 
 The following ADS-B feeders are installed:
 * FR24
