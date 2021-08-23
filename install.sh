@@ -58,7 +58,6 @@ sudo chown postgres:postgres ${PSQL_BACKUP_DIR}
 sudo ln -sf /etc/nginx/sites-available/* /etc/nginx/sites-enabled
 sudo ln -sf /usr/share/web1090/frontend /var/www/web1090
 
-sudo a2ensite 000-default-le-ssl.conf 000-default.conf 001-selfoss.conf 002-gitea.conf 003-munin.conf 004-nextcloud.conf 005-web1090.conf 006-web1090-api.conf
 sudo systemctl restart nginx
 sudo systemctl restart munin-node
 

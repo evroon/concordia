@@ -1,13 +1,8 @@
 server {
     server_name ${DOMAIN_NAME};
 
-    listen 443 ssl;
-    listen [::]:443 ssl;
+    listen 80;
+    listen [::]:80;
 
-    location / {
-        proxy_pass http://localhost:4000;
-    }
-
-    ssl_certificate /etc/letsencrypt/live/${DOMAIN_NAME}/cert.pem;
-    ssl_certificate_key /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem;
+    root /var/www/html;
 }
