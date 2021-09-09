@@ -26,7 +26,7 @@ else
    exit
 fi
 
-rm $psqlfile
+rm -f $psqlfile
 
 # Delete old backups
 find $backupfolder -mtime +$keep_days -delete
