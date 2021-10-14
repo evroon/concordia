@@ -1,5 +1,15 @@
 #!/bin/bash
 
+SELFOSS_VERSION=$(get_latest_github_release "fossar/selfoss")
+SELFOSS_VERSION_CURRENT=$(sed -n "s/^SELFOSS=\(.*\).*$/\1/p" versions.env)
+
+if [ "$SELFOSS_VERSION" == "$SELFOSS_VERSION_CURRENT" ]; then
+    echo "Selfoss is up-to-date (version: $SELFOSS_VERSION)"
+    exit 0
+fi
+
+SELFOSS_RELEASE="https://github.com/fossar/selfoss/releases/download/$SELFOSS_VERSION/selfoss-$SELFOSS_VERSION.zip"
+
 cd ${SELFOSS_DIR}
 sudo wget ${SELFOSS_RELEASE} -O selfoss.zip
 sudo unzip -qo selfoss.zip
