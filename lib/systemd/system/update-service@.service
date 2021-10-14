@@ -1,0 +1,11 @@
+[Unit]
+Description=Updates %i to a new version (if available)
+OnFailure=unit-status-mailer@%n.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/%i-install.sh
+User=pi
+
+[Install]
+WantedBy=multi-user.target
