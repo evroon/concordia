@@ -18,3 +18,5 @@ sudo chown www-data:www-data -R ${SELFOSS_DIR}
 
 sudo chmod -R 744 data
 sudo chown www-data:www-data ${SELFOSS_DIR}/config.ini
+
+sed -i "s/SELFOSS=.*/SELFOSS=$SELFOSS_VERSION/g" versions.env

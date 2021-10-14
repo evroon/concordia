@@ -15,7 +15,7 @@ python3 -m pip install -r requirements.txt
 cat > versions.env << EOF
 GITEA=Not Installed
 PIAWARE=Not Installed
-NEXTCLOUD=Not Installed
+DOCKER_COMPOSE=Not Installed
 SELFOSS=Not Installed
 EOF
 

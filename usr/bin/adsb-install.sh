@@ -15,7 +15,9 @@ else
     sudo dpkg -i piaware-repository_$PIAWARE_VERSION_all.deb
     sudo apt-get update
 
-    sudo apt-get install -y piaware    
+    sudo apt-get install -y piaware
+
+    sed -i "s/PIAWARE=.*/PIAWARE=$PIAWARE_VERSION/g" versions.env
 fi
 
 sudo systemctl restart piaware fr24feed

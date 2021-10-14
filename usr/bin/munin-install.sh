@@ -1,3 +1,5 @@
+#!/bin/bash
+
 TMP_DIR=$(mktemp -d)
 
 cd $TMP_DIR
@@ -7,4 +9,5 @@ cd /etc/munin
 sudo cp -r $TMP_DIR/contrib/templates/munstrap/templates .
 sudo cp -r $TMP_DIR/contrib/templates/munstrap/static .
 
+# Let Munin regenerate HTML files.
 rm -rf /var/www/munin/*
