@@ -12,4 +12,11 @@ sudo apt install -y \
 sudo pip3 install docker-compose python-dateutil
 python3 -m pip install -r requirements.txt
 
+cat > versions.env << EOF
+GITEA=Not Installed
+PIAWARE=Not Installed
+NEXTCLOUD=Not Installed
+SELFOSS=Not Installed
+EOF
+
 ./build.sh
