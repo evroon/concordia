@@ -12,11 +12,13 @@ sudo apt install -y \
 sudo pip3 install docker-compose python-dateutil
 python3 -m pip install -r requirements.txt
 
-cat > versions.env << EOF
+if [ ! -f versions.env ]; then
+    cat > versions.env << EOF
 GITEA=Not Installed
 PIAWARE=Not Installed
 DOCKER_COMPOSE=Not Installed
 SELFOSS=Not Installed
 EOF
+fi
 
 ./build.sh
