@@ -1,8 +1,11 @@
 #!/bin/bash
 
 # See: https://discussions.flightaware.com/t/how-to-make-piaware-compatible-with-fr24feed/54045/6
-#sudo bash -c "$(wget -O - https://repo-feed.flightradar24.com/install_fr24_rpi.sh)"
-sudo dpkg --purge dump1090-mutability
+if [ ! -d /lib/fr24 ]; then
+    sudo bash -c "$(wget -O - https://repo-feed.flightradar24.com/install_fr24_rpi.sh)"
+    sudo systemctl restart fr24feed
+    sudo dpkg --purge dump1090-mutability
+fi
 
 PIAWARE_VERSION=$(get_latest_github_release --tags --repo "flightaware/piaware")
 PIAWARE_VERSION="${PIAWARE_VERSION:1}"
@@ -13,28 +16,30 @@ if [ "$PIAWARE_VERSION" == "$PIAWARE_VERSION_CURRENT" ]; then
 else
     # See: https://discussions.flightaware.com/t/piaware-v-3-7-1-on-debian-10-0-buster-amd64-intel-pc/52414/4
     sudo apt update
-    sudo wget "https://flightaware.com/adsb/piaware/files/packages/pool/piaware/p/piaware-support/piaware-repository_" "$PIAWARE_VERSION" "_all.deb"
-    sudo dpkg -i "piaware-repository_" "$PIAWARE_VERSION" "_all.deb"
+    sudo wget "https://flightaware.com/adsb/piaware/files/packages/pool/piaware/p/piaware-support/piaware-repository_${PIAWARE_VERSION}_all.deb"
+    sudo dpkg -i "piaware-repository_${PIAWARE_VERSION}_all.deb"
     sudo apt-get update
 
     sudo apt-get install -y piaware
+    sudo systemctl restart piaware
 
     sed -i "s/PIAWARE=.*/PIAWARE=$PIAWARE_VERSION/g" ${CONCORDIA_DIR}/versions.env
 fi
 
-sudo systemctl restart piaware fr24feed
 
 sudo apt-get install -y dump1090-fa
-# sudo reboot
 
-wget -O ${PIAWARE_CSV_PATH} https://github.com/flightaware/dump1090/blob/master/tools/flightaware-20200924.csv.xz?raw=true
-unxz ${PIAWARE_CSV_PATH}
+# Fetch ICAO code database
+if [ ! -f ${PIAWARE_CSV_PATH} ]; then
+    sudo wget -O ${PIAWARE_CSV_PATH}.xz https://github.com/flightaware/dump1090/blob/master/tools/flightaware-20210817.csv.xz?raw=true
+    sudo unxz ${PIAWARE_CSV_PATH}.xz
+fi
 
 # Fetch VirtualRadar SQLite db.
-sudo touch ${VIRTUALRADAR_SQLITE_DB_PATH}.gz
-sudo chown pi:pi ${VIRTUALRADAR_SQLITE_DB_PATH}.gz
-
 if [ ! -f ${VIRTUALRADAR_SQLITE_DB_PATH}.gz ]; then
+    sudo touch ${VIRTUALRADAR_SQLITE_DB_PATH}.gz
+    sudo chown pi:pi ${VIRTUALRADAR_SQLITE_DB_PATH}.gz
+
     wget -O ${VIRTUALRADAR_SQLITE_DB_PATH}.gz https://www.virtualradarserver.co.uk/Files/StandingData.sqb.gz
     sudo gunzip -f ${VIRTUALRADAR_SQLITE_DB_PATH}.gz
 fi
