@@ -1,5 +1,5 @@
 # Move files to correct locations
-sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR} ${DOCKER_COMPOSE_DIR} ${HOME_ASSISTANT_DIR}/config
+sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DOCKER_COMPOSE_DIR} ${HOME_ASSISTANT_DIR}/config
 sudo cp usr/bin/* /usr/bin
 sudo cp lib/systemd/system/* /lib/systemd/system
 sudo cp -r etc/* /etc

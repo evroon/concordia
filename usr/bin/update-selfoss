@@ -4,7 +4,8 @@ php ${SELFOSS_DIR}/cliupdate.php
 
 python3 ${DISCORD_DIR}/selfoss.py \
     https://${SELFOSS_DOMAIN_NAME} \
-    ${DISCORD_DIR}/last-update \
     --token=${DISCORD_TOKEN} \
     --server-id=${DISCORD_SERVER_ID} \
+    --username=${SELFOSS_USERNAME} \
+    --password=${SELFOSS_PASSWORD} \
     --disable-verify-ssl
