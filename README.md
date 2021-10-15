@@ -40,7 +40,11 @@ network={
 ```
 Now, write the image to a USB-stick or an SD-card. Then boot the Pi and you should be able to connect to it via SSH.
 
-**Note**: You probably want to change the default password, update the kernel, set the correct locale (using `raspi-config`) etc. before continuing.
+**Note**: You probably want to do the following things before continuing:
+* Change the default password
+* Run `sudo apt update` and `sudo apt upgrade`, specifically to update the kernel
+* Set the correct locale (using `raspi-config`)
+* Generate SSH/GPG keys if necessary
 
 ## Install
 First, rename `sample.env` to `.env` and fill in the necessary values. Then, start the `setup.sh` script:

@@ -1,3 +1,8 @@
+#!/bin/bash
+
+TMP_DIR=$(mktemp -d)
+cd $TMP_DIR
+
 wget https://download.nextcloud.com/server/releases/nextcloud-${NEXTCLOUD_VERSION}.zip
 wget https://download.nextcloud.com/server/releases/nextcloud-${NEXTCLOUD_VERSION}.zip.md5
 wget https://download.nextcloud.com/server/releases/nextcloud-${NEXTCLOUD_VERSION}.zip.sha256

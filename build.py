@@ -15,8 +15,13 @@ for file in Path(args.directory).rglob('*'):
     if not os.path.isfile(file) or '.git/' in str(file):
         continue
 
-    with open(file, 'r') as f:
-        src = f.read()
+    try:
+        with open(file, 'r') as f:
+            src = f.read()
+    except UnicodeDecodeError:
+        print(f'Could not read {file}')
+        continue
+
 
     with open(file, 'w') as f:
         for param in config:

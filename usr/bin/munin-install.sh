@@ -10,4 +10,4 @@ sudo cp -r $TMP_DIR/contrib/templates/munstrap/templates .
 sudo cp -r $TMP_DIR/contrib/templates/munstrap/static .
 
 # Let Munin regenerate HTML files.
-rm -rf /var/www/munin/*
+sudo rm -rf /var/www/munin/*

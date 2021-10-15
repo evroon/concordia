@@ -1,15 +1,14 @@
 #!/bin/bash
 
 PLATFORM=arm-6
-GITEA_VERSION=$(get_latest_github_release "go-gitea/gitea")
+GITEA_VERSION=$(get_latest_github_release --repo "go-gitea/gitea")
 GITEA_VERSION="${GITEA_VERSION:1}"
-GITEA_VERSION_CURRENT=$(sed -n "s/^GITEA=\(.*\).*$/\1/p" versions.env)
+GITEA_VERSION_CURRENT=$(sed -n "s/^GITEA=\(.*\).*$/\1/p" ${CONCORDIA_DIR}/versions.env)
 
 if [ "$GITEA_VERSION" == "$GITEA_VERSION_CURRENT" ]; then
     echo "Gitea is up-to-date (version: $GITEA_VERSION)"
     exit 0
 fi
-
 sudo systemctl stop gitea
 sudo wget -O /usr/bin/gitea https://dl.gitea.io/gitea/$GITEA_VERSION/gitea-$GITEA_VERSION-linux-$PLATFORM
 sudo wget -O /tmp/gitea-$GITEA_VERSION-linux-$PLATFORM.asc https://dl.gitea.io/gitea/$GITEA_VERSION/gitea-$GITEA_VERSION-linux-$PLATFORM.asc
@@ -38,4 +37,4 @@ sudo chmod 770 /etc/gitea
 sudo systemctl enable gitea
 sudo systemctl start gitea
 
-sed -i "s/GITEA=.*/GITEA=$GITEA_VERSION/g" versions.env
+sed -i "s/GITEA=.*/GITEA=$GITEA_VERSION/g" ${CONCORDIA_DIR}/versions.env

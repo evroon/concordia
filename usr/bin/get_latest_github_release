@@ -1,4 +1,27 @@
-curl --silent "https://api.github.com/repos/$1/releases/latest" | # Get latest release from GitHub api
-    grep '"tag_name":' |                                            # Get tag line
-    sed -E 's/.*"([^"]+)".*/\1/'                                    # Pluck JSON value
+#!/bin/bash
 
+endpoint=releases
+repo=""
+suffix="/latest"
+tag_line="tag_name"
+
+while test $# -gt 0
+do
+    case "$1" in
+        --tags)
+            endpoint="tags"
+            suffix=""
+            tag_line="name"
+            ;;
+        --repo)
+            repo="$2"
+            shift
+            ;;
+    esac
+    shift
+done
+
+url="https://api.github.com/repos/$repo/$endpoint$suffix"
+curl --silent $url |                 # Get latest release from GitHub api
+    grep -m 1 "\"$tag_line\":" |     # Get tag line
+    sed -E 's/.*"([^"]+)".*/\1/'     # Pluck JSON value

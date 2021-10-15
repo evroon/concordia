@@ -1,7 +1,7 @@
 #!/bin/bash
 
-SELFOSS_VERSION=$(get_latest_github_release "fossar/selfoss")
-SELFOSS_VERSION_CURRENT=$(sed -n "s/^SELFOSS=\(.*\).*$/\1/p" versions.env)
+SELFOSS_VERSION=$(get_latest_github_release --repo "fossar/selfoss")
+SELFOSS_VERSION_CURRENT=$(sed -n "s/^SELFOSS=\(.*\).*$/\1/p" ${CONCORDIA_DIR}/versions.env)
 
 if [ "$SELFOSS_VERSION" == "$SELFOSS_VERSION_CURRENT" ]; then
     echo "Selfoss is up-to-date (version: $SELFOSS_VERSION)"
@@ -19,4 +19,4 @@ sudo chown www-data:www-data -R ${SELFOSS_DIR}
 sudo chmod -R 744 data
 sudo chown www-data:www-data ${SELFOSS_DIR}/config.ini
 
-sed -i "s/SELFOSS=.*/SELFOSS=$SELFOSS_VERSION/g" versions.env
+sed -i "s/SELFOSS=.*/SELFOSS=$SELFOSS_VERSION/g" ${CONCORDIA_DIR}/versions.env

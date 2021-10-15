@@ -11,6 +11,9 @@ server {
     ssl_certificate /etc/letsencrypt/live/${DOMAIN_NAME}/cert.pem;
     ssl_certificate_key /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem;
 
+    access_log /var/log/nginx/cloud.access.log;
+    error_log /var/log/nginx/cloud.error.log;
+
     # HSTS settings
     # WARNING: Only add the preload option once you read about
     # the consequences in https://hstspreload.org/. This option

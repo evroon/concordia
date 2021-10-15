@@ -2,10 +2,7 @@
 sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DISCORD_DIR} ${DOCKER_COMPOSE_DIR} ${HOME_ASSISTANT_DIR}/config
 sudo cp usr/bin/* /usr/bin
 sudo cp lib/systemd/system/* /lib/systemd/system
-sudo cp etc/* /etc
-sudo cp etc/msmtprc /etc
-sudo cp etc/nginx/sites-available/* /etc/nginx/sites-available
-sudo cp etc/apt/apt.conf.d/* /etc/apt/apt.conf.d
+sudo cp -r etc/* /etc
 sudo cp home/.gitconfig ~/
 sudo cp docker/* ${DOCKER_COMPOSE_DIR}
 sudo cp homeassistant/* ${HOME_ASSISTANT_DIR}/config

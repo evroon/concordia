@@ -1,3 +1,8 @@
 [user]
 	name = ${NAME}
 	email = ${EMAIL}
+	signingkey = ${GPG_KEY}
+[merge]
+	ff = false
+[commit]
+	verbose = true
