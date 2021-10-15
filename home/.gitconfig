@@ -6,3 +6,4 @@
 	ff = false
 [commit]
 	verbose = true
+	gpgsign = true
