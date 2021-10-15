@@ -23,5 +23,7 @@ if diff > 0:
     print(f'{bcolors.FAIL}Error: .env has {diff} less entries than sample.env.{bcolors.ENDC}')
     print(f'{bcolors.FAIL}This will likely produce errors.{bcolors.ENDC}')
     sys.exit(1)
+elif diff < 0:
+    print(f'{bcolors.WARNING}Warning: sample.env has {-diff} less entries than .env.{bcolors.ENDC}')
 else:
     print(f'{bcolors.OKGREEN}.env file is valid.{bcolors.ENDC}')
