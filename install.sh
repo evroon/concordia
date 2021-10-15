@@ -7,6 +7,7 @@ sudo cp home/.gitconfig ~/
 sudo cp docker/* ${DOCKER_COMPOSE_DIR}
 sudo cp homeassistant/* ${HOME_ASSISTANT_DIR}/config
 sudo cp selfoss/config.ini ${SELFOSS_DIR}
+sudo cp nextcloud/config.php ${NEXTCLOUD_DIR}/config
 
 # Setup Munin
 sudo chown munin:munin ${MUNIN_DIR}
