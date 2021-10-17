@@ -7,6 +7,15 @@ if [ ! -d /lib/fr24 ]; then
     sudo dpkg --purge dump1090-mutability
 fi
 
+if [ ! -f /bin/rbfeeder ]; then
+    sudo bash -c "$(wget -O - https://apt.rb24.com/inst_rbfeeder.sh)"
+fi
+
+if [ ! -f /bin/pfclient ]; then
+    wget -O /tmp/pfclient http://client.planefinder.net/pfclient_5.0.161_armhf.deb
+    sudo dpkg -i /tmp/pfclient
+fi
+
 PIAWARE_VERSION=$(get_latest_github_release --tags --repo "flightaware/piaware")
 PIAWARE_VERSION="${PIAWARE_VERSION:1}"
 PIAWARE_VERSION_CURRENT=$(sed -n "s/^PIAWARE=\(.*\).*$/\1/p" ${CONCORDIA_DIR}/versions.env)
