@@ -71,6 +71,25 @@ services:
             - /var/lib/gotify_data:/app/data
             - /etc/gotify-config.yml:/etc/gotify/config.yml
 
+    pihole:
+        container_name: pihole
+        image: pihole/pihole:latest
+        ports:
+            - "53:53/tcp"
+            - "53:53/udp"
+            - "67:67/udp"
+            - "80:80/tcp"
+        environment:
+            TZ: 'Europe/Amsterdam'
+            WEBPASSWORD: '${PIHOLE_PASSWORD}'
+            ServerIP: '192.168.178.234'
+        volumes:
+            - '/home/pi/etc-pihole:/etc/pihole/'
+            - '/home/pi/etc-dnsmasq.d:/etc/dnsmasq.d/'
+        cap_add:
+            - NET_ADMIN
+        restart: unless-stopped
+
 volumes:
     certs:
     logs:

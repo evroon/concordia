@@ -8,6 +8,7 @@ sudo docker pull itzg/minecraft-server
 sudo docker pull osixia/openldap:1.5.0
 sudo docker pull louislam/uptime-kuma
 sudo docker pull gotify/server
+sudo docker pull pihole/pihole:latest
 
 sudo docker stop homeassistant
 
