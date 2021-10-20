@@ -11,6 +11,7 @@ databases = [
     '${SELFOSS_PSQL_DB}',
     '${NEXTCLOUD_PSQL_DB}',
     '${GITEA_PSQL_DB}',
+    '${FR24_PSQL_DB}',
 ]
 
 def print_config() -> None:

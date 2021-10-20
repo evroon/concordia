@@ -67,7 +67,7 @@ sudo chmod 700 /usr/bin/update-selfoss
 # Enable services
 sudo systemctl enable --now gitea adsb2psql web1090api
 sudo systemctl enable nextcloudcron.timer selfoss-update.timer certs-update.timer update-docker-services.timer
-sudo systemctl enable postgres-backup@gitea.timer postgres-backup@nextcloud.timer postgres-backup@selfoss.timer
+sudo systemctl enable postgres-backup@gitea.timer postgres-backup@nextcloud.timer postgres-backup@selfoss.timer postgres-backup@fr24.timer
 sudo systemctl enable update-service@gitea.timer update-service@selfoss.timer
 
 # rm -rf $TMP_DIR
