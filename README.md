@@ -15,6 +15,10 @@ The following (web) services are installed and configured:
 * Dashy
 * Uptime Kuma
 * WEB1090
+* Pi-hole
+* Selfoss-discord
+* Minecraft server
+* Msmtp
 
 
 The following ADS-B feeders are installed:
