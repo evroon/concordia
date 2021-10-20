@@ -19,6 +19,7 @@ sudo ln -sf /usr/share/munin/plugins/cert_letsencrypt /etc/munin/plugins
 sudo ln -sf /usr/share/munin/plugins/dump1090_aircraft /etc/munin/plugins
 sudo ln -sf /usr/share/munin/plugins/postgres_backup /etc/munin/plugins
 sudo ln -sf /usr/share/munin/plugins/piaware* /etc/munin/plugins
+sudo ln -sf /usr/share/munin/plugins/systemd_failed /etc/munin/plugins
 
 # Set up certbot config file.
 sudo mkdir -p /etc/letsencrypt

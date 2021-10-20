@@ -14,7 +14,6 @@ def print_config() -> None:
 
     print("flights.label Flights")
     print("registrations.label Registrations")
-    print("aircrafttypes.label Aircraft types")
 
 
 def print_value() -> None:
@@ -27,18 +26,14 @@ def print_value() -> None:
     )
     cur = con.cursor()
 
-    cur.execute("select count(*) from (select distinct flight from flightdata) t")
-    flights = cur.fetchone()[0]
+    cur.execute("select count(*) from routesdata;")
+    routes = cur.fetchone()[0]
 
-    cur.execute("select count(*) from (select distinct aircrafttype from flightdata) t")
-    aircrafttypes = cur.fetchone()[0]
-
-    cur.execute("select count(*) from (select distinct registration from flightdata) t")
+    cur.execute("select count(*) from aircraftdata;")
     registrations = cur.fetchone()[0]
 
-    print(f'flights.value {flights}')
+    print(f'flights.value {routes}')
     print(f'registrations.value {registrations}')
-    print(f'aircrafttypes.value {aircrafttypes}')
 
 
 if __name__ == '__main__':

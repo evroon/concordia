@@ -1,0 +1,45 @@
+#!/bin/bash
+#
+# Munin plugin to monitor the number of failed service.
+#
+# Magic markers
+#
+#%# family=contrib
+#%# capabilities=autoconf
+
+config()
+{
+	cat <<-EOF
+		graph_title Number of failed systemd units
+		graph yes
+		graph_category system
+		graph_vlabel units
+		graph_args --base 1000 -l 0
+		status.label failed
+		status.critical 0:0
+	EOF
+}
+
+data()
+{
+	local failed="$(systemctl show --property=NFailedUnits --all | cut -d "=" -f 2)"
+	printf "status.value %d\n" "$failed"
+
+	local names="$(systemctl list-units --state=failed | grep failed | awk '{print $2}' | tr '\n' ' ' | sed 's/\ $//')"
+	printf "status.extinfo %s\n" "$names"
+}
+
+command="$1"
+shift
+
+case "$command" in
+	config)
+		config "$@"
+		;;
+	autoconf)
+		echo yes
+		;;
+	*)
+		data "$@"
+		;;
+esac
