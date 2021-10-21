@@ -54,7 +54,6 @@ sudo mkdir -p ${PSQL_BACKUP_DIR}
 sudo chown postgres:postgres ${PSQL_BACKUP_DIR}
 
 sudo ln -sf /etc/nginx/sites-available/* /etc/nginx/sites-enabled
-sudo ln -sf /usr/share/web1090/frontend /var/www/web1090
 
 sudo systemctl restart nginx
 sudo systemctl restart munin-node
