@@ -35,7 +35,7 @@ routes = {
 
 def print_config() -> None:
     print("graph_title NS Delay")
-    print("graph_vlabel seconds")
+    print("graph_vlabel minutes")
     print("graph_category ns")
     print("graph_info Delay of NS train per route.")
 
@@ -52,7 +52,7 @@ def print_value() -> None:
         delay_info = api.get_delay_info(orig, destination)
 
         if len(delay_info) > 0:
-            delay = int(delay_info[0].delay.total_seconds())
+            delay = delay_info[0].delay.total_seconds() / 60
             print(f'{id}.value {delay}')
 
 

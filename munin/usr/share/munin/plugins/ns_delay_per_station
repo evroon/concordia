@@ -17,7 +17,7 @@ origins = [
 
 def print_config() -> None:
     print("graph_title NS Delay per station")
-    print("graph_vlabel seconds")
+    print("graph_vlabel minutes")
     print("graph_category ns")
     print("graph_info Delay of NS train per station.")
 
@@ -45,7 +45,7 @@ def print_value() -> None:
             orig_code = route.origin.code
             dest_code = route.destination.code
 
-            delay = int(route.delay.total_seconds())
+            delay = route.delay.total_seconds() / 60
             print(f'{orig_code}_{dest_code}.value {delay}')
 
 
