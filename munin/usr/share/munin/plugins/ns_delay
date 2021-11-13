@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+
+sys.path.append('/var/lib/ns-api-python')
+
+from api import NSApi
+os.chdir('/var/lib/ns-api-python')
+
+
+routes = {
+    'ut_ledn': {
+        'label': 'Utrecht - Leiden',
+        'origin': 'UT',
+        'destination': 'LEDN',
+    },
+    'ledn_ut': {
+        'label': 'Leiden - Utrecht',
+        'origin': 'LEDN',
+        'destination': 'UT',
+    },
+    'ledn_vs': {
+        'label': 'Leiden - Vlissingen',
+        'origin': 'LEDN',
+        'destination': 'VS',
+    },
+    'gv_asd': {
+        'label': 'Den Haag - Amsterdam Centraal',
+        'origin': 'GV',
+        'destination': 'ASD',
+    },
+}
+
+
+def print_config() -> None:
+    print("graph_title NS Delay")
+    print("graph_vlabel seconds")
+    print("graph_category ns")
+    print("graph_info Delay of NS train per route.")
+
+    for id, route in routes.items():
+        print(f"{id}.label {route['label']}")
+
+
+def print_value() -> None:
+    api = NSApi()
+
+    for id, route in routes.items():
+        orig = route['origin']
+        destination = route['destination']
+        delay_info = api.get_delay_info(orig, destination)
+
+        if len(delay_info) > 0:
+            delay = int(delay_info[0].delay.total_seconds())
+            print(f'{id}.value {delay}')
+
+
+if __name__ == '__main__':
+    if len(sys.argv) > 1 and sys.argv[1] == 'config':
+        print_config()
+    else:
+        print_value()
