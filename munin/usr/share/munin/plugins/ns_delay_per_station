@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+
+sys.path.append('/var/lib/ns-api-python')
+
+from api import NSApi
+os.chdir('/var/lib/ns-api-python')
+
+
+origins = [
+    'LEDN',
+    'RSW',
+]
+
+
+def print_config() -> None:
+    print("graph_title NS Delay per station")
+    print("graph_vlabel seconds")
+    print("graph_category ns")
+    print("graph_info Delay of NS train per station.")
+
+    api = NSApi()
+    for orig in origins:
+        delay_info = api.get_delay_info(orig)
+
+        for route in delay_info:
+            orig_code = route.origin.code
+            dest_code = route.destination.code
+
+            orig_name = route.origin.names.long
+            dest_name = route.destination.names.long
+
+            print(f"{orig_code}_{dest_code}.label {orig_name} - {dest_name}")
+            print(f"{orig_code}_{dest_code}.draw STACK")
+
+
+def print_value() -> None:
+    api = NSApi()
+    for orig in origins:
+        delay_info = api.get_delay_info(orig)
+
+        for route in delay_info:
+            orig_code = route.origin.code
+            dest_code = route.destination.code
+
+            delay = int(route.delay.total_seconds())
+            print(f'{orig_code}_{dest_code}.value {delay}')
+
+
+if __name__ == '__main__':
+    if len(sys.argv) > 1 and sys.argv[1] == 'config':
+        print_config()
+    else:
+        print_value()
