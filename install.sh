@@ -47,9 +47,6 @@ create_db "${NEXTCLOUD_PSQL_USER}" "${NEXTCLOUD_PSQL_PASSWORD}" "${NEXTCLOUD_PSQ
 create_db "${FR24_PSQL_USER}" "${FR24_PSQL_PASSWORD}" "${FR24_PSQL_DB}"
 create_db "${GOTIFY_PSQL_USER}" "${GOTIFY_PSQL_PASSWORD}" "${GOTIFY_PSQL_DB}"
 
-# Start Docker containers.
-cd ${DOCKER_COMPOSE_DIR} && sudo docker-compose up -d
-
 # Create backup directory.
 sudo mkdir -p ${PSQL_BACKUP_DIR}
 sudo chown postgres:postgres ${PSQL_BACKUP_DIR}
