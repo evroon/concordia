@@ -39,6 +39,7 @@ def print_value() -> None:
     api = NSApi()
     for orig in origins:
         delay_info = api.get_delay_info(orig)
+        delay_info.sort(key=lambda x: x.origin.code + x.destination.code)
 
         for route in delay_info:
             orig_code = route.origin.code
