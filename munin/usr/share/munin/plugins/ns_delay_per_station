@@ -33,7 +33,6 @@ def print_config() -> None:
             dest_name = route.destination.names.long
 
             print(f"{orig_code}_{dest_code}.label {orig_name} - {dest_name}")
-            print(f"{orig_code}_{dest_code}.draw STACK")
 
 
 def print_value() -> None:
