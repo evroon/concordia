@@ -1,0 +1,9 @@
+[Unit]
+Description=Stores ADS-B data in Postgres.
+
+[Timer]
+OnBootSec=15min
+OnUnitActiveSec=24h
+
+[Install]
+WantedBy=timers.target

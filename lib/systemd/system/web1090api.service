@@ -10,7 +10,6 @@ User=pi
 WorkingDirectory=/usr/share/web1090/api
 ExecStart=/home/pi/.local/bin/uvicorn main:app --reload --host 0.0.0.0 --port 8006
 Restart=always
-Environment=AVIATIONSTACK_KEY=${AVIATIONSTACK_KEY} DUMP1090_ADDRESS=${DUMP1090_ADDRESS} PSQL_DB=${FR24_PSQL_DB} PSQL_USER=${FR24_PSQL_USER} PSQL_PASSWORD=${FR24_PSQL_PASSWORD} PSQL_PORT=${PSQL_PORT}
 
 [Install]
 WantedBy=multi-user.target

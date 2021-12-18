@@ -1,6 +1,7 @@
 # Move files to correct locations
 sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DOCKER_COMPOSE_DIR} ${HOME_ASSISTANT_DIR}/config
 sudo cp usr/bin/* /usr/bin
+sudo cp -r usr/share/* /usr/share
 sudo cp lib/systemd/system/* /lib/systemd/system
 sudo cp -r etc/* /etc
 sudo cp home/.gitconfig ~/
@@ -21,6 +22,7 @@ sudo ln -sf /usr/share/munin/plugins/postgres_backup /etc/munin/plugins
 sudo ln -sf /usr/share/munin/plugins/piaware* /etc/munin/plugins
 sudo ln -sf /usr/share/munin/plugins/systemd_failed /etc/munin/plugins
 sudo ln -sf /usr/share/munin/plugins/ns_* /etc/munin/plugins
+sudo ln -sf /usr/share/munin/plugins/web1090* /etc/munin/plugins
 
 # Set up certbot config file.
 sudo mkdir -p /etc/letsencrypt
@@ -62,9 +64,10 @@ sudo chown www-data:www-data /usr/bin/update-selfoss
 sudo chmod 700 /usr/bin/update-selfoss
 
 # Enable services
-sudo systemctl enable --now gitea adsb2psql web1090api
+sudo systemctl enable --now gitea web1090api
 sudo systemctl enable nextcloudcron.timer selfoss-update.timer certs-update.timer update-docker-services.timer
 sudo systemctl enable postgres-backup@gitea.timer postgres-backup@nextcloud.timer postgres-backup@selfoss.timer postgres-backup@fr24.timer
 sudo systemctl enable update-service@gitea.timer update-service@selfoss.timer
+sudo systemctl enable web1090cli.timer
 
 # rm -rf $TMP_DIR

@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+
+
+def print_config() -> None:
+    print("graph_title WEB1090 missing routes")
+    print("graph_vlabel count")
+    print("graph_category adsb")
+    print("graph_info Number of unknown flight numbers in the database of WEB1090, scheduled for an update.")
+
+    print("routes.label Flight numbers")
+
+
+def print_value() -> None:
+    with open('/usr/share/web1090/api/data/to_update.csv', 'r') as f:
+        line_count = len(f.readlines())
+        print(f'routes.value {line_count}')
+
+
+if __name__ == '__main__':
+    if len(sys.argv) > 1 and sys.argv[1] == 'config':
+        print_config()
+    else:
+        print_value()

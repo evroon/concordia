@@ -1,0 +1,13 @@
+[Unit]
+Description=Stores ADS-B data in Postgres.
+After=syslog.target
+After=network.target
+
+[Service]
+Type=oneshot
+User=pi
+WorkingDirectory=/usr/share/web1090/api
+ExecStart=python3 /usr/share/web1090/api/cli.py
+
+[Install]
+WantedBy=multi-user.target
