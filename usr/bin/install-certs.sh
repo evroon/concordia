@@ -8,4 +8,4 @@ sudo mv /etc/nginx/sites-enabled/default .
 sudo rm /etc/nginx/sites-enabled/*
 sudo mv default /etc/nginx/sites-enabled/default
 
-sudo certbot certonly
+sudo certbot certonly --expand
