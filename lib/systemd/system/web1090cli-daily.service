@@ -1,15 +1,13 @@
 [Unit]
-Description=Web1090 CLI
+Description=Stores ADS-B data in Postgres.
 After=syslog.target
 After=network.target
 
 [Service]
-RestartSec=2s
-Type=simple
+Type=oneshot
 User=pi
 WorkingDirectory=/usr/share/web1090/api
-ExecStart=python3 /usr/share/web1090/api/cli.py track-aircraft
-Restart=always
+ExecStart=python3 /usr/share/web1090/api/cli.py
 
 [Install]
 WantedBy=multi-user.target
