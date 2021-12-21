@@ -2,18 +2,15 @@
 
 import psycopg2
 import sys
-import json
-import requests
 
 
 def print_config() -> None:
-    print("graph_title PiAware data")
+    print("graph_title PiAware routes")
     print("graph_vlabel count")
     print("graph_category adsb")
-    print("graph_info Number of ADS-B flights, aircraft types and registrations stored in postgres.")
+    print("graph_info Number of ADS-B routes stored in postgres.")
 
-    print("flights.label Flights")
-    print("registrations.label Registrations")
+    print("routes.label Flights")
 
 
 def print_value() -> None:
@@ -29,11 +26,7 @@ def print_value() -> None:
     cur.execute("select count(*) from routesdata;")
     routes = cur.fetchone()[0]
 
-    cur.execute("select count(*) from aircraftdata;")
-    registrations = cur.fetchone()[0]
-
-    print(f'flights.value {routes}')
-    print(f'registrations.value {registrations}')
+    print(f'routes.value {routes}')
 
 
 if __name__ == '__main__':

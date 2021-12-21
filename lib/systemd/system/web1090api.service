@@ -4,6 +4,7 @@ After=syslog.target
 After=network.target
 
 [Service]
+TimeoutStopSec=5
 RestartSec=2s
 Type=simple
 User=pi
