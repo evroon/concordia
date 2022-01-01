@@ -1,3 +1,9 @@
+server {
+    listen 80;
+    server_name ${SELFOSS_DOMAIN_NAME};
+    return 301 https://${SELFOSS_DOMAIN_NAME}$request_uri;
+}
+
 # please make sure all directories/files in public/ are readable to your webserver, as well as data/favicons
 # If it still doesn't work look into your log files at /var/log/nginx/rss.error.log
 upstream backend {

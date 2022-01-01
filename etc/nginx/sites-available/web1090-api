@@ -1,4 +1,10 @@
 server {
+    listen 80;
+    server_name ${WEB1090_API_DOMAIN_NAME};
+    return 301 https://${WEB1090_API_DOMAIN_NAME}$request_uri;
+}
+
+server {
     server_name ${WEB1090_API_DOMAIN_NAME};
 
     listen 443 ssl;

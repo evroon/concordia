@@ -1,3 +1,9 @@
+server {
+    listen 80;
+    server_name ${NEXTCLOUD_DOMAIN_NAME};
+    return 301 https://${NEXTCLOUD_DOMAIN_NAME}$request_uri;
+}
+
 upstream php-handler {
     server 127.0.0.1:9000;
     server unix:/var/run/php/php7.3-fpm.sock;

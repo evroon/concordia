@@ -1,3 +1,9 @@
+server {
+    listen 80;
+    server_name ${GOTIFY_DOMAIN_NAME};
+    return 301 https://${GOTIFY_DOMAIN_NAME}$request_uri;
+}
+
 upstream gotify {
     server 127.0.0.1:8082;
 }
