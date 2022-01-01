@@ -90,6 +90,13 @@ services:
             - NET_ADMIN
         restart: unless-stopped
 
+    grafana:
+        container_name: grafana
+        image: grafana/grafana-enterprise:latest
+        ports:
+            - 3008:3000
+
+
 volumes:
     certs:
     logs:
