@@ -1,0 +1,4 @@
+- include: postgres_create_db.yml db_name='selfoss' db_user='selfoss' db_pass='{{ SELFOSS_PSQL_PASSWORD }}'
+- include: postgres_create_db.yml db_name='gitea' db_user='gitea' db_pass='{{ GITEA_PSQL_PASSWORD }}'
+- include: postgres_create_db.yml db_name='nextcloud' db_user='nextcloud' db_pass='{{ NEXTCLOUD_PSQL_PASSWORD }}'
+- include: postgres_create_db.yml db_name='fr24' db_user='fr24' db_pass='{{ FR24_PSQL_PASSWORD }}'

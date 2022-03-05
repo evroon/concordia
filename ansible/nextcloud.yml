@@ -1,0 +1,42 @@
+---
+- name: Download nextcloud archive
+  get_url:
+    url:  "{{ NEXTCLOUD_ARCHIVE }}"
+    dest: /tmp/nextcloud.tar.bz2
+    checksum: "sha256:{{ NEXTCLOUD_ARCHIVE }}.sha256"
+
+- name: Install Nextcloud
+  unarchive:
+    src: /tmp/nextcloud.tar.bz2
+    dest: /var/www
+    remote_src: true
+    creates: /var/www/nextcloud/occ
+
+- name: Setup Nextcloud
+  become_user: "www-data"
+  become: yes
+  shell: >
+    "{{ php }} occ maintenance:install"
+    --database postgres
+    --database-host "localhost"
+    --database-name {{ NEXTCLOUD_PSQL_DB }}
+    --database-user {{ NEXTCLOUD_PSQL_USER }}
+    --database-pass {{ NEXTCLOUD_PSQL_PASSWORD }}
+    --admin-user {{ NEXTCLOUD_ADMIN_USER }}
+    --admin-pass {{ NEXTCLOUD_ADMIN_PASSWORD }}
+    --data-dir {{ NEXTCLOUD_DATA_DIR }}
+  args:
+    chdir: /var/www/nextcloud/
+    creates: /var/www/nextcloud/config/config.php
+  register: setup_nc
+
+- name: set nextcloud domain config.php values
+  become_user: "www-data"
+  become_flags: "{{ ansible_become_flags | default(omit) }}"
+  become: yes
+  shell: "{{ php }} occ config:system:set {{ item.key }} {{ item.value }}"
+  args:
+    chdir: /var/www/nextcloud/
+  with_items:
+    - { key: "overwrite.cli.url", value: '--value=https://{{ NEXTCLOUD_DOMAIN_NAME }}' }
+    - { key: "trusted_domains", value: '1 --value={{ NEXTCLOUD_DOMAIN_NAME }}' }

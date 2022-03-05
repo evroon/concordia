@@ -1,4 +1,6 @@
 # Concordia
+[![ansible](https://github.com/evroon/concordia/actions/workflows/ansible.yml/badge.svg)](https://github.com/evroon/concordia/actions/workflows/ansible.yml)
+
 This project is used to quickly install web applications on my server.
 
 ## Services

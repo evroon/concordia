@@ -1,2 +1,8 @@
 **/.env
 versions.env
+
+**/secrets.yml
+**/secrets.enc
+.vault_pass
+
+ansible/installed_versions.yml

@@ -11,9 +11,11 @@ server {
     listen [::]:443 ssl;
 
     location / {
-        proxy_pass http://localhost:3008;
+        proxy_pass http://localhost:3000;
     }
 
     ssl_certificate /etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem;
+
+    proxy_set_header Host ${GRAFANA_DOMAIN_NAME};
 }

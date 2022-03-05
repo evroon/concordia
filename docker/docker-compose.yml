@@ -27,7 +27,7 @@ services:
             - minecraft # Start mc server only when needed
 
     dashy:
-        image: lissy93/dashy:arm32v7
+        image: lissy93/dashy
         container_name: dashy
         volumes:
             - /etc/dashy-config.yml:/app/public/conf.yml
@@ -62,15 +62,6 @@ services:
         ports:
             - 3001:3001
 
-    gotify:
-        image: gotify/server-arm7
-        container_name: gotify
-        ports:
-            - 8082:80
-        volumes:
-            - /var/lib/gotify_data:/app/data
-            - /etc/gotify-config.yml:/etc/gotify/config.yml
-
     pihole:
         container_name: pihole
         image: pihole/pihole:latest
@@ -89,12 +80,8 @@ services:
         cap_add:
             - NET_ADMIN
         restart: unless-stopped
-
-    grafana:
-        container_name: grafana
-        image: grafana/grafana-enterprise:latest
-        ports:
-            - 3008:3000
+        profiles:
+            - pihole # Start pihole only when needed
 
 
 volumes:

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PLATFORM=arm-6
+PLATFORM=amd64
 GITEA_VERSION=$(get_latest_github_release --repo "go-gitea/gitea")
 GITEA_VERSION="${GITEA_VERSION:1}"
 GITEA_VERSION_CURRENT=$(sed -n "s/^GITEA=\(.*\).*$/\1/p" ${CONCORDIA_DIR}/versions.env)

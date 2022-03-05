@@ -1,7 +1,6 @@
 # Move files to correct locations
 sudo mkdir -p ${SELFOSS_DIR} ${MUNIN_DIR} ${DOCKER_COMPOSE_DIR} ${HOME_ASSISTANT_DIR}/config
 sudo cp usr/bin/* /usr/bin
-sudo cp -r usr/share/* /usr/share
 sudo cp lib/systemd/system/* /lib/systemd/system
 sudo cp -r etc/* /etc
 sudo cp home/.gitconfig ~/
@@ -47,7 +46,6 @@ create_db "${SELFOSS_PSQL_USER}" "${SELFOSS_PSQL_PASSWORD}" "${SELFOSS_PSQL_DB}"
 create_db "${GITEA_PSQL_USER}" "${GITEA_PSQL_PASSWORD}" "${GITEA_PSQL_DB}"
 create_db "${NEXTCLOUD_PSQL_USER}" "${NEXTCLOUD_PSQL_PASSWORD}" "${NEXTCLOUD_PSQL_DB}"
 create_db "${FR24_PSQL_USER}" "${FR24_PSQL_PASSWORD}" "${FR24_PSQL_DB}"
-create_db "${GOTIFY_PSQL_USER}" "${GOTIFY_PSQL_PASSWORD}" "${GOTIFY_PSQL_DB}"
 
 # Create backup directory.
 sudo mkdir -p ${PSQL_BACKUP_DIR}
@@ -55,7 +53,7 @@ sudo chown postgres:postgres ${PSQL_BACKUP_DIR}
 
 sudo ln -sf /etc/nginx/sites-available/* /etc/nginx/sites-enabled
 
-sudo systemctl restart nginx
+sudo systemctl reload nginx
 sudo systemctl restart munin-node
 
 sudo chown www-data:www-data /var/www

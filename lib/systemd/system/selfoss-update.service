@@ -5,6 +5,7 @@ OnFailure=unit-status-mailer@%n.service
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/update-selfoss
+TimeoutStartSec=5m
 User=www-data
 
 [Install]
