@@ -1,0 +1,29 @@
+---
+- name: Move /usr/bin files
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /usr/bin
+    mode: '0755'
+  with_fileglob:
+    - ../usr/bin/*
+
+- name: Move systemd service files
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /lib/systemd/system
+    mode: '0755'
+  with_fileglob:
+    - ../lib/systemd/system/*
+
+- name: Create /nix
+  ansible.builtin.file:
+    path: /nix
+    state: directory
+    mode: '0777'
+    owner: "{{ USERNAME }}"
+    group: "{{ USERNAME }}"
+
+- name: Install nix
+  command: "nix-install.sh"
+  become: true
+  become_user: "{{ USERNAME }}"

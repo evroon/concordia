@@ -1,0 +1,14 @@
+- name: Create postgres user "{{ db_user }}"
+  community.postgresql.postgresql_user:
+    name: "{{ db_name }}"
+    password: "{{ db_pass }}"
+  become: true
+  become_user: postgres
+
+- name: Create postgres database "{{ db_name }}"
+  community.postgresql.postgresql_table:
+    db: "{{ db_name }}"
+    name: "{{ db_name }}"
+    owner: "{{ db_user }}"
+  become: true
+  become_user: postgres

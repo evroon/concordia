@@ -1,14 +1,15 @@
 [Unit]
-Description=Web1090 CLI
+Description=Web1090 API
 After=syslog.target
 After=network.target
 
 [Service]
+TimeoutStopSec=5
 RestartSec=2s
 Type=simple
-User=pi
+User={{ USERNAME }}
 WorkingDirectory=/usr/share/web1090/api
-ExecStart=python3 /usr/share/web1090/api/cli.py track-aircraft
+ExecStart=/usr/local/bin/uvicorn main:app --reload --host 0.0.0.0 --port 8006
 Restart=always
 
 [Install]

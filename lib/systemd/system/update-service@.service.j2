@@ -5,7 +5,7 @@ OnFailure=unit-status-mailer@%n.service
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/%i-install.sh
-User=pi
+User={{ USERNAME }}
 
 [Install]
 WantedBy=multi-user.target

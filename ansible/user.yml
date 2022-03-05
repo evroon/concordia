@@ -1,0 +1,25 @@
+---
+- name: "Create user"
+  ansible.builtin.user:
+    name: "{{ USERNAME }}"
+    comment: "{{ NAME }}"
+    home: "/home/{{ USERNAME }}"
+    shell: "/bin/zsh"
+    system: false
+    groups: sudo
+
+- name: "Copy homedir files"
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/home/{{ USERNAME }}"
+    owner: "{{ USERNAME }}"
+    group: "{{ USERNAME }}"
+    mode: '0644'
+  with_fileglob:
+    - ../home/*
+
+- name: Git clone concordia
+  git:
+    repo: 'https://github.com/evroon/concordia'
+    dest: "/home/{{ USERNAME }}/concordia"
+  become_user: "{{ USERNAME }}"

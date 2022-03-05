@@ -7,5 +7,6 @@ cd $TMP_DIR
 sudo mv /etc/nginx/sites-enabled/default .
 sudo rm /etc/nginx/sites-enabled/*
 sudo mv default /etc/nginx/sites-enabled/default
+sudo systemctl reload nginx
 
 sudo certbot certonly --expand
