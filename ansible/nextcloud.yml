@@ -16,9 +16,9 @@
   become_user: "www-data"
   become: yes
   shell: >
-    "{{ php }} occ maintenance:install"
+    {{ php }} occ maintenance:install
     --database postgres
-    --database-host "localhost"
+    --database-host localhost
     --database-name {{ NEXTCLOUD_PSQL_DB }}
     --database-user {{ NEXTCLOUD_PSQL_USER }}
     --database-pass {{ NEXTCLOUD_PSQL_PASSWORD }}
