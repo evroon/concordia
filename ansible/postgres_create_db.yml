@@ -6,8 +6,7 @@
   become_user: postgres
 
 - name: Create postgres database "{{ db_name }}"
-  community.postgresql.postgresql_table:
-    db: "{{ db_name }}"
+  community.postgresql.postgresql_db:
     name: "{{ db_name }}"
     owner: "{{ db_user }}"
   become: true
