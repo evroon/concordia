@@ -8,6 +8,7 @@
     - include: ufw.yml
     - include: install-files.yml
     - include: postgres.yml
+    - include: btop.yml
     - include: munin.yml
     - include: selfoss.yml
     - include: nextcloud.yml

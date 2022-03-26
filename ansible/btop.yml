@@ -1,0 +1,28 @@
+---
+- stat: path=/usr/local/bin/btop
+  register: btop_dir
+
+- block:
+  - name: Create temporary build directory
+    ansible.builtin.tempfile:
+      state: directory
+      suffix: btop
+    register: btop_tmp_dir
+
+  - name: Download btop release
+    get_url:
+      url: https://github.com/aristocratos/btop/releases/download/v1.2.5/btop-x86_64-linux-musl.tbz
+      dest: "{{ btop_tmp_dir.path }}"
+      mode: '0440'
+
+  - name: Extract btop tbz
+    ansible.builtin.unarchive:
+      src: "{{ btop_tmp_dir.path }}/btop-x86_64-linux-musl.tbz"
+      dest: "{{ btop_tmp_dir.path }}"
+
+  - name: Install btop
+    make:
+      chdir: "{{ btop_tmp_dir.path }}"
+      target: install
+
+  when: not (btop_dir.stat.isdir is defined and btop_dir.stat.isdir)
