@@ -42,23 +42,21 @@
     - { key: "trusted_domains 0", value: '--value={{ nextcloud_domain_name }}' }
     - { key: "mail_from_address", value: '--value={{ nextcloud_domain_name }}' }
 
-- name: configure php
-  copy:
-    src: '../nextcloud/cli.php.ini'
-    dest: '/etc/php/{{ php_version }}/php.ini'
-    owner: root
-    group: root
-    mode: 0644
-    force: true
-  notify: restart php-fpm
-
-- name: Configure php
+- name: Configure php memory limit
   ansible.builtin.lineinfile:
     path: "/etc/php/{{ php_version }}/php.ini"
     regexp: '^memory_limit = '
     line: "memory_limit = 1G"
   notify:
     - restart php-fpm
+    - restart nginx
+
+- name: Enable apcu
+  ansible.builtin.lineinfile:
+    path: "/etc/php/{{ php_version }}/cli/php.ini"
+    regexp: '^apc.enable_cli = '
+    line: "apc.enable_cli = 1"
+  notify:
     - restart nginx
 
 - name: configure php postgres module
