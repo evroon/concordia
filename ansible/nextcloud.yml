@@ -91,7 +91,7 @@
     name: nextcloud cronjob
     minute: '*/5'
     user: "www-data"
-    job: "php -f /var/www/nextcloud/cron.php > /dev/null 2>&1"
+    job: "{{ php }} -f /var/www/nextcloud/cron.php > /dev/null 2>&1"
 
 - name: change ImageMagick settings
   lineinfile:
@@ -116,7 +116,7 @@
 - name: set system config
   become_user: www-data
   become: yes
-  shell: php occ config:import /tmp/nextcloud.config.json
+  shell: "{{ php }} occ config:import /tmp/nextcloud.config.json"
   args:
     chdir: /var/www/nextcloud/
   register: setup_nc
