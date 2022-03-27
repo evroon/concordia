@@ -52,7 +52,7 @@
 
 - name: Configure php memory limit
   ansible.builtin.lineinfile:
-    path: "/etc/php/{{ php_version }}/php.ini"
+    path: "/etc/php/{{ php_version }}/cli/php.ini"
     regexp: '^memory_limit = '
     line: "memory_limit = 1G"
   notify:
