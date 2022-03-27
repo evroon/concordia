@@ -11,6 +11,7 @@
     - include: btop.yml
     - include: munin.yml
     - include: selfoss.yml
+    - include: redis.yml
     - include: nextcloud.yml
     - include: gitea.yml
     - include: nginx/nginx.yml
@@ -22,6 +23,18 @@
       state: restarted
     listen: "restart gitea"
 
-  - name: Restart nginx
+  - name: Reload nginx
     include_tasks: nginx/reload-nginx.yml
     listen: "restart nginx"
+
+  - name: Restart php-fpm
+    ansible.builtin.service:
+      name: php{{ php_version }}-fpm
+      state: restarted
+    listen: "restart php-fpm"
+
+  - name: Restart redis-server
+    ansible.builtin.service:
+      name: redis-server
+      state: restarted
+    listen: "restart redis-server"

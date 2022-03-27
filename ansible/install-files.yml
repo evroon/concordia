@@ -15,15 +15,20 @@
   with_fileglob:
     - ../lib/systemd/system/*
 
-- name: Create /nix
-  ansible.builtin.file:
-    path: /nix
-    state: directory
-    mode: '0777'
-    owner: "{{ USERNAME }}"
-    group: "{{ USERNAME }}"
+- stat: path=/nix
+  register: nix_dir
 
-- name: Install nix
-  command: "nix-install.sh"
-  become: true
-  become_user: "{{ USERNAME }}"
+- block:
+  - name: Create /nix
+    ansible.builtin.file:
+      path: /nix
+      state: directory
+      mode: '0777'
+      owner: "{{ username }}"
+      group: "{{ username }}"
+
+  - name: Install nix
+    command: "nix-install.sh"
+    become: true
+    become_user: "{{ username }}"
+  when: not (nix_dir.stat.isdir is defined and nix_dir.stat.isdir)

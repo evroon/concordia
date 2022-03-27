@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ${DOCKER_COMPOSE_DIR}
+cd {{ docker_compose_dir }}
 
 sudo docker pull lissy93/dashy
 sudo docker pull homeassistant/home-assistant:stable

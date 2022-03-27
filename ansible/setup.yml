@@ -41,6 +41,8 @@
       - "{{ php }}-intl"
       - "{{ php }}-bcmath"
       - "{{ php }}-gmp"
+      - "{{ php }}-redis"
+      - "{{ php }}-apcu"
       - certbot
       - python3-certbot-nginx
       - mailutils
@@ -54,6 +56,8 @@
       - apt-transport-https
       - fail2ban
       - wireguard
+      - libmagickcore-6.q16-6-extra
+      - redis-server
 
 - name: Uninstall apache2
   apt:

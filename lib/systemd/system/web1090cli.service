@@ -6,7 +6,7 @@ After=network.target
 [Service]
 RestartSec=2s
 Type=simple
-User={{ USERNAME }}
+User={{ username }}
 WorkingDirectory=/usr/share/web1090/api
 ExecStart=python3 /usr/share/web1090/api/cli.py track-aircraft
 Restart=always

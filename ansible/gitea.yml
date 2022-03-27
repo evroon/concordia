@@ -13,7 +13,7 @@
 
 - set_fact: gitea_gpg_key="7C9E68152594688862D62AF62D9AE806EC1592E2"
 - set_fact: gitea_version="{{ gitea_version.stdout | regex_replace('v', '') }}"
-- set_fact: gitea_dl_url="https://dl.gitea.io/gitea/{{ gitea_version }}/gitea-{{ gitea_version }}-linux-{{ GITEA_PLATFORM }}"
+- set_fact: gitea_dl_url="https://dl.gitea.io/gitea/{{ gitea_version }}/gitea-{{ gitea_version }}-linux-{{ gitea_platform }}"
 
 - name: "Create Gitea Group"
   group:
@@ -69,10 +69,6 @@
     daemon_reload: true
 
 # - include_tasks: jwt_secrets.yml
-# - name: 'Install git'
-#   ansible.builtin.package:
-#     name: 'git'
-#     state: 'present'
 
 - name: "Configure gitea"
   ansible.builtin.template:
@@ -105,7 +101,7 @@
     - name: Download gitea archive
       get_url:
         url: "{{ gitea_dl_url }}.xz"
-        dest: "/tmp/gitea-{{ gitea_version }}.linux-{{ GITEA_PLATFORM }}.xz"
+        dest: "/tmp/gitea-{{ gitea_version }}.linux-{{ gitea_platform }}.xz"
         checksum: "sha256:{{ gitea_dl_url }}.xz.sha256"
       register: _download_archive
       until: _download_archive is succeeded
@@ -115,7 +111,7 @@
     - name: Download gitea asc file
       get_url:
         url: "{{ gitea_dl_url }}.xz.asc"
-        dest: "/tmp/gitea-{{ gitea_version }}.linux-{{ GITEA_PLATFORM }}.xz.asc"
+        dest: "/tmp/gitea-{{ gitea_version }}.linux-{{ gitea_platform }}.xz.asc"
       register: _download_asc
       until: _download_asc is succeeded
       retries: 5
@@ -134,17 +130,17 @@
       when: _gitea_gpg_key_status.rc != 0
 
     - name: Check archive signature
-      command: "gpg --verify /tmp/gitea-{{ gitea_version }}.linux-{{ GITEA_PLATFORM }}.xz.asc /tmp/gitea-{{ gitea_version }}.linux-{{ GITEA_PLATFORM }}.xz"
+      command: "gpg --verify /tmp/gitea-{{ gitea_version }}.linux-{{ gitea_platform }}.xz.asc /tmp/gitea-{{ gitea_version }}.linux-{{ gitea_platform }}.xz"
       changed_when: false
 
     - name: Unpack gitea binary
       command:
-        cmd: "xz -k -d /tmp/gitea-{{ gitea_version }}.linux-{{ GITEA_PLATFORM }}.xz"
-        creates: "/tmp/gitea-{{ gitea_version }}.linux-{{ GITEA_PLATFORM }}"
+        cmd: "xz -k -d /tmp/gitea-{{ gitea_version }}.linux-{{ gitea_platform }}.xz"
+        creates: "/tmp/gitea-{{ gitea_version }}.linux-{{ gitea_platform }}"
 
     - name: Propagate gitea binary
       copy:
-        src: "/tmp/gitea-{{ gitea_version }}.linux-{{ GITEA_PLATFORM }}"
+        src: "/tmp/gitea-{{ gitea_version }}.linux-{{ gitea_platform }}"
         remote_src: true
         dest: "/usr/local/bin/gitea"
         mode: 0755

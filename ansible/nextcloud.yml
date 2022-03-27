@@ -1,9 +1,9 @@
 ---
 - name: Download nextcloud archive
   get_url:
-    url:  "{{ NEXTCLOUD_ARCHIVE }}"
+    url:  "{{ nextcloud_archive }}"
     dest: /tmp/nextcloud.tar.bz2
-    checksum: "sha256:{{ NEXTCLOUD_ARCHIVE }}.sha256"
+    checksum: "sha256:{{ nextcloud_archive }}.sha256"
 
 - name: Install Nextcloud
   unarchive:
@@ -19,12 +19,12 @@
     {{ php }} occ maintenance:install
     --database postgres
     --database-host localhost
-    --database-name {{ NEXTCLOUD_PSQL_DB }}
-    --database-user {{ NEXTCLOUD_PSQL_USER }}
-    --database-pass {{ NEXTCLOUD_PSQL_PASSWORD }}
-    --admin-user {{ NEXTCLOUD_ADMIN_USER }}
-    --admin-pass {{ NEXTCLOUD_ADMIN_PASSWORD }}
-    --data-dir {{ NEXTCLOUD_DATA_DIR }}
+    --database-name {{ nextcloud_psql_db }}
+    --database-user {{ nextcloud_psql_user }}
+    --database-pass {{ nextcloud_psql_password }}
+    --admin-user {{ nextcloud_admin_user }}
+    --admin-pass {{ nextcloud_admin_password }}
+    --data-dir {{ nextcloud_data_dir }}
   args:
     chdir: /var/www/nextcloud/
     creates: /var/www/nextcloud/config/config.php
@@ -38,5 +38,86 @@
   args:
     chdir: /var/www/nextcloud/
   with_items:
-    - { key: "overwrite.cli.url", value: '--value=https://{{ NEXTCLOUD_DOMAIN_NAME }}' }
-    - { key: "trusted_domains", value: '1 --value={{ NEXTCLOUD_DOMAIN_NAME }}' }
+    - { key: "overwrite.cli.url", value: '--value=https://{{ nextcloud_domain_name }}' }
+    - { key: "trusted_domains 0", value: '--value={{ nextcloud_domain_name }}' }
+    - { key: "mail_from_address", value: '--value={{ nextcloud_domain_name }}' }
+
+- name: configure php
+  copy:
+    src: '../nextcloud/cli.php.ini'
+    dest: '/etc/php/{{ php_version }}/php.ini'
+    owner: root
+    group: root
+    mode: 0644
+    force: true
+  notify: restart php-fpm
+
+- name: Configure php
+  ansible.builtin.lineinfile:
+    path: "/etc/php/{{ php_version }}/php.ini"
+    regexp: '^memory_limit = '
+    line: "memory_limit = 1G"
+  notify:
+    - restart php-fpm
+    - restart nginx
+
+- name: configure php postgres module
+  copy:
+    dest: /etc/php/{{ php_version }}/mods-available/pgsql.ini
+    content: |
+      # configuration for PHP PostgreSQL module
+      extension=pgsql.so
+
+      [PostgresSQL]
+      pgsql.allow_persistent = On
+      pgsql.auto_reset_persistent = Off
+      pgsql.max_persistent = -1
+      pgsql.max_links = -1
+      pgsql.ignore_notice = 0
+      pgsql.log_notice = 0
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart php-fpm
+
+- name: add nextcloud cronjob
+  cron:
+    name: nextcloud cronjob
+    minute: '*/5'
+    user: "www-data"
+    job: "php -f /var/www/nextcloud/cron.php > /dev/null 2>&1"
+
+- name: change ImageMagick settings
+  lineinfile:
+    path:   '/etc/ImageMagick-6/policy.xml'
+    line:   '  <policy domain="coder" rights="read|write" pattern="{{ item }}" />'
+    regexp: '(.*)<policy domain="coder" rights="(.*)" pattern="{{ item }}" />(.*)'
+    insertbefore: '</policymap>'
+  loop:
+    - PS
+    - EPI
+    - PDF
+    - XPS
+
+
+- name: copy system_config.json to /tmp
+  copy:
+    src: ../nextcloud/system_config.json
+    dest: /tmp/nextcloud.config.json
+    owner: www-data
+    mode: 0600
+
+- name: set system config
+  become_user: www-data
+  become: yes
+  shell: php occ config:import /tmp/nextcloud.config.json
+  args:
+    chdir: /var/www/nextcloud/
+  register: setup_nc
+
+- name: Pass environment variables
+  ansible.builtin.lineinfile:
+    path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
+    regexp: '^;clear_env ='
+    line: "clear_env = no"
+  notify: restart php-fpm
