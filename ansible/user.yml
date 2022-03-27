@@ -23,10 +23,6 @@
   register: concordia_stat
 
 - name: Git clone concordia
-  debug:
-    msg: "{{ concordia_stat }}"
-
-- name: Git clone concordia
   git:
     repo: 'https://github.com/evroon/concordia'
     dest: "/home/{{ username }}/concordia"

@@ -42,6 +42,14 @@
     - { key: "trusted_domains 0", value: '--value={{ nextcloud_domain_name }}' }
     - { key: "mail_from_address", value: '--value={{ nextcloud_domain_name }}' }
 
+- name: Get php.ini location
+  command: "{{ php }} --ini"
+  register: php_ini
+
+- name: Debug php.ini
+  debug:
+    msg: "{{ php_ini }}"
+
 - name: Configure php memory limit
   ansible.builtin.lineinfile:
     path: "/etc/php/{{ php_version }}/php.ini"
