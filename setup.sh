@@ -2,15 +2,7 @@
 
 # Install ansible
 sudo apt install ansible
-sudo ansible-playbook -e @secrets.enc ansible/build.yml
+sudo ansible-galaxy collection install community.postgresql
 
-if [ ! -f versions.env ]; then
-    cat > versions.env << EOF
-GITEA=Not Installed
-PIAWARE=Not Installed
-DOCKER_COMPOSE=Not Installed
-SELFOSS=Not Installed
-EOF
-fi
-
-./build.sh
+# Run build playbook
+sudo ansible-playbook -e @ansible/secrets.ci.yml -e @ansible/inventory.yml -e @ansible/installed_versions.yml ansible/build.yml

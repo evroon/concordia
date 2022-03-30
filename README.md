@@ -21,6 +21,8 @@ The following (web) services are installed and configured:
 * Selfoss-discord
 * Minecraft server
 * Msmtp
+* btop
+* Redis
 
 
 The following ADS-B feeders are installed:
