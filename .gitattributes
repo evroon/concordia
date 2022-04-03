@@ -1,0 +1,2 @@
+*.yml linguist-generated=true
+*.yml linguist-language=Ansible
