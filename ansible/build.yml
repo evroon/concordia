@@ -1,10 +1,12 @@
 ---
 - name: Playbook to build concordia
-  hosts: localhost
-  connection: local
+  hosts: webserver
   tasks:
-    - include: install-requirements.yml
+    - include_vars: inventory.yml
+    - include_vars: installed_versions.yml
+    - include_vars: secrets.enc
     - include: setup.yml
+    - include: install-requirements.yml
     - include: ufw.yml
     - include: install-files.yml
     - include: postgres.yml

@@ -7,6 +7,7 @@
     shell: "/bin/zsh"
     system: false
     groups: sudo
+  become: yes
 
 - name: "Copy homedir files"
   ansible.builtin.template:

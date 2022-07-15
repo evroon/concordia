@@ -6,6 +6,7 @@
     mode: '0755'
   with_fileglob:
     - ../usr/bin/*
+  become: yes
 
 - name: Move systemd service files
   ansible.builtin.copy:
@@ -14,6 +15,7 @@
     mode: '0755'
   with_fileglob:
     - ../lib/systemd/system/*
+  become: yes
 
 - stat: path=/nix
   register: nix_dir
@@ -26,6 +28,7 @@
       mode: '0777'
       owner: "{{ username }}"
       group: "{{ username }}"
+    become: yes
 
   - name: Install nix
     command: "nix-install.sh"

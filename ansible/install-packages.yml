@@ -2,8 +2,6 @@
 
 ---
 - name: Install user packages
-  hosts: localhost
-  connection: localhost
   tasks:
     - include: install-files.yml
     # - include: nextcloud.yml

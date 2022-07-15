@@ -13,6 +13,7 @@
     mode: 0755
     force: true
   when: selfoss_version | default(-1) != selfoss_version_latest.stdout
+  become: yes
 
 - name: Git clone selfoss-discord
   git:
