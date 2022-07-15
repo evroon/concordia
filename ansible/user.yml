@@ -1,25 +1,32 @@
 ---
 - name: "Create user"
   ansible.builtin.user:
-    name: "{{ USERNAME }}"
-    comment: "{{ NAME }}"
-    home: "/home/{{ USERNAME }}"
+    name: "{{ username }}"
+    comment: "{{ full_name }}"
+    home: "/home/{{ username }}"
     shell: "/bin/zsh"
     system: false
     groups: sudo
+  become: yes
 
 - name: "Copy homedir files"
-  ansible.builtin.copy:
+  ansible.builtin.template:
     src: "{{ item }}"
-    dest: "/home/{{ USERNAME }}"
-    owner: "{{ USERNAME }}"
-    group: "{{ USERNAME }}"
+    dest: "/home/{{ username }}"
+    owner: "{{ username }}"
+    group: "{{ username }}"
     mode: '0644'
   with_fileglob:
     - ../home/*
 
+- stat:
+    path: "/home/{{ username }}/concordia"
+  register: concordia_stat
+
 - name: Git clone concordia
   git:
     repo: 'https://github.com/evroon/concordia'
-    dest: "/home/{{ USERNAME }}/concordia"
-  become_user: "{{ USERNAME }}"
+    dest: "/home/{{ username }}/concordia"
+  become: true
+  become_user: "{{ username }}"
+  when: not (concordia_stat.stat.isdir is defined and concordia_stat.stat.isdir)

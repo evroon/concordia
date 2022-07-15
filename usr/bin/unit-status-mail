@@ -1,5 +1,5 @@
 #!/bin/bash
-MAILTO="${EMAIL}"
+MAILTO="{{ email }}"
 MAILFROM="unit-status-mailer"
 UNIT="$1"
 

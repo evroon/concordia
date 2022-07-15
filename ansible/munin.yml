@@ -1,5 +1,6 @@
 ---
-- stat: path=/etc/munin/static
+- stat:
+    path: /etc/munin/static
   register: static_dir
 
 - block:

@@ -1,1 +1,2 @@
-php: php7.4
+php_version: 8.1
+php: "php{{ php_version }}"

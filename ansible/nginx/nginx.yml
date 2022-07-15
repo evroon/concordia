@@ -1,5 +1,10 @@
 ---
 - name: Copy letsencrypt cli.ini
-  ansible.builtin.copy:
+  ansible.builtin.template:
+    src: ../letsencrypt/cli.ini
+    dest: /etc/letsencrypt/cli.ini
+
+- name: Copy letsencrypt cli.ini
+  ansible.builtin.template:
     src: ../letsencrypt/cli.ini
     dest: /etc/letsencrypt/cli.ini

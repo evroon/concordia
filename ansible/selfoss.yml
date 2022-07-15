@@ -13,6 +13,7 @@
     mode: 0755
     force: true
   when: selfoss_version | default(-1) != selfoss_version_latest.stdout
+  become: yes
 
 - name: Git clone selfoss-discord
   git:
@@ -22,14 +23,14 @@
 
 - name: Update selfoss version
   ansible.builtin.lineinfile:
-    path: "{{ CONCORDIA_DIR }}/ansible/installed_versions.yml"
+    path: "{{ concordia_dir }}/ansible/installed_versions.yml"
     regexp: '^selfoss_version:'
     line: "selfoss_version: {{ selfoss_version_latest.stdout }}"
 
 - name: "Copy update script"
   ansible.builtin.template:
-    src: ../usr/bin/update-selfoss.j2
-    dest: /usr/bin/selfoss-update
+    src: ../selfoss/update-selfoss
+    dest: /usr/bin/update-selfoss
     owner: "www-data"
     group: "www-data"
     mode: 0700
