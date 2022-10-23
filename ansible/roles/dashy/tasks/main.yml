@@ -1,0 +1,7 @@
+- name: "Configure dashy"
+  ansible.builtin.template:
+    src: dashy-config.yml.j2
+    dest: /etc/dashy-config.yml
+    mode: 0600
+  become: true
+  

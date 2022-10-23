@@ -1,0 +1,21 @@
+- stat: path=/usr/local/bin/op
+  register: op_stat
+
+- block:
+  - name: Download 1password archive
+    get_url:
+      url: "https://cache.agilebits.com/dist/1P/op2/pkg/v2.7.1/op_linux_amd64_v2.7.1.zip"
+      dest: "/tmp/op.zip"
+      checksum: "sha256:13f764ac04897fbdb8d61e2d7a8bf5580210398b5e162ddc03cc21e224da4ffe"
+    register: _download_archive
+    until: _download_archive is succeeded
+    retries: 5
+    delay: 2
+
+  - name: Extract op.zip
+    unarchive:
+      remote_src: true
+      src: /tmp/op.zip
+      dest: /usr/local/bin
+    become: true
+  when: not (op_stat.stat.exists is defined and op_stat.stat.exists)

@@ -1,0 +1,27 @@
+---
+- name: "Copy homedir files"
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/home/{{ ansible_user_id }}/{{ item }}"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: '0644'
+  with_items:
+    # - ".bashrc"
+    - ".gitconfig"
+    - "settings.json"
+  become: true
+
+- stat:
+    path: "/home/{{ ansible_user_id }}/concordia"
+  register: concordia_stat
+
+- name: Git clone concordia
+  git:
+    repo: 'https://github.com/evroon/concordia'
+    dest: "/home/{{ ansible_user_id }}/concordia"
+  become: true
+  become_user: "{{ ansible_user_id }}"
+  when: not (concordia_stat.stat.isdir is defined and concordia_stat.stat.isdir)
+  environment:
+    PATH: "{{ ansible_env.PATH|default('')}}:/usr/local/bin:/usr/bin"

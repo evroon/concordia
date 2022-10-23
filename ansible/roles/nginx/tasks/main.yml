@@ -1,0 +1,31 @@
+---
+- name: Install apt packages
+  apt:
+    state: present
+    name:
+      - nginx
+  become: true
+
+- name: Uninstall apache2
+  apt:
+    state: absent
+    name:
+      - apache2
+  become: true
+
+- name: Copy nginx.conf
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+  become: true
+
+- name: "Copy site configs"
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "/etc/nginx/sites-available"
+    owner: "www-data"
+    group: "www-data"
+    mode: '0644'
+  with_fileglob:
+    - "sites-available/*"
+  become: true

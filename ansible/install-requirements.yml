@@ -1,3 +1,0 @@
----
-- name: Install requirements
-  command: "ansible-galaxy install -r requirements.yml"

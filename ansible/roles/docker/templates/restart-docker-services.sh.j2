@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd {{ docker_compose_dir }}
+
+sudo docker-compose up -d --force-recreate
+
+sudo docker system prune -f
+sudo docker volume prune -f
+sudo docker network prune -f

@@ -21,6 +21,8 @@ The following (web) services are installed and configured:
 * Selfoss-discord
 * Minecraft server
 * Msmtp
+* btop
+* Redis
 
 
 The following ADS-B feeders are installed:
@@ -29,7 +31,7 @@ The following ADS-B feeders are installed:
 * RadarBox
 * PiAware
 
-## Setup
+## Setup on Raspberry Pi
 First, download Raspbian from [here](https://www.raspberrypi.com/software/operating-systems/).
 
 If you want to start the Pi without connecting a keyboard, mouse and display to it, create an empty `ssh` file in the `boot` directory to enable SSH.
@@ -60,3 +62,10 @@ git clone git@github.com:evroon/concordia.git
 cd concordia
 ./setup.sh
 ```
+
+## Build server on Hetzner Cloud
+1. Build a server with the configuration from `hetzner.config` (and replace the public SSH key)
+1. SSH into the server
+1. Run `./setup-concordia.sh`
+1. Put the newly generated public SSH key in [Github settings](https://github.com/settings/ssh/new)
+1. Make sure `secrets.enc` and `.vault_pass` files are in place

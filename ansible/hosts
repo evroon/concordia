@@ -1,0 +1,2 @@
+webserver ansible_connection=local
+dev_machine ansible_connection=local

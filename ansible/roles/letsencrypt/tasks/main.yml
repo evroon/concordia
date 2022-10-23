@@ -1,0 +1,26 @@
+---
+- name: Install apt packages
+  apt:
+    state: present
+    name:
+      - certbot
+      - python3-certbot-nginx
+  become: true
+
+- name: "create acme-challenges directory"
+  file:
+    path: "/var/www/acme-challenges"
+    state: "directory"
+    owner: "root"
+    group: "www-data"
+    # The 2xxx octal means the group setuid bit is set, meaning all
+    # files that get created in this directory will have the group
+    # `www-data`.
+    mode: "2750"
+  become: true
+
+- name: Copy letsencrypt cli.ini
+  ansible.builtin.template:
+    src: cli.ini.j2
+    dest: /etc/letsencrypt/cli.ini
+  become: true

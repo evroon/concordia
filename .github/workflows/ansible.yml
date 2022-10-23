@@ -4,13 +4,13 @@ on: [push, workflow_dispatch]
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install ansible
-        run: sudo apt install ansible && sudo ansible-galaxy collection install community.postgresql
+      - name: Setup
+        run: ./setup-concordia.sh
 
-      - name: Run ansible playbooks
-        run: sudo ansible-playbook -e @ansible/secrets.ci.yml -e @ansible/inventory.yml -e @ansible/installed_versions.yml ansible/build.yml
+      - name: Run build.py
+        run: cd ansible && ./build.py --ci
