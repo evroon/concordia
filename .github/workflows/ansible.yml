@@ -13,4 +13,4 @@ jobs:
         run: ./setup-concordia.sh
 
       - name: Run build.py
-        run: cd ansible && ./build.py --ci
+        run: ./build.py --ci

@@ -13,17 +13,20 @@ nix shell -f default.nix -c provision ansible --tags nginx --limit app_gateways 
 Here, the `nginx` tag was generated dynamically.
 """
 from __future__ import print_function
-from ansible.plugins.callback import CallbackBase
+
+from typing import Any
+
+from ansible.plugins.callback import CallbackBase  # type: ignore[import]
 
 
-class CallbackModule(CallbackBase):
+class CallbackModule(CallbackBase):  # type: ignore[misc]
     """
     Ansible supports several types of plugins. We are using the *callback* type here, since
     it seemed the best choice for our use case, because it allows you to hook into the start
     of a playbook.
     """
 
-    def v2_playbook_on_start(self, playbook):
+    def v2_playbook_on_start(self, playbook: Any) -> None:  # type: ignore[misc]
         """
         Dynamically add a tag of the same name to each role.
         Note: Plays, roles, task_blocks and tasks can have tags.

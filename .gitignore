@@ -8,3 +8,4 @@ versions.env
 ansible/installed_versions.yml
 
 __pycache__
+.junit_report.xml

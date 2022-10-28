@@ -1,0 +1,31 @@
+name: python-checks
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install pip3 requirements
+        run: pip3 install -r requirements.txt
+
+      - name: Run mypy
+        run: ./check.py --check --mypy
+
+      - name: Run black
+        run: ./check.py --check --black
+
+      - name: Run pylint
+        run: ./check.py --check --pylint
+
+      - name: Run isort
+        run: ./check.py --check --isort
+
+      - name: Run autoflake
+        run: ./check.py --check --autoflake
+
+      - name: Run bandit
+        run: ./check.py --check --bandit

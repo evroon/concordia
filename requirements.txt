@@ -2,3 +2,9 @@ python-dotenv
 python-dateutil
 psycopg2
 requests
+mypy
+black
+pylint
+bandit
+autoflake
+toml
