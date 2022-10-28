@@ -1,0 +1,14 @@
+---
+- name: Install apt packages
+  apt:
+    state: present
+    name:
+      - fail2ban
+  become: true
+
+- name: "Configure fail2ban"
+  ansible.builtin.template:
+    src: jail.conf.j2
+    dest: /etc/fail2ban/jail.local
+    mode: 0600
+  become: true

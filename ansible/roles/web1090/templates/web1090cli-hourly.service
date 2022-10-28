@@ -1,0 +1,13 @@
+[Unit]
+Description=Stores ADS-B data in Postgres.
+After=syslog.target
+After=network.target
+
+[Service]
+Type=oneshot
+User={{ ansible_user_id }}
+WorkingDirectory=/usr/share/web1090/api
+ExecStart=python3 /usr/share/web1090/api/cli.py load-data-source --source=google.missing_routes
+
+[Install]
+WantedBy=multi-user.target

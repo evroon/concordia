@@ -1,1 +1,17 @@
-php: php7.4
+php_version: 8.1
+php: "php{{ php_version }}"
+cert:
+  name: "{{ domain_name }}"
+  alternative_names:
+  - "www.{{ domain_name }}"
+  - "{{ gitea_domain_name }}"
+  - "{{ selfoss_domain_name }}"
+  - "{{ munin_domain_name }}"
+  - "{{ nextcloud_domain_name }}"
+  - "{{ web1090_domain_name }}"
+  - "{{ uptime_kuma_domain_name }}"
+  - "{{ grafana_domain_name }}"
+
+postgres_backup_dbs:
+  - gitea
+  - selfoss

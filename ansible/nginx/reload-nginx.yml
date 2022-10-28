@@ -1,9 +1,0 @@
----
-- name: "test nginx configuration"
-  command: "nginx -t"
-  changed_when: false
-
-- name: "actually perform the reload"
-  systemd:
-    name: "nginx.service"
-    state: "reloaded"

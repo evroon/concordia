@@ -1,0 +1,84 @@
+appConfig:
+  theme: "colorful"
+  fontAwesomeKey: "0821c65656"
+  layout: "horizontal"
+  iconSize: "medium"
+  language: "en"
+  allowConfigEdit: false
+  customColors:
+    default:
+      primary: "#985ceb"
+      backgroundDarker: "#141b33"
+
+pageInfo:
+  title: "Dashy"
+  navLinks:
+    - title: "Home"
+      path: "/"
+  description: ""
+  footerText: ""
+
+sections:
+  - name: "Server"
+    items:
+      - title: "Uptime Kuma"
+        description: "Uptime Kuma"
+        icon: "fas fa-check-circle"
+        url: "https://{{ uptime_kuma_domain_name }}"
+
+      - title: "Gitea"
+        description: "Gitea"
+        icon: "fab fa-git-square"
+        url: "https://{{ gitea_domain_name }}"
+
+      - title: "Munin"
+        description: "Munin"
+        icon: "fas fa-chart-bar"
+        url: "https://{{ munin_domain_name }}"
+
+      - title: "Selfoss"
+        description: "Selfoss RSS Reader"
+        icon: "fas fa-rss"
+        url: "https://{{ selfoss_domain_name }}"
+
+      - title: "Nextcloud"
+        description: "Nextcloud"
+        icon: "fas fa-cloud"
+        url: "https://{{ nextcloud_domain_name }}"
+
+      - title: "Home Assistant"
+        description: "Home Assistant"
+        icon: "fas fa-home"
+        url: "{{ home_assistant_url }}"
+
+
+  - name: "ADS-B"
+    items:
+      - title: "FlightAware"
+        description: "FlightAware"
+        icon: "fas fa-plane"
+        url: "{{ flightaware_url }}"
+
+      - title: "FR24"
+        description: "FR24"
+        icon: "fas fa-globe-europe"
+        url: "{{ fr24_url }}"
+
+      - title: "RadarBox"
+        description: "RadarBox"
+        icon: "fas fa-box"
+        url: "{{ radarbox_url }}"
+
+      - title: "PlaneFinder"
+        description: "PlaneFinder"
+        icon: "fas fa-location-arrow"
+        url: "{{ planefinder_url }}"
+
+
+
+  - name: "Personal"
+    items:
+      - title: "Blog"
+        description: "Blog on Github Pages"
+        icon: "fas fa-blog"
+        url: "https://evroon.github.io/"

@@ -1,0 +1,20 @@
+- name: Install apt packages
+  apt:
+    state: present
+    name:
+      - postgresql
+      - postgresql-contrib
+      - postgresql-client
+      - pgpdump
+  become: true
+
+- name: Start postgresql
+  ansible.builtin.service:
+    name: postgresql
+    state: started
+  become: true
+
+- include: create_db.yml db_name='selfoss' db_user='selfoss' db_pass='{{ selfoss_psql_password }}'
+- include: create_db.yml db_name='nextcloud' db_user='nextcloud' db_pass='{{ nextcloud_psql_password }}'
+- include: create_db.yml db_name='gitea' db_user='gitea' db_pass='{{ gitea_psql_password }}'
+- include: create_db.yml db_name='fr24' db_user='fr24' db_pass='{{ fr24_psql_password }}'

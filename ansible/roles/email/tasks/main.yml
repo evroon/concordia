@@ -1,0 +1,17 @@
+---
+- name: Install apt packages
+  apt:
+    state: present
+    name:
+      - mailutils
+      - msmtp
+      - msmtp-mta
+  become: true
+
+- name: Copy msmtprc config
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/etc/{{ item }}"
+  become: true
+  with_items:
+    - "msmtprc"

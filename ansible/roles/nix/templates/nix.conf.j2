@@ -1,0 +1,33 @@
+# User group to build new stuff as.
+build-users-group = nixbld
+
+# Cache endpoints to fetch packages from.
+substituters = https://cache.nixos.org
+
+# Trust packages from cache signed by these keys.
+trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+
+# Allow root and users from the adm group to substitute binaries without
+# signatures. This is equivalent to root access on the box, but these users
+# have it anyway already.
+trusted-users = root @adm
+
+# Remember cache 404s for 5 seconds (the default of an hour is too aggressive).
+# This means Nix will perform more cache lookups, which helps when Cachix/S3 is
+# being inconsistent.
+narinfo-cache-negative-ttl = 5
+
+# Flush the derivation to disk before registering it. This should prevent store
+# corruption issues when an instance is shutdown (eg. preempted) while Nix is
+# installing a package.
+sync-before-registering = true
+
+# Setting this to 0 makes this machine not build derivations. Unfortunately,
+# this cannot be 0 since environments need to be built. We could get around
+# this by using custom builders but there's no need for this.
+max-jobs = 1
+
+# Enable the Nix command, which as of 2.11.0 is still experimental. Also enable
+# flakes support, since most useful commands now either require flakes or a
+# path. This also means we can probably drop channels.
+experimental-features = nix-command flakes

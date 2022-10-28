@@ -1,0 +1,48 @@
+---
+- stat: path=/nix
+  register: nix_dir
+
+- name: Copy install script
+  ansible.builtin.template:
+    src: "nix-install.sh"
+    dest: "/usr/local/bin/nix-install.sh"
+    mode: '0755'
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    remote_src: true
+  become: true
+
+- name: "Create config directory"
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user_id }}/.config/nix"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: '0755'
+  become: true
+
+- name: "Write nix configuration file"
+  template:
+    src: "nix.conf.j2"
+    dest: "/home/{{ ansible_user_id }}/.config/nix/nix.conf"
+    mode: "0664"
+  become: true
+
+- block:
+  - name: Create /nix
+    ansible.builtin.file:
+      path: /nix
+      state: directory
+      mode: '0777'
+      owner: "{{ ansible_user_id }}"
+      group: "{{ ansible_user_id }}"
+    become: true
+
+  - name: Install nix
+    command: "/usr/local/bin/nix-install.sh"
+    become: true
+    become_user: "{{ ansible_user_id }}"
+    environment:
+      HOME: "/home/{{ ansible_user_id }}"
+
+  when: not (nix_dir.stat.isdir is defined and nix_dir.stat.isdir)

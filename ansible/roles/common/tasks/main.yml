@@ -1,0 +1,81 @@
+---
+- name: Print $PATH
+  ansible.builtin.debug:
+    msg: "PATH: {{ lookup('ansible.builtin.env', 'PATH', default='') }}"
+
+- name: Upgrade all Packages
+  register: updatesys
+  apt:
+    name: "*"
+    state: latest
+    update_cache: yes
+  become: true
+
+- name: Install apt packages
+  apt:
+    state: present
+    name:
+      - wget
+      - curl
+      - git
+      - make
+      - unzip
+      - tar
+      - htop
+      - btop
+      - tmux
+      - pwgen
+      - uidmap
+      - telnet
+      - aha
+      - davfs2
+      - apt-transport-https
+      - wireguard
+      - libmagickcore-6.q16-6-extra
+      - python3
+      - python3-pip
+      - python3-psycopg2
+  become: true
+
+- name: "find all .bashrc files in home directories"
+  find:
+    paths: /home
+    recurse: yes
+    file_type: file
+    hidden: yes
+    pattern: .bashrc
+  register: bashrc_files
+  tags: "prompt"
+
+# - name: "add bash prompt to all .bashrc files"
+#   blockinfile:
+#     path: "{{ item.path }}"
+#     block: "{{ lookup('file', 'prompt.bash') }}"
+#   loop: "{{ bashrc_files.files + [{'path': '/etc/skel/.bashrc'}] }}"
+#   loop_control:
+#     label: "{{ item.path }}"
+#   tags: "prompt"
+
+- name: "set timezone to Europe/Amsterdam"
+  timezone:
+    name: "Europe/Amsterdam"
+  become: true
+
+- name: "ensure en_US.UTF-8 locale is generated"
+  locale_gen:
+    name: en_US.UTF-8
+    state: present
+  become: true
+
+- name: "set en_US.UTF-8 locale"  # noqa 301 haven't found a clean way of doing this
+  command: /usr/sbin/update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+  become: true
+
+- name: "Copy get_latest_github_release script"
+  ansible.builtin.template:
+    src: get_latest_github_release.j2
+    dest: /usr/local/bin/get_latest_github_release
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: 0744
+  become: true

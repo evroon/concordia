@@ -1,0 +1,21 @@
+server {
+    listen 80;
+    server_name {{ grafana_domain_name }};
+    return 301 https://{{ grafana_domain_name }}$request_uri;
+}
+
+server {
+    server_name {{ grafana_domain_name }};
+
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    location / {
+        proxy_pass http://localhost:3000;
+    }
+
+    ssl_certificate /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ domain_name }}/privkey.pem;
+
+    proxy_set_header Host {{ grafana_domain_name }};
+}

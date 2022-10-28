@@ -1,0 +1,15 @@
+server {
+    listen       80 default_server;
+    server_name  {{ domain_name }};
+
+    include includes/security-headers.conf;
+
+    location '/.well-known/acme-challenge' {
+        default_type "text/plain";
+        root /var/www/acme-challenges;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}

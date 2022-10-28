@@ -1,0 +1,11 @@
+---
+- ufw:
+    state: enabled
+    rule: allow
+    port: '{{ item }}'
+    proto: tcp
+  with_items:
+    - '80'
+    - '443'
+    - '22'
+  become: true

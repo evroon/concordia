@@ -1,0 +1,30 @@
+- hosts: webserver
+  handlers:
+    - import_tasks: "roles/common/handlers/main.yml"
+  roles:
+    - role: "1password"
+    - role: "common"
+    - role: "dashy"
+    - role: "docker"
+    - role: "email"
+    - role: "fail2ban"
+    - role: "grafana"
+    - role: "homedir"
+    - role: "letsencrypt"
+    - role: "munin"
+    - role: "nginx"
+    - role: "nix"
+    - role: "postgres"
+    - role: "postgres_backup"
+    - role: "selfoss"
+    - role: "systemd"
+    - role: "ufw"
+    - role: "unattended_upgrades"
+    - role: "gitea"
+
+- hosts: dev_machine
+  handlers:
+    - import_tasks: "roles/common/handlers/main.yml"
+  roles:
+    - role: "homedir"
+    - role: "unattended_upgrades"

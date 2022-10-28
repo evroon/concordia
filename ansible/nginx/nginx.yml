@@ -1,5 +1,0 @@
----
-- name: Copy letsencrypt cli.ini
-  ansible.builtin.copy:
-    src: ../letsencrypt/cli.ini
-    dest: /etc/letsencrypt/cli.ini

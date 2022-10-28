@@ -1,0 +1,30 @@
+---
+# These handlers are made available in every play by forcing Ansible to import
+# the tasks from this file.
+- name: "reload systemd"
+  systemd:
+    daemon_reload: true
+  environment:
+    PATH: "{{ ansible_env.PATH|default('')}}:/usr/local/bin:/usr/bin"
+  become: true
+
+- name: Restart gitea
+  ansible.builtin.service:
+    name: gitea
+    state: restarted
+  listen: "restart gitea"
+  become: true
+
+- name: "reload nginx"
+  block:
+  - name: "test nginx configuration"
+    command: "nginx -t"
+    changed_when: false
+
+  - name: "actually perform the reload"
+    systemd:
+      name: "nginx.service"
+      state: "reloaded"
+  become: true
+  environment:
+    PATH: "{{ ansible_env.PATH|default('')}}:/usr/local/bin:/usr/bin"

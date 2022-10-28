@@ -1,0 +1,52 @@
+---
+- name: Install apt packages
+  apt:
+    state: present
+    name:
+      - docker-compose
+  become: true
+
+- name: Copy systemd service and timer
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/lib/systemd/system/{{ item }}"
+  become: true
+  with_items:
+    - "update-docker-services.service"
+    - "update-docker-services.timer"
+
+- name: Copy scripts
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/usr/local/bin/{{ item }}"
+    mode: '0755'
+    remote_src: true
+  become: true
+  with_items:
+    - "update-docker-services.sh"
+    - "restart-docker-services.sh"
+
+- name: "Create config and data directory"
+  ansible.builtin.file:
+    path: "/usr/share/concordia"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: '0755'
+  become: true
+
+- name: "Copy docker-compose.yml"
+  ansible.builtin.template:
+    src: "docker-compose.yml.j2"
+    dest: "/usr/share/concordia/docker-compose.yml"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: '0644'
+  become: true
+
+- name: "Start update-docker-services.service"
+  ansible.builtin.service:
+    name: "update-docker-services"
+    state: started
+    enabled: true
+  become: true

@@ -6,3 +6,5 @@ versions.env
 .vault_pass
 
 ansible/installed_versions.yml
+
+__pycache__

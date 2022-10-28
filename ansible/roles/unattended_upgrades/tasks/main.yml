@@ -1,0 +1,10 @@
+---
+- name: Copy config
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/etc/apt/apt.conf.d/{{ item }}"
+  become: true
+  with_items:
+    - "02periodic"
+    - "20auto-upgrades"
+  

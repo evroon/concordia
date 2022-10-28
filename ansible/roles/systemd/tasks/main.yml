@@ -1,0 +1,14 @@
+---
+- name: Copy systemd config
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/lib/systemd/system/{{ item }}"
+  become: true
+  with_items:
+    - "unit-status-mailer@.service"
+  
+- name: Copy unit-status-mail script
+  ansible.builtin.template:
+    src: "unit-status-mail.j2"
+    dest: "/usr/bin/unit-status-mail"
+  become: true
