@@ -58,6 +58,7 @@
     - "/home/git/custom/mailer"
     - "/home/git/indexers"
     - "/home/git/log"
+    - "/var/lib/gitea"
   become: true
 
 - name: "Setup systemd service"
