@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+
+import sys
+
+import psycopg2
+
+
+def print_config() -> None:
+    print("graph_title PiAware routes")
+    print("graph_vlabel count")
+    print("graph_category adsb")
+    print("graph_info Number of ADS-B routes stored in postgres.")
+
+    print("routes.label Flights")
+
+
+def print_value() -> None:
+    con = psycopg2.connect(
+        database="{{ fr24_psql_db }}",
+        user="{{ fr24_psql_user }}",
+        password="{{ fr24_psql_password }}",
+        host="127.0.0.1",
+        port="{{ psql_port }}"
+    )
+    cur = con.cursor()
+
+    cur.execute("select count(*) from routesdata;")
+    routes = cur.fetchone()[0]
+
+    print(f'routes.value {routes}')
+
+
+if __name__ == '__main__':
+    if len(sys.argv) > 1 and sys.argv[1] == 'config':
+        print_config()
+    else:
+        print_value()
