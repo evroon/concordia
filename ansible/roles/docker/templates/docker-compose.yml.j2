@@ -5,7 +5,7 @@ services:
         image: homeassistant/home-assistant:stable
         container_name: homeassistant
         restart: always
-        env_file: ~/.env
+        env_file: {{ docker_compose_dir }}/.env
         volumes:
             - {{ home_assistant_dir }}/config:/config
             - /etc/localtime:/etc/localtime
@@ -83,58 +83,7 @@ services:
         profiles:
             - pihole # Start pihole only when needed
 
-  drone-server:
-    container_name: drone-server
-    image: drone/drone:2
-    ports:
-      - 8000:80
-      - 9000:443
-    networks:
-      - drone
-    volumes:
-      - ./drone-data:/var/lib/drone/
-      - /var/run/docker.sock:/var/run/docker.sock
-    env_file:
-      - ./drone.env
-    restart: always
-    environment:
-      - DRONE_GITHUB_SKIP_VERIFY=true
-      - DRONE_AGENTS_ENABLED=true
-      - DRONE_SERVER_HOST=localhost:8000
-      - DRONE_SERVER_PROTO=http
-      - DRONE_TLS_AUTOCERT=false
-      - DRONE_OPEN=false
-      - DRONE_HOST=https://localhost:8000
-      - DRONE_GITHUB=true
-      # Variables below set via drone.env file
-      # - DRONE_USER_CREATE=
-      # - DRONE_USER_FILTER=
-      # - DRONE_GITHUB_CLIENT_ID=
-      # - DRONE_GITHUB_CLIENT_SECRET=
-      # - DRONE_RPC_SECRET=
-
-  drone-agent:
-    container_name: drone-runner
-    image: drone/drone-runner-docker:1
-    restart: always
-    depends_on:
-      - drone-server
-    networks:
-      - drone
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    env_file:
-      - ./drone.env
-    environment:
-      - DRONE_RPC_SERVER=drone-server:8000
-      # Variables below set via drone.env file
-      # - DRONE_RPC_SECRET=
-
 volumes:
     certs:
     logs:
     fallbackcerts:
-
-networks:
-  drone:
-    name: drone_network

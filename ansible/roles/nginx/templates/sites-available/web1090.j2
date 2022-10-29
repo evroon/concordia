@@ -1,11 +1,11 @@
 server {
     listen 80;
-    server_name ${WEB1090_DOMAIN_NAME};
-    return 301 https://${WEB1090_DOMAIN_NAME}$request_uri;
+    server_name {{ web1090_domain_name }};
+    return 301 https://{{ web1090_domain_name }}$request_uri;
 }
 
 server {
-    server_name ${WEB1090_DOMAIN_NAME};
+    server_name {{ web1090_domain_name }};
 
     listen 443 ssl;
     listen [::]:443 ssl;

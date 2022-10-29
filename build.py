@@ -42,6 +42,9 @@ def build_all(args: argparse.Namespace) -> None:
     if args.vvv:
         command.append('-vvv')
 
+    if args.tags:
+        command.extend(['--tags', args.tags])
+
     command.append('provision.yml')
 
     change_working_directory()
@@ -50,8 +53,9 @@ def build_all(args: argparse.Namespace) -> None:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Provision this machine.')
-    parser.add_argument('--ci', action='store_true', help='whether to debug or not')
     parser.add_argument('-vvv', action='store_true', help='whether to print verbose output')
+    parser.add_argument('--ci', action='store_true', help='whether to debug or not')
+    parser.add_argument('--tags', type=str, help='which tags/roles to run')
     args_parsed = parser.parse_args()
 
     build_all(args_parsed)

@@ -5,6 +5,7 @@
     - role: "1password"
     - role: "common"
     - role: "dashy"
+    - role: "davfs2"
     - role: "docker"
     - role: "email"
     - role: "fail2ban"

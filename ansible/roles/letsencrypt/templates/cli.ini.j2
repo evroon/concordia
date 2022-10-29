@@ -1,10 +1,9 @@
 # See: https://gist.github.com/stevenvandervalk/130cba3488611d44390738dd86bb2ea5
 
-# Use a 4096 bit RSA key instead of 2048.
 rsa-key-size = 4096
-# Set email and domains.
+cert-name: {{ domain_name }}
 email = {{ email }}
-domains = {% for hostname in cert.alternative_names %}{{ hostname }},{% endfor %}{{ domain_name }}
+domains = {% for hostname in cert.alternative_names %}{{ hostname.domain }},{% endfor %}{{ domain_name }}
 # Text interface.
 text = True
 # No prompts.

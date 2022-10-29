@@ -7,8 +7,8 @@ backupfolder={{ psql_backup_dir }}
 recipient_email={{ email }}
 keep_days=30
 
-psqlfile=$backupfolder/$db_name/$db_name-$(date +%d-%m-%Y_%H-%M-%S).psql
-zipfile=$backupfolder/$db_name/$db_name-$(date +%d-%m-%Y_%H-%M-%S).zip
+psqlfile=$backupfolder/$(hostname)/$db_name/$db_name-$(date +%Y-%m-%d_%H-%M-%S).psql
+zipfile=$backupfolder/$(hostname)/$db_name/$db_name-$(date +%Y-%m-%d_%H-%M-%S).zip
 
 # Create a backup
 if pg_dump $db_name > $psqlfile ; then

@@ -21,11 +21,60 @@
 
 - name: "Copy site configs"
   ansible.builtin.template:
-    src: "{{ item }}"
-    dest: "/etc/nginx/sites-available"
+    src: "sites-available/{{ item.nginx_config }}.j2"
+    dest: "/etc/nginx/sites-available/{{ item.nginx_config }}"
     owner: "www-data"
     group: "www-data"
     mode: '0644'
-  with_fileglob:
-    - "sites-available/*"
+  with_items:
+    - "{{ cert.alternative_names }}"
+    - default:
+      domain: "{{ domain_name }}"
+      nginx_config: default
+  when: "item.nginx_config|default(None) != None"
   become: true
+
+- name: "Disable all site configs"
+  ansible.builtin.file:
+    path: "/etc/nginx/sites-available/{{ item }}"
+    state: absent
+  with_fileglob:
+    - "/etc/nginx/sites-enabled/*"
+  become: true
+
+- name: "Enable default site config"
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/default"
+    dest: "/etc/nginx/sites-enabled/default"
+    owner: "www-data"
+    group: "www-data"
+    mode: '0644'
+    state: link
+  become: true
+  
+- name: "Request certificates"
+  command: certbot certonly
+  register: "certbot_output"
+  changed_when: "'no action taken' not in certbot_output.stdout"
+  notify: "reload nginx"
+  when: "is_ci|default(False) != True"
+  become: true
+
+- stat:
+    path: "/etc/letsencrypt/live/{{ domain_name }}"
+  register: cert_available
+  become: true
+
+- name: "Enable site configs if certificate exists"
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/{{ item.nginx_config }}"
+    dest: "/etc/nginx/sites-enabled/{{ item.nginx_config }}"
+    owner: "www-data"
+    group: "www-data"
+    mode: '0644'
+    state: link
+  with_items:
+    - "{{ cert.alternative_names }}"
+  become: true
+  when: cert_available.stat.exists
+  notify: "reload nginx"
