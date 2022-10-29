@@ -1,4 +1,16 @@
 ---
+- name: Install apt packages
+  apt:
+    state: present
+    name:
+      - "{{ php }}"
+      - "{{ php }}-gd"
+      - "{{ php }}-http"
+      - "{{ php }}-curl"
+      - "{{ php }}-mbstring"
+      - "{{ php }}-tidy"
+      - "{{ php }}-imagick"
+  become: true
 
 - name: "Get latest Selfoss version"
   shell: "get_latest_github_release --repo 'fossar/selfoss'"
@@ -7,19 +19,50 @@
 - name: "Download selfoss"
   ansible.builtin.get_url:
     url: "https://github.com/fossar/selfoss/releases/download/{{ selfoss_version_latest.stdout }}/selfoss-{{ selfoss_version_latest.stdout }}.zip"
-    dest: /var/www/selfoss
+    dest: "/tmp/selfoss-{{ selfoss_version_latest.stdout }}"
+    force: true
+  when: selfoss_version | default(-1) != selfoss_version_latest.stdout
+
+- name: Extract selfoss download
+  unarchive:
+    remote_src: true
+    src: "/tmp/selfoss-{{ selfoss_version_latest.stdout }}"
+    dest: /var/www
     owner: www-data
     group: www-data
     mode: 0755
-    force: true
-  when: selfoss_version | default(-1) != selfoss_version_latest.stdout
+  become: true
+
+- name: "Create data directories"
+  file:
+    path: "/var/www/selfoss/{{ item }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: 'u=rwX,g=rX,o=rX'
+    recurse: true
+  with_items:
+    - ""
+    - "data/cache"
+    - "data/favicons"
+    - "data/logs"
+    - "data/thumbnails"
+    - "data/sqlite"
+  become: true
+
+- name: "Copy config"
+  ansible.builtin.template:
+    src: config.ini.j2
+    dest: /var/www/selfoss/config.ini
+    owner: "www-data"
+    group: "www-data"
+    mode: 0644
   become: true
 
 - name: Git clone selfoss-discord
   git:
     repo: 'https://github.com/evroon/selfoss-discord'
     dest: "/var/lib/discord"
-  become_user: root
   become: true
   environment:
     PATH: "{{ ansible_env.PATH|default('')}}:/usr/local/bin:/usr/bin"
@@ -38,4 +81,3 @@
     group: "www-data"
     mode: 0700
   become: true
-  become_user: root

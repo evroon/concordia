@@ -37,3 +37,4 @@
     issues = !open "$(git config remote.origin.url)/issues" # open repo's issues in browser
     url =! bash -c 'git config --get remote.origin.url | sed -E "s/.+:\\(.+\\)\\.git$/https:\\\\/\\\\/github\\\\.com\\\\/\\\\1/g"' # show url of remote
     gf = commit -a --fixup=HEAD
+    po = !git push --set-upstream origin "$(git rev-parse --abbrev-ref HEAD)"

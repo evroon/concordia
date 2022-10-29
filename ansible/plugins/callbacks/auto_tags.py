@@ -1,16 +1,23 @@
 """
 This module implements an Ansible plugin that is triggered at the start of a playbook.
 
-The plugin dynamically generates a tag for each role. The tag has the same name as the role.
+The plugin dynamically generates a tag for each role. Each tag has the same name as its role.
 The advantage of this is that it saves you some boilerplate, because you don't have to wrap
 all tasks of a role in an additional block and assign a tag to that.
 Additionally, it works automatically when you add new roles to your playbook.
 
 Usage is exactly the same as without this plugin:
 
-nix shell -f default.nix -c provision ansible --tags nginx --limit app_gateways --check
+ansible-playbook --tags=some_tag provision.yml
 
-Here, the `nginx` tag was generated dynamically.
+Here, the "some_tag" tag was generated dynamically (assuming there is a "some_tag" role).
+
+Installation:
+1. Place this file in `plugins/callbacks/auto_tags.py` (relative to your playbook root)
+2. Add the following two lines to your `ansible.cfg` file:
+
+callback_plugins = plugins/callbacks
+callback_whitelist = auto_tags
 """
 from __future__ import print_function
 
@@ -43,5 +50,3 @@ class CallbackModule(CallbackBase):  # type: ignore[misc]
             role_name = role._role_name
             if role_name not in role.tags:
                 role.tags += [role_name]
-
-            # print('Role: {} - Tags: {}'.format(role_name, role.tags))

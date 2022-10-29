@@ -3,15 +3,29 @@ php: "php{{ php_version }}"
 cert:
   name: "{{ domain_name }}"
   alternative_names:
-  - "www.{{ domain_name }}"
-  - "{{ gitea_domain_name }}"
-  - "{{ selfoss_domain_name }}"
-  - "{{ munin_domain_name }}"
-  - "{{ nextcloud_domain_name }}"
-  - "{{ web1090_domain_name }}"
-  - "{{ uptime_kuma_domain_name }}"
-  - "{{ grafana_domain_name }}"
+  - dashy:
+    nginx_config: dashy
+    domain: "www.{{ domain_name }}"
+  - gitea:
+    nginx_config: gitea
+    domain: "{{ gitea_domain_name }}"
+  - selfoss:
+    nginx_config: selfoss
+    domain: "{{ selfoss_domain_name }}"
+  - munin:
+    nginx_config: munin
+    domain: "{{ munin_domain_name }}"
+  - web1090:
+    nginx_config: web1090
+    domain: "{{ web1090_domain_name }}"
+  - uptime_kuma:
+    nginx_config: uptime_kuma
+    domain: "{{ uptime_kuma_domain_name }}"
+  - grafana:
+    nginx_config: grafana
+    domain: "{{ grafana_domain_name }}"
 
 postgres_backup_dbs:
   - gitea
   - selfoss
+  

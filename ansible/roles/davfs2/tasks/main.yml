@@ -1,0 +1,37 @@
+---
+- name: Install apt packages
+  apt:
+    state: present
+    name:
+      - davfs2
+  become: true
+
+- name: "Create config directory"
+  file:
+    path: "/home/{{ ansible_user_id }}/.davfs2"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: '0755'
+  become: true
+
+- name: "Write secrets"
+  copy:
+    content: "{{ webdav_path }} {{ webdav_username }} {{ webdav_password }}"
+    dest: "/home/{{ ansible_user_id }}/.davfs2/secrets"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: '0600'
+  become: true
+
+- name: Mount nextcloud
+  ansible.posix.mount:
+    path: "/mnt/cloud-backups"
+    src: "https://cloud.familievroon.nl/remote.php/dav/files/backup/"
+    fstype: davfs
+    opts: user,auto,rw
+    state: mounted
+  become: true
+  environment:
+    PATH: "{{ ansible_env.PATH|default('')}}:/usr/local/bin:/usr/bin"
+  when: "is_ci|default(False) != True"

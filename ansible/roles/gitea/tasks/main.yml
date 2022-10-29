@@ -61,16 +61,6 @@
     - "/var/lib/gitea"
   become: true
 
-- name: "Setup systemd service"
-  ansible.builtin.template:
-    src: gitea.service.j2
-    dest: /lib/systemd/system/gitea.service
-    owner: root
-    group: root
-    mode: 0644
-  become: true
-  notify: "reload systemd"
-
 - name: "Configure gitea"
   ansible.builtin.template:
     src: app.ini.j2
@@ -78,14 +68,6 @@
     owner: "git"
     group: "git"
     mode: 0600
-  become: true
-
-- name: "Service gitea"
-  ansible.builtin.service:
-    name: gitea
-    state: started
-    enabled: true
-  when: ansible_service_mgr == "systemd"
   become: true
 
 - name: Install dependencies
@@ -150,6 +132,24 @@
         mode: 0755
         owner: git
         group: git
-      notify: "restart gitea"
   when: gitea_active_version.stdout != gitea_version
   become: true
+
+- name: "Setup systemd service"
+  ansible.builtin.template:
+    src: gitea.service.j2
+    dest: /lib/systemd/system/gitea.service
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  notify: "reload systemd"
+
+- name: "Service gitea"
+  ansible.builtin.service:
+    name: gitea
+    state: started
+    enabled: true
+  when: ansible_service_mgr == "systemd"
+  become: true
+  notify: "restart gitea"

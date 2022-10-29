@@ -28,7 +28,6 @@
       - uidmap
       - telnet
       - aha
-      - davfs2
       - apt-transport-https
       - wireguard
       - libmagickcore-6.q16-6-extra

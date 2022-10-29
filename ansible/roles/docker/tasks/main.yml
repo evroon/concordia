@@ -26,22 +26,25 @@
     - "update-docker-services.sh"
     - "restart-docker-services.sh"
 
-- name: "Create config and data directory"
+- name: "Create docker-compose directory"
   ansible.builtin.file:
-    path: "/usr/share/concordia"
+    path: "{{ docker_compose_dir }}"
     state: directory
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
     mode: '0755'
   become: true
 
-- name: "Copy docker-compose.yml"
+- name: "Copy docker-compose.yml and .env"
   ansible.builtin.template:
-    src: "docker-compose.yml.j2"
-    dest: "/usr/share/concordia/docker-compose.yml"
+    src: "{{ item }}.j2"
+    dest: "{{ docker_compose_dir }}/{{ item }}"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
     mode: '0644'
+  with_items:
+    - "docker-compose.yml"
+    - ".env"
   become: true
 
 - name: "Start update-docker-services.service"
