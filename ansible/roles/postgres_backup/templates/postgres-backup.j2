@@ -4,7 +4,6 @@ set -evo pipefail
 # Source: https://sqlbak.com/blog/how-to-automate-postgresql-database-backups-in-linux
 
 backupfolder={{ psql_backup_dir }}
-recipient_email={{ email }}
 keep_days=30
 
 psqlfile=$backupfolder/$(hostname)/$db_name/$db_name-$(date +%Y-%m-%d_%H-%M-%S).psql

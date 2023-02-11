@@ -1,12 +1,15 @@
 [Unit]
 Description=Updates the RSS feed of Selfoss
 OnFailure=unit-status-mailer@%n.service
+After=syslog.target
+After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/update-selfoss
+ExecStart=/usr/bin/php /var/www/selfoss/cliupdate.php && /var/lib/selfoss-discord/selfoss-discord
 TimeoutStartSec=5m
 User=www-data
+WorkingDirectory=/var/lib/selfoss-discord
 
 [Install]
 WantedBy=multi-user.target

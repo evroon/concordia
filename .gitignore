@@ -8,4 +8,10 @@ versions.env
 ansible/installed_versions.yml
 
 __pycache__
+Pipfile.lock
+
 .junit_report.xml
+
+target
+
+Cargo.lock

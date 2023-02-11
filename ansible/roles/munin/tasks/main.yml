@@ -3,40 +3,44 @@
   apt:
     state: present
     name:
+      - libdbd-pg-perl
       - munin
   become: true
 
 - stat:
-    path: /etc/munin/static
-  register: static_dir
+    path: /usr/share/munin/plugins
+  register: plugins_dir
+
+- name: Create /etc/munin if it does not exist
+  ansible.builtin.file:
+    path: /etc/munin
+    state: directory
+    group: munin
+    owner: munin
+    mode: '0755'
+    recurse: true
+  become: true
+
+- name: Create /usr/share/munin if it does not exist
+  ansible.builtin.file:
+    path: /usr/share/munin
+    state: directory
+    group: munin
+    owner: munin
+    mode: '0755'
+    recurse: true
+  become: true
 
 - block:
-  - name: Create /etc/munin if it does not exist
-    ansible.builtin.file:
-      path: /etc/munin
-      state: directory
-      mode: '0755'
-
-  - name: Create /usr/share/munin if it does not exist
-    ansible.builtin.file:
-      path: /usr/share/munin
-      state: directory
-      mode: '0755'
-
   - name: Copy munin-node
-    ansible.builtin.copy:
-      src: ../munin/munin-node
+    ansible.builtin.template:
+      src: munin-node.j2
       dest: /etc/munin/munin-node
 
   - name: Copy munin.conf
-    ansible.builtin.copy:
-      src: ../munin/munin.conf
+    ansible.builtin.template:
+      src: munin.conf.j2
       dest: /etc/munin/munin.conf
-
-  - name: Copy plugins
-    ansible.builtin.copy:
-      src: ../munin/plugins
-      dest: /usr/share/munin/plugins
 
   - name: Create temporary template directory
     ansible.builtin.tempfile:
@@ -55,32 +59,89 @@
     ansible.builtin.copy:
       src: "{{ munin_contrib_tmp_dir.path }}/templates/munstrap/templates"
       dest: /etc/munin
+      remote_src: true
 
   - name: Copy static
     ansible.builtin.copy:
       src: "{{ munin_contrib_tmp_dir.path }}/templates/munstrap/static"
       dest: /etc/munin
+      remote_src: true
 
   - name: Let Munin regenerate HTML files
     file:
       state: absent
       path: /var/www/munin/*
-  when: not (static_dir.stat.isdir is defined and static_dir.stat.isdir)
+    notify: "reload nginx"
+  when: not (plugins_dir.stat.isdir is defined and plugins_dir.stat.isdir)
+  become: true
 
-# - name: Create symlinks for plugins
-#   ansible.builtin.file:
-#     src: "{{ item }}"
-#     dest: /usr/bin
-#     mode: '0744'
-#     state: link
-#   with_fileglob:
-#     -
+- name: Copy plugins
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "/usr/share/munin/plugins/{{ item | basename | regex_replace('\\.j2$', '') }}"
+    remote_src: true
+    mode: '0755'
+  with_fileglob:
+    - "templates/plugins/*"
+  become: true
 
-# - name: Create symlinks for plugins
-#   ansible.builtin.file:
-#     src: "{{ item }}"
-#     dest: /usr/bin
-#     mode: '0744'
-#     state: link
-#   with_fileglob:
-#     - /etc/munin/plugins/*
+- name: Create symlinks for plugins
+  ansible.builtin.file:
+    src: "/usr/share/munin/plugins/{{ item | basename | regex_replace('\\.j2$', '') }}"
+    dest: "/etc/munin/plugins/{{ item | basename | regex_replace('\\.j2$', '') }}"
+    mode: '0777'
+    state: link
+  with_fileglob:
+    - "templates/plugins/*"
+  become: true
+
+- name: "Disable squeezebox plugins"
+  command: "bash -c 'rm /etc/munin/plugins/squeezebox_* || true'"
+  changed_when: false
+  become: true
+
+- stat:
+    path: "/var/lib/ns-api-python"
+  register: ns_api_stat
+
+- name: Git clone ns-api-python
+  git:
+    repo: 'https://github.com/evroon/ns-api-python'
+    dest: "/var/lib/ns-api-python"
+  become: true
+  when: not (ns_api_stat.stat.isdir is defined and ns_api_stat.stat.isdir)
+  environment:
+    PATH: "{{ ansible_env.PATH|default('')}}:/usr/local/bin:/usr/bin"
+
+- name: Git pull ns-api-python if exists
+  git:
+    repo: 'https://github.com/evroon/ns-api-python'
+    dest: "/var/lib/ns-api-python"
+  become: true
+  become_user: munin
+  when: (ns_api_stat.stat.isdir is defined and ns_api_stat.stat.isdir)
+  environment:
+    PATH: "{{ ansible_env.PATH|default('')}}:/usr/local/bin:/usr/bin"
+    
+- name: Change ownership of ns-api-python repo
+  file:
+    path: "/var/lib/ns-api-python"
+    owner: "munin"
+    group: "munin"
+    state: directory
+    recurse: yes
+  become: true
+
+- name: "Install pip requirements"
+  command: "pip3 install -r /var/lib/ns-api-python/requirements.txt"
+  changed_when: false
+  become: true
+  
+- name: Place API key in .env
+  ansible.builtin.lineinfile:
+    path: "/var/lib/ns-api-python/.env"
+    regexp: '^API_KEY='
+    line: "API_KEY={{ ns_api_key }}"
+    create: true
+  become: true
+  become_user: munin

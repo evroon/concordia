@@ -18,3 +18,4 @@
 - include: create_db.yml db_name='nextcloud' db_user='nextcloud' db_pass='{{ nextcloud_psql_password }}'
 - include: create_db.yml db_name='gitea' db_user='gitea' db_pass='{{ gitea_psql_password }}'
 - include: create_db.yml db_name='fr24' db_user='fr24' db_pass='{{ fr24_psql_password }}'
+- include: create_db.yml db_name='bracket' db_user='bracket' db_pass='{{ bracket_psql_password }}'

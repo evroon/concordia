@@ -21,18 +21,18 @@ def print_config() -> None:
     print("graph_info Number of hours since last postgres backup per database.")
 
     for db in databases:
-        print(f"{{ db }}.label {{ db }}")
-        print(f"{{ db }}.warning 0:24")
-        print(f"{{ db }}.critical 0:48")
+        print(f"{db}.label {db}")
+        print(f"{db}.warning 0:24")
+        print(f"{db}.critical 0:48")
 
 
 def print_value() -> None:
     for db in databases:
-        backups = glob.glob(f'{{ psql_backup_dir }}/{{ db }}-*.zip')
+        backups = glob.glob(f'{{ psql_backup_dir }}/{db}-*.zip')
         min_time = 1e4 # hours
 
         for backup in backups:
-            date_str = backup.replace('.zip', '').replace(f'{{ psql_backup_dir }}/{{ db }}-', '')
+            date_str = backup.replace('.zip', '').replace(f'{{ psql_backup_dir }}/{db}-', '')
             date = datetime.strptime(date_str, '%d-%m-%Y_%H-%M-%S')
             tdelta = relativedelta(datetime.now(), date)
 
@@ -44,7 +44,7 @@ def print_value() -> None:
             if diff < min_time:
                 min_time = diff
 
-        print(f'{{ db }}.value {min_time}')
+        print(f'{db}.value {min_time}')
 
 
 if __name__ == '__main__':

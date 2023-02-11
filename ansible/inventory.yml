@@ -24,8 +24,20 @@ cert:
   - grafana:
     nginx_config: grafana
     domain: "{{ grafana_domain_name }}"
+  - drone:
+    nginx_config: drone
+    domain: "{{ drone_domain_name }}"
+  - shopware6:
+    nginx_config: shopware6
+    domain: "{{ shopware6_domain_name }}"
+  - wordpress:
+    nginx_config: wordpress
+    domain: "{{ wordpress_domain_name }}"
+  - bracket:
+    nginx_config: bracket
+    domain: "{{ bracket_api_domain_name }}"
 
 postgres_backup_dbs:
   - gitea
   - selfoss
-  
+  - bracket

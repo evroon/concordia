@@ -1,10 +1,4 @@
 #!/bin/bash
 
-php {{ selfoss_dir }}/cliupdate.php
-
-python3 {{ discord_dir }}/selfoss.py \
-    https://{{ selfoss_domain_name }} \
-    --token={{ discord_token }} \
-    --server-id={{ discord_server_id }} \
-    --username={{ selfoss_username }} \
-    --password={{ selfoss_password }}
+php /var/www/selfoss/cliupdate.php
+/var/lib/selfoss-discord/selfoss-discord
