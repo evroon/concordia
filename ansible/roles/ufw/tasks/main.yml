@@ -1,4 +1,17 @@
 ---
+- name: Install apt packages
+  apt:
+    state: present
+    name: 
+      - ufw
+      - iptables
+  become: true
+
+- name: "Set legacy iptables version on rpi"
+  command: "update-alternatives --set iptables /usr/sbin/iptables-legacy"
+  become: true
+  when: inventory_hostname == 'pi'
+
 - ufw:
     state: enabled
     rule: allow

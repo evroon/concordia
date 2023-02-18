@@ -1,0 +1,44 @@
+---
+- name: Add flightradar24 repo
+  apt_repository:
+    repo: deb http://repo.feed.flightradar24.com flightradar24 raspberrypi-stable
+    state: present
+    filename: flightradar24
+  become: true
+
+- name: Download piaware
+  get_url:
+    url: "https://flightaware.com/adsb/piaware/files/packages/pool/piaware/f/flightaware-apt-repository/flightaware-apt-repository_1.1_all.deb"
+    dest: "/tmp/piaware.deb"
+  register: _download_archive
+  until: _download_archive is succeeded
+  retries: 5
+  delay: 2
+
+- name: Install package
+  command: "dpkg -i /tmp/piaware.deb"
+  become: true
+
+- name: Upgrade all Packages
+  register: updatesys
+  apt:
+    name: "*"
+    state: latest
+    update_cache: yes
+  become: true
+  
+- name: Install piaware apt package
+  apt:
+    state: present
+    name: 
+      - piaware
+      - dump1090-fa
+  become: true
+
+- name: "Restart piaware service"
+  ansible.builtin.service:
+    name: "piaware.service"
+    state: restarted
+    enabled: true
+  become: true
+  notify: "reload systemd"

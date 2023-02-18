@@ -1,14 +1,32 @@
 ---
+- name: Import GPG key for the APT repository
+  ansible.builtin.apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: C969F07840C430F5
+  become: true
+
 - name: Add flightradar24 repo
   apt_repository:
     repo: deb http://repo.feed.flightradar24.com flightradar24 raspberrypi-stable
     state: present
     filename: flightradar24
   become: true
+  
+- name: Install fr24feed apt package
+  apt:
+    state: present
+    name: fr24feed
+  become: true
+  
+- name: Remove dump1090-mutability
+  apt:
+    state: absent
+    name: dump1090-mutability
+  become: true
 
 - name: "Copy config file"
   ansible.builtin.template:
-    src: fr24feed.yml.j2
+    src: fr24feed.ini.j2
     dest: /etc/fr24feed.ini
     mode: 0644
   become: true
