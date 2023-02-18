@@ -2,9 +2,9 @@
   handlers:
     - import_tasks: "roles/common/handlers/main.yml"
   roles:
+    - role: "common"
     - role: "1password"
     - role: "authelia"
-    - role: "common"
     - role: "dashy"
     - role: "davfs2"
     - role: "docker"
@@ -30,6 +30,7 @@
   handlers:
     - import_tasks: "roles/common/handlers/main.yml"
   roles:
+    - role: "common"
     - role: "homedir"
     - role: "unattended_upgrades"
 
@@ -37,7 +38,7 @@
   handlers:
     - import_tasks: "roles/common/handlers/main.yml"
   roles:
-    - role: "adsb"
     - role: "common"
+    - role: "adsb"
     - role: "homedir"
     - role: "unattended_upgrades"
