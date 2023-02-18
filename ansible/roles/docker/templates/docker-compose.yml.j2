@@ -1,16 +1,18 @@
 version: '3.1'
 
 services:
-    homeassistant:
-        image: homeassistant/home-assistant:stable
-        container_name: homeassistant
-        restart: always
-        env_file: {{ docker_compose_dir }}/.env
-        volumes:
-            - {{ home_assistant_dir }}/config:/config
-            - /etc/localtime:/etc/localtime
-        ports:
-            - {{ home_assistant_port }}:{{ home_assistant_port }}
+    # homeassistant:
+    #     image: homeassistant/home-assistant:stable
+    #     container_name: homeassistant
+    #     restart: always
+    #     env_file: {{ docker_compose_dir }}/.env
+    #     volumes:
+    #         - {{ home_assistant_dir }}/config:/config
+    #         - /etc/localtime:/etc/localtime
+    #     ports:
+    #         - {{ home_assistant_port }}:{{ home_assistant_port }}
+    #     profiles:
+    #         - homeassistant
 
     mc:
         image: itzg/minecraft-server
@@ -82,6 +84,89 @@ services:
         restart: unless-stopped
         profiles:
             - pihole # Start pihole only when needed
+
+    drone-server:
+        container_name: drone-server
+        image: drone/drone:2
+        ports:
+            - 3030:80
+            - 3031:443
+        volumes:
+            - ./drone-data:/var/lib/drone/
+            - /var/run/docker.sock:/var/run/docker.sock
+        restart: always
+        env_file: {{ docker_compose_dir }}/.env
+        environment:
+            - DRONE_GITEA_SERVER=https://{{ gitea_domain_name }}
+            - DRONE_GITEA_CLIENT_ID={{ drone_gitea_oauth_id }}
+            - DRONE_GITEA_CLIENT_SECRET={{ drone_gitea_oauth_secret }}
+            - DRONE_RPC_SECRET={{ drone_rpc_secret }}
+            - DRONE_SERVER_HOST={{ drone_domain_name }}
+            - DRONE_SERVER_PROTO=https
+
+    drone-runner:
+        container_name: drone-runner
+        image: drone/drone-runner-docker:1
+        command: agent
+        restart: always
+        depends_on:
+            - drone-server
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        env_file: {{ docker_compose_dir }}/.env
+        environment:
+            - DRONE_RPC_SECRET={{ drone_rpc_secret }}
+            - DRONE_RPC_HOST={{ drone_domain_name }}
+            - DRONE_RPC_PROTO=https
+            - DRONE_RUNNER_CAPACITY=2
+            - DRONE_RUNNER_NAME=cassandra
+
+    # shopware:
+    #     container_name: shopware
+    #     image: dockware/dev:latest
+    #     ports:
+    #         - "8080:80"
+    #     environment:
+    #         - APP_URL={{ shopware6_domain_name }}
+
+    wordpress:
+        container_name: wordpress
+        image: wordpress
+        restart: always
+        ports:
+            - "8083:80"
+        volumes:
+            - /var/lib/wordpress/html:/var/www/html
+        environment:
+            WORDPRESS_DB_HOST: wordpress_db
+            WORDPRESS_DB_NAME: {{ wordpress_db_name }}
+            WORDPRESS_DB_USER: {{ wordpress_db_user }}
+            WORDPRESS_DB_PASSWORD: {{ wordpress_db_password }}
+            WORDPRESS_CONFIG_EXTRA: |
+                $_SERVER['HTTPS'] = 'on';
+
+    wordpress_db:
+        container_name: wordpress_db
+        image: mysql:5.7
+        restart: always
+        environment:
+            MYSQL_DATABASE: {{ wordpress_db_name }}
+            MYSQL_USER: {{ wordpress_db_user }}
+            MYSQL_PASSWORD: {{ wordpress_db_password }}
+            MYSQL_RANDOM_ROOT_PASSWORD: '1'
+        volumes:
+            - /var/lib/wordpress/db:/var/lib/mysql
+
+    alertmanager:
+        container_name: alertmanager
+        image: prom/alertmanager:latest
+        ports:
+            - 9093:9093
+        volumes:
+            - /etc/prometheus/alertmanager.yml:/etc/alertmanager/config.yml
+        command:
+            - '--config.file=/etc/alertmanager/config.yml'
+            # - '--web.external-url=https://dev.monitor.example.com/alertmanager'
 
 volumes:
     certs:

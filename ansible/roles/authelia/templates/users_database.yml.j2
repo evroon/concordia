@@ -1,0 +1,9 @@
+users:
+  {{ username }}:
+    displayname: "{{ full_name }}"
+    # Generate password with `authelia hash-password -- 'password'`
+    password: "{{ authelia_admin_password }}"
+    email: {{ email }}
+    groups:
+      - admins
+      - dev

@@ -1,0 +1,22 @@
+---
+- name: Add flightradar24 repo
+  apt_repository:
+    repo: deb http://repo.feed.flightradar24.com flightradar24 raspberrypi-stable
+    state: present
+    filename: flightradar24
+  become: true
+
+- name: "Copy config file"
+  ansible.builtin.template:
+    src: fr24feed.yml.j2
+    dest: /etc/fr24feed.ini
+    mode: 0644
+  become: true
+
+- name: "Restart fr24feed service"
+  ansible.builtin.service:
+    name: "fr24feed.service"
+    state: restarted
+    enabled: true
+  become: true
+  notify: "reload systemd"

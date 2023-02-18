@@ -1,0 +1,88 @@
+---
+- name: "Install pip requirements"
+  command: "python3 -m pip install --upgrade pipenv wheel virtualenv"
+  changed_when: false
+  become: true
+
+- stat:
+    path: "/var/lib/bracket"
+  register: bracket_stat
+
+- name: "Create Bracket Group"
+  group:
+    name: "bracket"
+    system: true
+    state: "present"
+  become: true
+
+- name: "Create Bracket user"
+  ansible.builtin.user:
+    name: "bracket"
+    comment: "Bracket user"
+    home: "/home/bracket"
+    shell: "/bin/bash"
+    system: true
+  become: true
+
+- name: Change ownership of bracket repo
+  file:
+    path: "/var/lib/bracket"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    state: directory
+    recurse: yes
+  become: true
+
+- name: Git clone bracket
+  git:
+    repo: 'https://github.com/evroon/bracket.git'
+    dest: "/var/lib/bracket"
+  environment:
+    PATH: "{{ ansible_env.PATH|default('')}}:/usr/local/bin:/usr/bin"
+
+- name: Change ownership of bracket repo
+  file:
+    path: "/var/lib/bracket"
+    owner: "bracket"
+    group: "bracket"
+    state: directory
+    recurse: yes
+  become: true
+
+- name: "Copy config"
+  ansible.builtin.template:
+    src: prod.env.j2
+    dest: /var/lib/bracket/backend/prod.env
+    owner: "bracket"
+    group: "bracket"
+    mode: 0644
+  become: true
+
+- name: "Install pipenv"
+  command: "pipenv install"
+  args:
+    chdir: /var/lib/bracket/backend
+  vars:
+    ansible_remote_tmp: /tmp
+  changed_when: false
+  become: true
+  become_user: bracket
+
+- name: "Copy systemd service and timer"
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/lib/systemd/system/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  with_items:
+    - bracket.service
+
+- name: "Start bracket service"
+  ansible.builtin.service:
+    name: "bracket.service"
+    state: restarted
+    enabled: true
+  become: true
+  notify: "reload systemd"

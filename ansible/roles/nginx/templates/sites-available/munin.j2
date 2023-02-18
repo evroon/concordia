@@ -1,10 +1,4 @@
 server {
-    listen 80;
-    server_name {{ munin_domain_name }};
-    return 301 https://{{ munin_domain_name }}$request_uri;
-}
-
-server {
     server_name {{ munin_domain_name }};
 
     listen 443 ssl;
@@ -13,7 +7,11 @@ server {
     root /var/www/munin;
     index index.html;
 
+    include /etc/authelia/nginx/authelia-location.conf;
+
     location / {
+        include /etc/authelia/nginx/proxy.conf;
+        include /etc/authelia/nginx/authelia-authrequest.conf;
         try_files $uri $uri/ =404;
     }
 

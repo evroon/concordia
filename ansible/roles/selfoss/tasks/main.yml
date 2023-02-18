@@ -59,25 +59,62 @@
     mode: 0644
   become: true
 
-- name: Git clone selfoss-discord
-  git:
-    repo: 'https://github.com/evroon/selfoss-discord'
-    dest: "/var/lib/discord"
-  become: true
-  environment:
-    PATH: "{{ ansible_env.PATH|default('')}}:/usr/local/bin:/usr/bin"
-
 - name: Update selfoss version
   ansible.builtin.lineinfile:
     path: "{{ concordia_dir }}/ansible/installed_versions.yml"
     regexp: '^selfoss_version:'
     line: "selfoss_version: {{ selfoss_version_latest.stdout }}"
 
-- name: "Copy update script"
+- name: "Create selfoss-discord directory"
+  file:
+    path: "/var/lib/selfoss-discord"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: 'u=rwX,g=rX,o=rX'
+    recurse: true
+  become: true
+
+- name: "Get latest selfoss-discord version"
+  shell: "get_latest_github_release --repo 'evroon/selfoss-discord'"
+  register: selfoss_discord_version_latest
+
+- name: "Download selfoss-discord"
+  ansible.builtin.get_url:
+    url: "https://github.com/evroon/selfoss-discord/releases/download/{{ selfoss_discord_version_latest.stdout }}/selfoss-discord"
+    dest: "/var/lib/selfoss-discord/selfoss-discord"
+    owner: www-data
+    group: www-data
+    mode: 0700
+    force: true
+  become: true
+
+- name: "Copy .env script"
   ansible.builtin.template:
-    src: update-selfoss.j2
-    dest: /usr/bin/update-selfoss
+    src: "{{ item }}.j2"
+    dest: "/var/lib/selfoss-discord/{{ item }}"
     owner: "www-data"
     group: "www-data"
     mode: 0700
+  become: true
+  with_items:
+    - .env
+
+- name: "Copy systemd service and timer"
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/lib/systemd/system/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  with_items:
+    - selfoss-update.service
+    - selfoss-update.timer
+
+- name: "Start selfoss-update service"
+  ansible.builtin.service:
+    name: "selfoss-update.timer"
+    state: started
+    enabled: true
   become: true

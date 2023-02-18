@@ -27,11 +27,10 @@
 - name: Mount nextcloud
   ansible.posix.mount:
     path: "/mnt/cloud-backups"
-    src: "https://cloud.familievroon.nl/remote.php/dav/files/backup/"
+    src: "https://{{ nextcloud_domain_name }}/remote.php/dav/files/backup/"
     fstype: davfs
     opts: user,auto,rw
     state: mounted
-  become: true
   environment:
     PATH: "{{ ansible_env.PATH|default('')}}:/usr/local/bin:/usr/bin"
   when: "is_ci|default(False) != True"

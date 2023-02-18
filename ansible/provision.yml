@@ -1,9 +1,10 @@
-- hosts: webserver
+- hosts: webservers
   handlers:
     - import_tasks: "roles/common/handlers/main.yml"
   roles:
-    - role: "1password"
     - role: "common"
+    - role: "1password"
+    - role: "authelia"
     - role: "dashy"
     - role: "davfs2"
     - role: "docker"
@@ -18,14 +19,26 @@
     - role: "postgres"
     - role: "postgres_backup"
     - role: "selfoss"
+    - role: "sshd"
     - role: "systemd"
     - role: "ufw"
     - role: "unattended_upgrades"
     - role: "gitea"
+    - role: "bracket"
 
-- hosts: dev_machine
+- hosts: dev_machines
   handlers:
     - import_tasks: "roles/common/handlers/main.yml"
   roles:
+    - role: "common"
+    - role: "homedir"
+    - role: "unattended_upgrades"
+
+- hosts: pis
+  handlers:
+    - import_tasks: "roles/common/handlers/main.yml"
+  roles:
+    - role: "common"
+    - role: "adsb"
     - role: "homedir"
     - role: "unattended_upgrades"

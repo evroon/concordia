@@ -1,13 +1,19 @@
 #!/bin/bash
+set -evo pipefail
 
 cd {{ docker_compose_dir }}
 
 sudo docker pull lissy93/dashy
-sudo docker pull homeassistant/home-assistant:stable
+#sudo docker pull homeassistant/home-assistant:stable
 sudo docker pull itzg/minecraft-server
 sudo docker pull osixia/openldap:1.5.0
 sudo docker pull louislam/uptime-kuma
+sudo docker pull drone/drone:2
+sudo docker pull drone/drone-runner-docker:1
+#sudo docker pull dockware/dev:latest
+sudo docker pull wordpress
+sudo docker pull mysql:5.7
 
-sudo docker stop homeassistant
+# sudo docker stop homeassistant
 
 /usr/local/bin/restart-docker-services.sh

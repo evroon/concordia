@@ -16,7 +16,7 @@ def print_config() -> None:
 
 
 def print_value() -> None:
-    response = requests.get('${DUMP1090_ADDRESS}')
+    response = requests.get('{{ dump1090_address }}')
     if response.ok:
         data = json.loads(response.content)
         num_aircraft = len(data['aircraft'])

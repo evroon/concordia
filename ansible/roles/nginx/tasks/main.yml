@@ -51,12 +51,11 @@
     mode: '0644'
     state: link
   become: true
-  
+
 - name: "Request certificates"
-  command: certbot certonly
+  command: certbot certonly --expand
   register: "certbot_output"
   changed_when: "'no action taken' not in certbot_output.stdout"
-  notify: "reload nginx"
   when: "is_ci|default(False) != True"
   become: true
 

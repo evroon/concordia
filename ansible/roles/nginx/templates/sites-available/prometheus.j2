@@ -1,0 +1,19 @@
+server {
+    server_name {{ prometheus_domain_name }};
+
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    include /etc/authelia/nginx/authelia-location.conf;
+
+    location / {
+        include /etc/authelia/nginx/proxy.conf;
+        include /etc/authelia/nginx/authelia-authrequest.conf;
+        proxy_pass http://localhost:9090;
+    }
+
+    ssl_certificate /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ domain_name }}/privkey.pem;
+
+    proxy_set_header Host {{ prometheus_domain_name }};
+}

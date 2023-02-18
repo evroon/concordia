@@ -1,0 +1,13 @@
+server {
+    server_name {{ drone_domain_name }};
+
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    location / {
+        proxy_pass http://localhost:3030;
+    }
+
+    ssl_certificate /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ domain_name }}/privkey.pem;
+}

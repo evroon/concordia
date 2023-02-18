@@ -1,9 +1,3 @@
-server {
-    listen 80;
-    server_name {{ selfoss_domain_name }};
-    return 301 https://{{ selfoss_domain_name }}$request_uri;
-}
-
 # please make sure all directories/files in public/ are readable to your webserver, as well as data/favicons
 # If it still doesn't work look into your log files at /var/log/nginx/rss.error.log
 upstream backend {

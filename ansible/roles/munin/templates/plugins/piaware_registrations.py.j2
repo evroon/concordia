@@ -16,11 +16,11 @@ def print_config() -> None:
 
 def print_value() -> None:
     con = psycopg2.connect(
-        database="${FR24_PSQL_DB}",
-        user="${FR24_PSQL_USER}",
-        password="${FR24_PSQL_PASSWORD}",
+        database="{{ fr24_psql_db }}",
+        user="{{ fr24_psql_user }}",
+        password="{{ fr24_psql_password }}",
         host="127.0.0.1",
-        port="${PSQL_PORT}"
+        port="{{ psql_port }}"
     )
     cur = con.cursor()
 
