@@ -67,4 +67,4 @@ postgres_backup_dbs:
   - selfoss
   - bracket
   - authelia
-
+  - grafana

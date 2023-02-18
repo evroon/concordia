@@ -15,8 +15,8 @@
   become: true
 
 - include: create_db.yml db_name='selfoss' db_user='selfoss' db_pass='{{ selfoss_psql_password }}'
-- include: create_db.yml db_name='nextcloud' db_user='nextcloud' db_pass='{{ nextcloud_psql_password }}'
 - include: create_db.yml db_name='gitea' db_user='gitea' db_pass='{{ gitea_psql_password }}'
 - include: create_db.yml db_name='fr24' db_user='fr24' db_pass='{{ fr24_psql_password }}'
 - include: create_db.yml db_name='bracket' db_user='bracket' db_pass='{{ bracket_psql_password }}'
 - include: create_db.yml db_name='authelia' db_user='authelia' db_pass='{{ authelia_storage_posgres_password }}'
+- include: create_db.yml db_name='grafana' db_user='grafana' db_pass='{{ grafana_psql_password }}'

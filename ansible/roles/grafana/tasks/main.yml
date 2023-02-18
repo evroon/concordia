@@ -20,30 +20,40 @@
     update_cache: yes
   become: true
 
-- name: Enable and start grafana service
+- name: Update grafana admin password
+  ansible.builtin.lineinfile:
+    path: "/etc/grafana/grafana.ini"
+    regexp: '^;admin_password ='
+    line: "admin_password = {{ grafana_admin_password }}"
+  become: true
+
+- name: Update grafana db config
+  ansible.builtin.blockinfile:
+    path: "/etc/grafana/grafana.ini"
+    insertafter: "[database]"
+    block: |
+      url = postgres://grafana:{{ grafana_psql_password }}@localhost:5432/grafana
+  become: true
+
+- name: Enable and start grafana-server service
   service:
     name: grafana-server
-    enabled: yes
-    state: started
+    state: restarted
+    enabled: true
   become: true
 
-- name: "Copy Prometheus config"
+- name: "Copy configuration files"
   ansible.builtin.template:
-    src: prometheus.yml.j2
-    dest: /etc/prometheus/prometheus.yml
+    src: "{{ item.in }}"
+    dest: "{{ item.out }}"
     owner: "root"
     group: "root"
     mode: 0644
   become: true
-
-- name: "Copy AlertManager config"
-  ansible.builtin.template:
-    src: alertmanager.yml.j2
-    dest: /etc/prometheus/alertmanager.yml
-    owner: "root"
-    group: "root"
-    mode: 0644
-  become: true
+  with_items:
+    - { in: 'datasources/prometheus.yml.j2', out: '/etc/grafana/provisioning/datasources/prometheus.yml' }
+    - { in: 'prometheus.yml.j2', out: '/etc/prometheus/prometheus.yml' }
+    - { in: 'alertmanager.yml.j2', out: '/etc/prometheus/alertmanager.yml' }
 
 - name: "Restart prometheus service"
   ansible.builtin.service:
