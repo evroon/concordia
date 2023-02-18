@@ -1,2 +1,2 @@
 extra_common_apt_packages:
-  - btop
+  btop
