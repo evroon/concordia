@@ -40,5 +40,9 @@
   roles:
     - role: "common"
     - role: "adsb"
+    - role: "email"
+    - role: "fail2ban"
     - role: "homedir"
+    - role: "sshd"
+    - role: "ufw"
     - role: "unattended_upgrades"

@@ -1,0 +1,34 @@
+---
+- name: Import GPG key for the APT repository
+  ansible.builtin.apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: 1D043681
+  become: true
+
+- name: Add rb24 repo
+  apt_repository:
+    repo: deb https://apt.rb24.com/ bullseye main
+    state: present
+    filename: rb24
+  become: true
+  
+- name: Install rbfeeder apt package
+  apt:
+    state: present
+    name: rbfeeder
+  become: true
+
+- name: "Copy config file"
+  ansible.builtin.template:
+    src: rbfeeder.ini.j2
+    dest: /etc/rbfeeder.ini
+    mode: 0644
+  become: true
+
+- name: "Restart rbfeeder service"
+  ansible.builtin.service:
+    name: "rbfeeder.service"
+    state: restarted
+    enabled: true
+  become: true
+  notify: "reload systemd"

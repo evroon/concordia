@@ -1,2 +1,4 @@
 ---
 - include: fr24.yml
+- include: piaware.yml
+- include: rbfeeder.yml
