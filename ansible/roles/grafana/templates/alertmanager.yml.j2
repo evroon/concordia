@@ -1,0 +1,28 @@
+
+global:
+  smtp_smarthost: 'localhost:25'
+  smtp_from: 'alertmanager@{{ hostname }}'
+  # slack_api_url: "${ alertmanager_webhook }$"
+route:
+  receiver: email
+  group_by: [instance, alertname]
+
+templates:
+- '/etc/prometheus/alertmanager_templates/*.tmpl'
+
+inhibit_rules:
+- source_match:
+    severity: 'critical'
+  target_match:
+    severity: 'warning'
+  equal: ['service']
+
+receivers:
+  - name: 'email'
+    email_configs:
+    - to: '{{ email }}'
+
+  # - name: discord
+  #   slack_configs:
+  #     - send_resolved: true
+  #       channel: "#prometheus-alerts"

@@ -36,8 +36,35 @@ cert:
   - bracket:
     nginx_config: bracket
     domain: "{{ bracket_api_domain_name }}"
+  - authelia:
+    nginx_config: authelia
+    domain: "{{ authelia_domain_name }}"
+  - alertmanager:
+    nginx_config: alertmanager
+    domain: "{{ alertmanager_domain_name }}"
+  - prometheus:
+    nginx_config: prometheus
+    domain: "{{ prometheus_domain_name }}"
+
+authelia:
+  secrets:
+    - jwt_secret:
+      filename: jwt_secret
+      secret: "{{ authelia_jwt_secret }}"
+    - session_secret:
+      filename: session_secret
+      secret: "{{ authelia_session_secret }}"
+    - posgres_password:
+      filename: posgres_password
+      secret: "{{ authelia_storage_posgres_password }}"
+    - encryption_key:
+      filename: encryption_key
+      secret: "{{ authelia_storage_encryption_key }}"
+
 
 postgres_backup_dbs:
   - gitea
   - selfoss
   - bracket
+  - authelia
+

@@ -1,8 +1,9 @@
 #!/bin/bash
+set -evo pipefail
 
 cd {{ docker_compose_dir }}
 
-sudo docker-compose up -d --force-recreate
+sudo docker-compose up -d --force-recreate --remove-orphans
 
 sudo docker system prune -f
 sudo docker volume prune -f

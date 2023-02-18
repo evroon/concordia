@@ -1,24 +1,19 @@
 server {
-    server_name {{ munin_domain_name }};
+    server_name {{ prometheus_domain_name }};
 
     listen 443 ssl;
     listen [::]:443 ssl;
-
-    root /var/www/munin;
-    index index.html;
 
     include /etc/authelia/nginx/authelia-location.conf;
 
     location / {
         include /etc/authelia/nginx/proxy.conf;
         include /etc/authelia/nginx/authelia-authrequest.conf;
-        try_files $uri $uri/ =404;
-    }
-
-    location ^~ /.well-known/ {
-        allow all;
+        proxy_pass http://localhost:9090;
     }
 
     ssl_certificate /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/{{ domain_name }}/privkey.pem;
+
+    proxy_set_header Host {{ prometheus_domain_name }};
 }

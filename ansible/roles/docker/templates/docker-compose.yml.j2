@@ -1,18 +1,18 @@
 version: '3.1'
 
 services:
-    homeassistant:
-        image: homeassistant/home-assistant:stable
-        container_name: homeassistant
-        restart: always
-        env_file: {{ docker_compose_dir }}/.env
-        volumes:
-            - {{ home_assistant_dir }}/config:/config
-            - /etc/localtime:/etc/localtime
-        ports:
-            - {{ home_assistant_port }}:{{ home_assistant_port }}
-        profiles:
-            - homeassistant
+    # homeassistant:
+    #     image: homeassistant/home-assistant:stable
+    #     container_name: homeassistant
+    #     restart: always
+    #     env_file: {{ docker_compose_dir }}/.env
+    #     volumes:
+    #         - {{ home_assistant_dir }}/config:/config
+    #         - /etc/localtime:/etc/localtime
+    #     ports:
+    #         - {{ home_assistant_port }}:{{ home_assistant_port }}
+    #     profiles:
+    #         - homeassistant
 
     mc:
         image: itzg/minecraft-server
@@ -121,13 +121,13 @@ services:
             - DRONE_RUNNER_CAPACITY=2
             - DRONE_RUNNER_NAME=cassandra
 
-    shopware:
-        container_name: shopware
-        image: dockware/dev:latest
-        ports:
-            - "8080:80"
-        environment:
-            - APP_URL={{ shopware6_domain_name }}
+    # shopware:
+    #     container_name: shopware
+    #     image: dockware/dev:latest
+    #     ports:
+    #         - "8080:80"
+    #     environment:
+    #         - APP_URL={{ shopware6_domain_name }}
 
     wordpress:
         container_name: wordpress
@@ -156,6 +156,17 @@ services:
             MYSQL_RANDOM_ROOT_PASSWORD: '1'
         volumes:
             - /var/lib/wordpress/db:/var/lib/mysql
+
+    alertmanager:
+        container_name: alertmanager
+        image: prom/alertmanager:latest
+        ports:
+            - 9093:9093
+        volumes:
+            - /etc/prometheus/alertmanager.yml:/etc/alertmanager/config.yml
+        command:
+            - '--config.file=/etc/alertmanager/config.yml'
+            # - '--web.external-url=https://dev.monitor.example.com/alertmanager'
 
 volumes:
     certs:

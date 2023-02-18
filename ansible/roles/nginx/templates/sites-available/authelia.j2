@@ -1,0 +1,17 @@
+server {
+    server_name {{ authelia_domain_name }};
+
+    listen 443 ssl http2;
+
+    location / {
+        include /etc/authelia/nginx/proxy.conf;
+        proxy_pass http://localhost:9091;
+    }
+
+    location /api/verify {
+        proxy_pass http://localhost:9091;
+    }
+
+    ssl_certificate /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ domain_name }}/privkey.pem;
+}

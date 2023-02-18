@@ -1,0 +1,101 @@
+---
+- name: Add authelia gpg key
+  shell: curl https://apt.authelia.com/organization/signing.asc | apt-key add -
+  become: true
+
+- name: Add authelia repo
+  apt_repository:
+    repo: deb https://apt.authelia.com/stable/debian/debian all main
+    state: present
+    filename: authelia
+  become: true
+
+- name: Install authelia
+  apt:
+    name:
+      - authelia
+    state: present
+    update_cache: yes
+  become: true
+
+- name: "Create authelia Group"
+  group:
+    name: "authelia"
+    system: true
+    state: "present"
+  become: true
+
+- name: "Create authelia user"
+  ansible.builtin.user:
+    name: "authelia"
+    comment: "Authelia user"
+    shell: "/bin/bash"
+    system: true
+  become: true
+
+- name: "Create authelia directories"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "authelia"
+    group: "authelia"
+    mode: 'u=rwX,g=rX,o='
+    recurse: true
+  with_items:
+    - "/etc/authelia/"
+    - "/etc/authelia/.users/"
+    - "/etc/authelia/.secrets/"
+    - "/etc/authelia/assets/"
+    - "/etc/authelia/nginx/"
+  become: true
+
+- copy:
+    content: "{{ item.secret }}"
+    dest: "/etc/authelia/.secrets/{{ item.filename }}"
+  with_items:
+    - "{{ authelia.secrets }}"
+  become: true
+  no_log: true
+
+- name: "Copy Authelia secrets environmentfile"
+  ansible.builtin.template:
+    src: secrets
+    dest: /etc/authelia/secrets
+    owner: "authelia"
+    group: "authelia"
+    mode: 0600
+  become: true
+
+- name: "Copy Authelia config"
+  ansible.builtin.template:
+    src: "{{ item.in }}"
+    dest: "/etc/authelia/{{ item.out }}"
+    owner: "authelia"
+    group: "authelia"
+    mode: 0600
+  become: true
+  with_items:
+    - { in: 'configuration.yml.j2', out: 'configuration.yml' }
+    - { in: 'users_database.yml.j2', out: '.users/users_database.yml' }
+    - { in: 'authelia-authrequest.conf.j2', out: 'nginx/authelia-authrequest.conf' }
+    - { in: 'authelia-location.conf.j2', out: 'nginx/authelia-location.conf' }
+    - { in: 'proxy.conf.j2', out: 'nginx/proxy.conf' }
+
+- name: "Setup systemd service"
+  ansible.builtin.template:
+    src: authelia.service.j2
+    dest: /lib/systemd/system/authelia.service
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+
+- name: "Restart Authelia service"
+  ansible.builtin.service:
+    name: "authelia.service"
+    state: restarted
+    enabled: true
+  become: true
+  notify:
+    - "reload systemd"
+    - "reload nginx"

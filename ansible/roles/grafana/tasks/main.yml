@@ -35,3 +35,20 @@
     group: "root"
     mode: 0644
   become: true
+
+- name: "Copy AlertManager config"
+  ansible.builtin.template:
+    src: alertmanager.yml.j2
+    dest: /etc/prometheus/alertmanager.yml
+    owner: "root"
+    group: "root"
+    mode: 0644
+  become: true
+
+- name: "Restart prometheus service"
+  ansible.builtin.service:
+    name: "prometheus.service"
+    state: restarted
+    enabled: true
+  become: true
+  notify: "reload systemd"

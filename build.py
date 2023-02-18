@@ -45,6 +45,9 @@ def build_all(args: argparse.Namespace) -> None:
     if args.tags:
         command.extend(['--tags', args.tags])
 
+    if args.limit:
+        command.extend(['--limit', args.limit])
+
     command.append('provision.yml')
 
     change_working_directory()
@@ -52,10 +55,11 @@ def build_all(args: argparse.Namespace) -> None:
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Provision this machine.')
+    parser = argparse.ArgumentParser(description='Provision ansible.')
     parser.add_argument('-vvv', action='store_true', help='whether to print verbose output')
     parser.add_argument('--ci', action='store_true', help='whether to debug or not')
     parser.add_argument('--tags', type=str, help='which tags/roles to run')
+    parser.add_argument('--limit', type=str, help='limit hosts to run on')
     args_parsed = parser.parse_args()
 
     build_all(args_parsed)
