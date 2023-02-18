@@ -35,7 +35,7 @@
 
 - name: Git clone bracket
   git:
-    repo: 'git@github.com:evroon/bracket.git'
+    repo: 'https://github.com/evroon/bracket.git'
     dest: "/var/lib/bracket"
   environment:
     PATH: "{{ ansible_env.PATH|default('')}}:/usr/local/bin:/usr/bin"
