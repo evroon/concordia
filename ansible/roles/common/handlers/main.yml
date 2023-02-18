@@ -25,15 +25,9 @@
         msg: "{{ journalctl_gitea_out.stdout_lines }}"
 
 - name: "reload nginx"
-  block:
-  - name: "test nginx configuration"
-    command: "nginx -t"
-    changed_when: false
-
-  - name: "actually perform the reload"
-    systemd:
-      name: "nginx.service"
-      state: "reloaded"
-  become: true
+  systemd:
+    name: "nginx.service"
+    state: "reloaded"
   environment:
     PATH: "{{ ansible_env.PATH|default('')}}:/usr/local/bin:/usr/bin"
+  become: true
