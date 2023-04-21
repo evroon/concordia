@@ -44,5 +44,6 @@
     - role: "fail2ban"
     - role: "homedir"
     - role: "sshd"
+    - role: "spotifyd"
     - role: "ufw"
     - role: "unattended_upgrades"

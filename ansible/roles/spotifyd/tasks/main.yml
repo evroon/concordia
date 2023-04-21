@@ -1,0 +1,74 @@
+---
+- name: "Get latest Spotifyd version"
+  shell: "/usr/local/bin/get_latest_github_release --repo 'Spotifyd/spotifyd'"
+  register: spotifyd_version
+
+- set_fact: spotifyd_dl_url="https://github.com/Spotifyd/spotifyd/releases/download/{{ spotifyd_version }}/spotifyd-linux-armhf-full"
+
+- name: Download Spotifyd archive
+  get_url:
+    url: "{{ spotifyd_dl_url }}.tar.gz"
+    dest: "/tmp/spotifyd-{{ spotifyd_version }}.tar.gz"
+    checksum: "sha512:{{ spotifyd_dl_url }}.sha512"
+  register: _download_archive
+  until: _download_archive is succeeded
+  retries: 5
+  delay: 2
+
+- name: "Create Spotifyd user"
+  ansible.builtin.user:
+    name: "spotifyd"
+    comment: "Spotifyd user"
+    home: "/home/spotifyd"
+    shell: "/bin/bash"
+    system: true
+  become: true
+
+- name: "Create .config directory"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "spotifyd"
+    group: "spotifyd"
+    mode: '0755'
+  with_items:
+    - "/home/spotifyd/.config"
+  become: true
+
+- name: "Configure Spotifyd"
+  ansible.builtin.template:
+    src: spotifyd
+    dest: /home/spotifyd/.config/spotifyd
+    owner: "spotifyd"
+    group: "spotifyd"
+    mode: 0600
+  become: true
+
+- name: Propagate Spotifyd binary
+  copy:
+    src: "/tmp/spotifyd-{{ spotifyd_version }}.tar.gz"
+    remote_src: true
+    dest: "/usr/local/bin/spotifyd"
+    mode: 0755
+    owner: spotifyd
+    group: spotifyd
+  become: true
+
+- name: "Setup systemd service"
+  ansible.builtin.template:
+    src: spotifyd.service.j2
+    dest: /lib/systemd/system/spotifyd.service
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  notify: "reload systemd"
+
+- name: "Service spotifyd"
+  ansible.builtin.service:
+    name: spotifyd
+    state: started
+    enabled: true
+  when: ansible_service_mgr == "systemd"
+  become: true
+  notify: "restart spotifyd"
