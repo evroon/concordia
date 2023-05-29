@@ -45,6 +45,9 @@ cert:
   - prometheus:
     nginx_config: prometheus
     domain: "{{ prometheus_domain_name }}"
+  - wg_easy_ui:
+    nginx_config: wg_easy_ui
+    domain: "{{ wg_easy_ui_domain_name }}"
 
 authelia:
   secrets:
