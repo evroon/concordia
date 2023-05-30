@@ -25,6 +25,7 @@
     - role: "unattended_upgrades"
     - role: "gitea"
     - role: "bracket"
+    - role: "wireguard"
 
 - hosts: dev_machines
   handlers:
