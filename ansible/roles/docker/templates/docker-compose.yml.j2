@@ -179,7 +179,8 @@ services:
         volumes:
             - /etc/wireguard:/etc/wireguard
         ports:
-            - "51820:51820/udp"
+            # UDP port 51820 is not forwarded because wireguard runs on the host
+            # and not inside the container.
             - "51821:51821/tcp"
         restart: unless-stopped
         cap_add:
