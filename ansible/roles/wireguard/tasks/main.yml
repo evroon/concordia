@@ -1,0 +1,32 @@
+---
+- ufw:
+    state: enabled
+    rule: allow
+    port: '{{ item }}'
+    proto: udp
+  with_items:
+    - '51820'
+  become: true
+
+- name: Install apt packages
+  apt:
+    state: present
+    name:
+      - wireguard
+  become: true
+
+- name: Set net.ipv4.ip_forward
+  ansible.builtin.lineinfile:
+    path: "/etc/sysctl.conf"
+    regexp: '^net.ipv4.ip_forward='
+    line: "net.ipv4.ip_forward=1"
+    create: true
+  become: true
+
+- name: Set net.ipv4.conf.all.src_valid_mark
+  ansible.builtin.lineinfile:
+    path: "/etc/sysctl.conf"
+    regexp: '^net.ipv4.conf.all.src_valid_mark='
+    line: "net.ipv4.conf.all.src_valid_mark=1"
+    create: true
+  become: true
