@@ -28,6 +28,7 @@ The following (web) services are installed and configured:
 * Wordpress
 * Bracket
 * Webdav mount to Nextcloud
+* Wireguard VPN with wg-easy
 
 ## Setup on Raspberry Pi
 First, download Raspbian from [here](https://www.raspberrypi.com/software/operating-systems/).
