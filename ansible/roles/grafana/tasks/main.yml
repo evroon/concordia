@@ -15,7 +15,6 @@
     name:
       - grafana
       - prometheus
-      - prometheus-node-exporter
     state: present
     update_cache: yes
   become: true
