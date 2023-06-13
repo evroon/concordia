@@ -2,7 +2,7 @@
 - name: Install apt packages
   apt:
     state: present
-    name: 
+    name:
       - ufw
       - iptables
   become: true
@@ -21,4 +21,15 @@
     - '80'
     - '443'
     - '22'
+  become: true
+
+- ufw:
+    state: enabled
+    rule: allow
+    proto: tcp
+    from_ip: '{{ item }}'
+  with_items:
+    - "{{ lookup('dig', '{{ domain_name }}') }}"
+    - "192.168.1.0/24"
+    - "10.8.0.0/24"
   become: true
