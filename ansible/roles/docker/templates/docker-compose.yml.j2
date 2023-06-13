@@ -189,6 +189,7 @@ services:
         image: mindflavor/prometheus-wireguard-exporter
         container_name: wg-exporter
         restart: unless-stopped
+        command: -a true
         cap_add:
             - NET_ADMIN
         network_mode: host

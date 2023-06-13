@@ -23,3 +23,7 @@ scrape_configs:
   - job_name: esp32
     static_configs:
       - targets: ['{{ esp32_host }}:80']
+
+  - job_name: wireguard-exporter
+    static_configs:
+      - tagets: ['localhost:9586']
