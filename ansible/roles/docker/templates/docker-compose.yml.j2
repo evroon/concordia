@@ -184,6 +184,15 @@ services:
             - SYS_MODULE
         # Use host network mode for performance and accessing the host's ports from the peer.
         network_mode: host
+
+    wg-exporter:
+        image: mindflavor/prometheus-wireguard-exporter
+        container_name: wg-exporter
+        restart: unless-stopped
+        command: -a true
+        cap_add:
+            - NET_ADMIN
+        network_mode: host
 volumes:
     certs:
     logs:
