@@ -30,3 +30,10 @@
     line: "net.ipv4.conf.all.src_valid_mark=1"
     create: true
   become: true
+
+- name: "Service wg-quick@wg0"
+  ansible.builtin.service:
+    name: wg-quick@wg0
+    state: started
+    enabled: true
+  become: true
