@@ -31,6 +31,16 @@
     create: true
   become: true
 
+- name: "Setup dummy wg0.conf for CI only"
+  ansible.builtin.template:
+    src: ci-wg0.conf
+    dest: /etc/wireguard/wg0.conf
+    owner: "root"
+    group: "root"
+    mode: 0600
+  become: true
+  when: "is_ci|default(False) == True"
+
 - name: "Service wg-quick@wg0"
   ansible.builtin.service:
     name: wg-quick@wg0
