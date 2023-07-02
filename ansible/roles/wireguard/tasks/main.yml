@@ -39,7 +39,7 @@
     group: "root"
     mode: 0600
   become: true
-  when: "is_ci|default(False) == True"
+  when: "is_ci|default(False) == true"
 
 - name: "Service wg-quick@wg0"
   ansible.builtin.service:
