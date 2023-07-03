@@ -6,15 +6,6 @@
       - docker-compose
   become: true
 
-- name: Copy systemd service and timer
-  ansible.builtin.template:
-    src: "{{ item }}.j2"
-    dest: "/lib/systemd/system/{{ item }}"
-  become: true
-  with_items:
-    - "update-docker-services.service"
-    - "update-docker-services.timer"
-
 - name: Copy scripts
   ansible.builtin.template:
     src: "{{ item }}.j2"
@@ -23,7 +14,6 @@
     remote_src: true
   become: true
   with_items:
-    - "update-docker-services.sh"
     - "restart-docker-services.sh"
 
 - name: "Create docker-compose directory"
@@ -45,11 +35,4 @@
   with_items:
     - "docker-compose.yml"
     - ".env"
-  become: true
-
-- name: "Start update-docker-services.service"
-  ansible.builtin.service:
-    name: "update-docker-services"
-    state: started
-    enabled: true
   become: true
