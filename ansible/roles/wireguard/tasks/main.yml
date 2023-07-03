@@ -41,9 +41,18 @@
   become: true
   when: "is_ci|default(False) == true"
 
-- name: "Service wg-quick@wg0"
-  ansible.builtin.service:
-    name: wg-quick@wg0
-    state: started
-    enabled: true
-  become: true
+block:
+  - name: "Service wg-quick@wg0"
+    ansible.builtin.service:
+      name: wg-quick@wg0
+      state: started
+      enabled: true
+    become: true
+rescue:
+  - name: get errors
+    shell: journalctl -xeu wg-quick@wg0
+    register: err_msg
+    become: true
+  - name: Print error message to console
+    debug:
+      msg: "{{ err_msg.stdout }}"
