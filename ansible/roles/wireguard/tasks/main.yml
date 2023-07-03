@@ -31,27 +31,27 @@
     create: true
   become: true
 
-- name: "Setup dummy wg0.conf for CI only"
+- name: "Setup dummy wg1.conf for CI only"
   ansible.builtin.template:
-    src: ci-wg0.conf
-    dest: /etc/wireguard/wg0.conf
+    src: ci-wg1.conf
+    dest: /etc/wireguard/wg1.conf
     owner: "root"
     group: "root"
     mode: 0600
   become: true
-  when: "is_ci|default(False) == true"
+  when: "is_ci|default(false) == true"
 
 - name: "Start wg-quick"
   block:
-  - name: "Service wg-quick@wg0"
+  - name: "Service wg-quick@wg1"
     ansible.builtin.service:
-      name: wg-quick@wg0
+      name: wg-quick@wg1
       state: started
       enabled: true
     become: true
   rescue:
   - name: get errors
-    shell: journalctl -xeu wg-quick@wg0
+    shell: journalctl -xeu wg-quick@wg1
     register: err_msg
     become: true
   - name: Print error message to console
