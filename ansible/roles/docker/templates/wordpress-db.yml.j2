@@ -1,0 +1,11 @@
+    wordpress_db:
+        container_name: wordpress_db
+        image: mysql:5.7
+        restart: always
+        environment:
+            MYSQL_DATABASE: {{ wordpress_db_name }}
+            MYSQL_USER: {{ wordpress_db_user }}
+            MYSQL_PASSWORD: {{ wordpress_db_password }}
+            MYSQL_RANDOM_ROOT_PASSWORD: '1'
+        volumes:
+            - /var/lib/wordpress/db:/var/lib/mysql

@@ -1,0 +1,16 @@
+    wg-easy:
+        environment:
+            - WG_HOST={{ domain_name }}
+            - PASSWORD={{ wg_easy_password }}
+            - WG_PORT=51820
+            - WG_MTU=1420
+        image: weejewel/wg-easy
+        container_name: wg-easy
+        volumes:
+            - /etc/wireguard:/etc/wireguard
+        restart: unless-stopped
+        cap_add:
+            - NET_ADMIN
+            - SYS_MODULE
+        # Use host network mode for performance and accessing the host's ports from the peer.
+        network_mode: host

@@ -1,0 +1,10 @@
+    openldap:
+        image: osixia/openldap:1.5.0
+        container_name: openldap
+        environment:
+            - LDAP_ORGANISATION={{ ldap_organisation }}
+            - LDAP_DOMAIN={{ ldap_domain }}
+            - LDAP_ADMIN_PASSWORD={{ ldap_admin_password }}
+        ports:
+            - "389:389"
+            - "636:636"
