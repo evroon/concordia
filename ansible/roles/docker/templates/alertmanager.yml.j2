@@ -1,0 +1,10 @@
+    alertmanager:
+        container_name: alertmanager
+        image: prom/alertmanager:latest
+        ports:
+            - 9093:9093
+        volumes:
+            - /etc/prometheus/alertmanager.yml:/etc/alertmanager/config.yml
+        command:
+            - '--config.file=/etc/alertmanager/config.yml'
+            # - '--web.external-url=https://dev.monitor.example.com/alertmanager'

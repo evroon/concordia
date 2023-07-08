@@ -1,0 +1,16 @@
+    drone-runner:
+        container_name: drone-runner
+        image: drone/drone-runner-docker:1
+        command: agent
+        restart: always
+        depends_on:
+            - drone-server
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        env_file: {{ docker_compose_dir }}/.env
+        environment:
+            - DRONE_RPC_SECRET={{ drone_rpc_secret }}
+            - DRONE_RPC_HOST={{ drone_domain_name }}
+            - DRONE_RPC_PROTO=https
+            - DRONE_RUNNER_CAPACITY=2
+            - DRONE_RUNNER_NAME=cassandra

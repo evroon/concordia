@@ -1,0 +1,18 @@
+    drone-server:
+        container_name: drone-server
+        image: drone/drone:2
+        ports:
+            - 3030:80
+            - 3031:443
+        volumes:
+            - ./drone-data:/var/lib/drone/
+            - /var/run/docker.sock:/var/run/docker.sock
+        restart: always
+        env_file: {{ docker_compose_dir }}/.env
+        environment:
+            - DRONE_GITEA_SERVER=https://{{ gitea_domain_name }}
+            - DRONE_GITEA_CLIENT_ID={{ drone_gitea_oauth_id }}
+            - DRONE_GITEA_CLIENT_SECRET={{ drone_gitea_oauth_secret }}
+            - DRONE_RPC_SECRET={{ drone_rpc_secret }}
+            - DRONE_SERVER_HOST={{ drone_domain_name }}
+            - DRONE_SERVER_PROTO=https
