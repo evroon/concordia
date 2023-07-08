@@ -1,18 +1,19 @@
 version: '3.1'
 
 services:
-{{ lookup("template", "mc.yml.j2") }}
-{{ lookup("template", "dashy.yml.j2") }}
-{{ lookup("template", "openldap.yml.j2") }}
-{{ lookup("template", "uptime-kuma.yml.j2") }}
-{{ lookup("template", "pihole.yml.j2") }}
-{{ lookup("template", "drone-server.yml.j2") }}
-{{ lookup("template", "drone-runner.yml.j2") }}
-{{ lookup("template", "wordpress.yml.j2") }}
-{{ lookup("template", "wordpress-db.yml.j2") }}
 {{ lookup("template", "alertmanager.yml.j2") }}
+{{ lookup("template", "dashy.yml.j2") }}
+{{ lookup("template", "drone-runner.yml.j2") }}
+{{ lookup("template", "drone-server.yml.j2") }}
+{{ lookup("template", "mc.yml.j2") }}
+{{ lookup("template", "openldap.yml.j2") }}
+{{ lookup("template", "pihole.yml.j2") }}
+{{ lookup("template", "uptime-kuma.yml.j2") }}
+{{ lookup("template", "watchtower.yml.j2") }}
 {{ lookup("template", "wg-easy.yml.j2") }}
 {{ lookup("template", "wg-exporter.yml.j2") }}
+{{ lookup("template", "wordpress.yml.j2") }}
+{{ lookup("template", "wordpress-db.yml.j2") }}
 
 volumes:
     certs:
