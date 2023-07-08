@@ -29,8 +29,17 @@
     path: "/mnt/cloud-backups"
     src: "https://{{ nextcloud_domain_name }}/remote.php/dav/files/backup/"
     fstype: davfs
-    opts: user,auto,rw
+    opts: user,rw,noauto,x-systemd.automount,x-systemd.idle-timeout=30
     state: mounted
   environment:
     PATH: "{{ ansible_env.PATH|default('')}}:/usr/local/bin:/usr/bin"
   when: "is_ci|default(False) != True"
+
+- name: "Restart remote-fs"
+  ansible.builtin.service:
+    name: remote-fs.target
+    state: restarted
+    enabled: true
+  when: ansible_service_mgr == "systemd"
+  become: true
+  notify: "reload systemd"
