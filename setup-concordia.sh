@@ -15,4 +15,4 @@ if [ ! -d "$mitogen_dir/mitogen-stable" ]; then
     sudo unzip -qo /tmp/mitogen.zip -d $mitogen_dir
 fi
 
-sudo ansible-galaxy collection install community.postgresql ansible.posix
+sudo ansible-galaxy collection install community.postgresql ansible.posix community.docker

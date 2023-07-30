@@ -49,3 +49,17 @@
     - role: "sshd"
     - role: "ufw"
     - role: "unattended_upgrades"
+
+- hosts: pis_vpn
+  handlers:
+    - import_tasks: "roles/common/handlers/main.yml"
+  roles:
+    - role: "common"
+    - role: "docker"
+    - role: "email"
+    - role: "fail2ban"
+    - role: "node-exporter"
+    - role: "homedir"
+    - role: "sshd"
+    - role: "ufw"
+    - role: "unattended_upgrades"
