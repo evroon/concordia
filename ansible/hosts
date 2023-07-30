@@ -1,5 +1,5 @@
 [webservers]
-webserver
+webserver ansible_connection=local
 
 [pis]
 andromeda
