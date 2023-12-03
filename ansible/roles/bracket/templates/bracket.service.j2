@@ -9,7 +9,7 @@ RestartSec=2s
 Type=simple
 User=bracket
 WorkingDirectory=/var/lib/bracket/backend
-ExecStart=pipenv run gunicorn -k uvicorn.workers.UvicornWorker bracket.app:app --bind localhost:8400 --workers 2 --reload
+ExecStart=pipenv run gunicorn -k uvicorn.workers.UvicornWorker bracket.app:app --bind localhost:8400 --workers 1 --reload
 Environment=ENVIRONMENT=PRODUCTION
 Restart=always
 
