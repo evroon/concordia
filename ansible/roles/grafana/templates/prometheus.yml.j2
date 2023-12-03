@@ -27,3 +27,7 @@ scrape_configs:
   - job_name: wireguard-exporter
     static_configs:
       - targets: ['localhost:9586']
+
+  - job_name: bracket
+    static_configs:
+      - targets: ['localhost:8400']
