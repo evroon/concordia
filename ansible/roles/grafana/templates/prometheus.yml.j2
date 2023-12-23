@@ -31,3 +31,7 @@ scrape_configs:
   - job_name: bracket
     static_configs:
       - targets: ['localhost:8400']
+
+  - job_name: docker
+    static_configs:
+      - targets: ["localhost:9323"]

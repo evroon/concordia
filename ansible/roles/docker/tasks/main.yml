@@ -50,6 +50,17 @@
     - ".env"
   become: true
 
+# Note that the docker daemon has to be restarted when this file changed.
+# We probably don't want to automate the restart because all containers will be down.
+- name: "Copy daemon.json"
+  ansible.builtin.template:
+    src: "daemon.json.j2"
+    dest: "/etc/docker/daemon.json"
+    owner: "root"
+    group: "root"
+    mode: '0644'
+  become: true
+
 # Assume every host is in exactly one group.
 - name: "Copy docker-compose.yml"
   ansible.builtin.template:
