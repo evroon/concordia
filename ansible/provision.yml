@@ -7,11 +7,11 @@
     - role: "authelia"
     - role: "dashy"
     - role: "davfs2"
+    - role: "grafana"
     - role: "docker"
     - role: "email"
     - role: "fail2ban"
     - role: "promtail"
-    - role: "grafana"
     - role: "homedir"
     - role: "letsencrypt"
     - role: "munin"
@@ -47,6 +47,19 @@
     - role: "fail2ban"
     - role: "promtail"
     - role: "node-exporter"
+    - role: "homedir"
+    - role: "sshd"
+    - role: "ufw"
+    - role: "unattended_upgrades"
+
+- hosts: vpn_pis
+  handlers:
+    - import_tasks: "roles/common/handlers/main.yml"
+  roles:
+    - role: "common"
+    - role: "fail2ban"
+    - role: "node-exporter"
+    - role: "promtail"
     - role: "homedir"
     - role: "sshd"
     - role: "ufw"

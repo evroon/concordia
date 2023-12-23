@@ -5,3 +5,5 @@ webserver ansible_connection=local
 
 [dev_machines]
 dev_machine ansible_connection=local
+
+[vpn_pis]
