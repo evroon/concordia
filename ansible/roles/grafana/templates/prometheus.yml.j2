@@ -1,36 +1,39 @@
 global:
-  scrape_interval:     15s
+  scrape_interval: 15s
   evaluation_interval: 15s
+
+rule_files:
+  - alert.rules.yml
 
 alerting:
   alertmanagers:
-  - static_configs:
-    - targets: ['localhost:9093']
+    - static_configs:
+        - targets: ["localhost:9093"]
 
 scrape_configs:
-  - job_name: 'prometheus'
+  - job_name: "prometheus"
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ["localhost:9090"]
 
-  - job_name: node
-    static_configs:
-      - targets: ['localhost:9100', '10.8.0.3:9100']
+  # - job_name: node
+  #   static_configs:
+  #     - targets: ["localhost:9100", "10.8.0.3:9100"]
 
   - job_name: alertmanager
     static_configs:
-      - targets: ['localhost:9093']
+      - targets: ["localhost:9093"]
 
-  - job_name: esp32
-    static_configs:
-      - targets: ['{{ esp32_host }}:80']
+  # - job_name: esp32
+  #   static_configs:
+  #     - targets: ["{{ esp32_host }}:80"]
 
   - job_name: wireguard-exporter
     static_configs:
-      - targets: ['localhost:9586']
+      - targets: ["localhost:9586"]
 
   - job_name: bracket
     static_configs:
-      - targets: ['localhost:8400']
+      - targets: ["localhost:8400"]
 
   - job_name: docker
     static_configs:

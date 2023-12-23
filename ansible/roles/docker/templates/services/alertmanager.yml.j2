@@ -7,4 +7,4 @@
             - /etc/prometheus/alertmanager.yml:/etc/alertmanager/config.yml
         command:
             - '--config.file=/etc/alertmanager/config.yml'
-            # - '--web.external-url=https://dev.monitor.example.com/alertmanager'
+            - '--web.external-url=https://{{ alertmanager_domain_name }}'

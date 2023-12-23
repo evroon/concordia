@@ -65,7 +65,15 @@
     - { in: 'datasources/prometheus.yml.j2', out: '/etc/grafana/provisioning/datasources/prometheus.yml' }
     - { in: 'prometheus.yml.j2', out: '/etc/prometheus/prometheus.yml' }
     - { in: 'alertmanager.yml.j2', out: '/etc/prometheus/alertmanager.yml' }
+    - { in: 'alerts.rules.yml.j2', out: '/etc/prometheus/alert.rules.yml' }
     - { in: 'loki.yml.j2', out: '/etc/loki/local-config.yaml' }
+
+- name: Set command args for prometheus
+  ansible.builtin.lineinfile:
+    path: /etc/default/prometheus
+    regexp: '^ARGS="'
+    line: ARGS="--web.external-url=https://{{ prometheus_domain_name }}"
+  become: true
 
 - name: "Restart prometheus service"
   ansible.builtin.service:
