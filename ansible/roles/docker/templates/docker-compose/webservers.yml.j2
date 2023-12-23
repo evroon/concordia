@@ -5,6 +5,7 @@ services:
 {{ lookup("template", "services/dashy.yml.j2") }}
 {{ lookup("template", "services/drone-runner.yml.j2") }}
 {{ lookup("template", "services/drone-server.yml.j2") }}
+{{ lookup("template", "services/loki.yml.j2") }}
 {{ lookup("template", "services/mc.yml.j2") }}
 {{ lookup("template", "services/openldap.yml.j2") }}
 {{ lookup("template", "services/pihole.yml.j2") }}
@@ -12,8 +13,8 @@ services:
 {{ lookup("template", "services/watchtower.yml.j2") }}
 {{ lookup("template", "services/wg-easy.yml.j2") }}
 {{ lookup("template", "services/wg-exporter.yml.j2") }}
-{{ lookup("template", "services/wordpress.yml.j2") }}
 {{ lookup("template", "services/wordpress-db.yml.j2") }}
+{{ lookup("template", "services/wordpress.yml.j2") }}
 
 volumes:
     certs:

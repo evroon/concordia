@@ -59,6 +59,7 @@
     - role: "common"
     - role: "fail2ban"
     - role: "node-exporter"
+    - role: "promtail"
     - role: "homedir"
     - role: "sshd"
     - role: "ufw"
