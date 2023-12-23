@@ -50,6 +50,7 @@
     - ".env"
   become: true
 
+# Assume every host is in exactly one group.
 - name: "Copy docker-compose.yml"
   ansible.builtin.template:
     src: "docker-compose/{{ item }}.yml.j2"
