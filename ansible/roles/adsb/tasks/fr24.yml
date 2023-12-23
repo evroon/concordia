@@ -11,13 +11,13 @@
     state: present
     filename: flightradar24
   become: true
-  
+
 - name: Install fr24feed apt package
   apt:
     state: present
     name: fr24feed
   become: true
-  
+
 - name: Remove dump1090-mutability
   apt:
     state: absent

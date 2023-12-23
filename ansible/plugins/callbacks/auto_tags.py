@@ -23,7 +23,7 @@ from __future__ import print_function
 
 from typing import Any
 
-from ansible.plugins.callback import CallbackBase
+from ansible.plugins.callback import CallbackBase  # type: ignore[import-not-found]
 
 
 class CallbackModule(CallbackBase):  # type: ignore[misc]

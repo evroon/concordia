@@ -41,6 +41,18 @@
     enabled: true
   become: true
 
+- name: "Create config directories"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: 'u=rwX,g=rX,o='
+    recurse: true
+  with_items:
+    - "/etc/loki/"
+  become: true
+
 - name: "Copy configuration files"
   ansible.builtin.template:
     src: "{{ item.in }}"
@@ -53,6 +65,7 @@
     - { in: 'datasources/prometheus.yml.j2', out: '/etc/grafana/provisioning/datasources/prometheus.yml' }
     - { in: 'prometheus.yml.j2', out: '/etc/prometheus/prometheus.yml' }
     - { in: 'alertmanager.yml.j2', out: '/etc/prometheus/alertmanager.yml' }
+    - { in: 'loki.yml.j2', out: '/etc/loki/local-config.yaml' }
 
 - name: "Restart prometheus service"
   ansible.builtin.service:

@@ -1,0 +1,56 @@
+---
+- name: Install promtail
+  apt:
+    name:
+      - promtail
+    state: present
+    update_cache: yes
+  become: true
+
+- name: "Copy systemd service"
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/etc/systemd/system/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  with_items:
+    - promtail.service
+
+- name: Enable and start promtail service
+  service:
+    name: promtail
+    state: restarted
+    enabled: true
+  become: true
+  notify: "reload systemd"
+
+- name: "Create config directories"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "promtail"
+    mode: 'u=rwX,g=rX,o='
+    recurse: true
+  with_items:
+    - "/etc/promtail/"
+  become: true
+
+- name: "Copy configuration files"
+  ansible.builtin.template:
+    src: "{{ item.in }}"
+    dest: "{{ item.out }}"
+    owner: "promtail"
+    mode: 0644
+  become: true
+  with_items:
+    - { in: 'promtail.yml.j2', out: '/etc/promtail/config.yml' }
+
+- name: "Restart prometheus service"
+  ansible.builtin.service:
+    name: "prometheus.service"
+    state: restarted
+    enabled: true
+  become: true
+  notify: "reload systemd"

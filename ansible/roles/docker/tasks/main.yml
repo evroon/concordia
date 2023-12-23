@@ -16,13 +16,26 @@
   with_items:
     - "restart-docker-services.sh"
 
-- name: "Create docker-compose directory"
+- name: "Create directories"
   ansible.builtin.file:
-    path: "{{ docker_compose_dir }}"
+    path: "{{ item }}"
     state: directory
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
     mode: '0755'
+  with_items:
+    - "{{ docker_compose_dir }}"
+  become: true
+
+- name: "Create volume directories"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "10001"
+    group: "10001"
+    mode: '0755'
+  with_items:
+    - "{{ docker_compose_dir }}/volumes/loki"
   become: true
 
 - name: "Copy docker-compose.yml and .env"
