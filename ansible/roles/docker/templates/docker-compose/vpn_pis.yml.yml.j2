@@ -1,0 +1,7 @@
+version: '3.1'
+
+services:
+{{ lookup("template", "services/pihole.yml.j2") }}
+{{ lookup("template", "services/watchtower.yml.j2") }}
+{{ lookup("template", "services/wg-easy.yml.j2") }}
+{{ lookup("template", "services/wg-exporter.yml.j2") }}
