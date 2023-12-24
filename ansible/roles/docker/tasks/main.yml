@@ -26,9 +26,10 @@
     mode: '0755'
   with_items:
     - "{{ docker_compose_dir }}"
+    - "{{ docker_compose_dir }}/volumes/wg-easy"
   become: true
 
-- name: "Create volume directories"
+- name: "Create Loki volume directories"
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
