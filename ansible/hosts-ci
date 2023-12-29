@@ -1,0 +1,9 @@
+[webservers]
+webserver ansible_connection=local
+
+[pis]
+
+[dev_machines]
+dev_machine ansible_connection=local
+
+[vpn_pis]
