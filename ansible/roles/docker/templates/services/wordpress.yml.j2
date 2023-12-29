@@ -1,7 +1,7 @@
     wordpress:
         container_name: wordpress
         image: wordpress
-        restart: always
+        restart: unless-stopped
         ports:
             - "8083:80"
         volumes:

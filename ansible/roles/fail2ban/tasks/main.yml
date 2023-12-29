@@ -12,3 +12,11 @@
     dest: /etc/fail2ban/jail.local
     mode: 0600
   become: true
+
+- name: "Reload fail2ban service"
+  ansible.builtin.service:
+    name: "fail2ban.service"
+    state: reloaded
+    enabled: true
+  become: true
+  notify: "reload systemd"

@@ -65,8 +65,19 @@
     - { in: 'datasources/prometheus.yml.j2', out: '/etc/grafana/provisioning/datasources/prometheus.yml' }
     - { in: 'prometheus.yml.j2', out: '/etc/prometheus/prometheus.yml' }
     - { in: 'alertmanager.yml.j2', out: '/etc/prometheus/alertmanager.yml' }
-    - { in: 'alerts.rules.yml.j2', out: '/etc/prometheus/alert.rules.yml' }
     - { in: 'loki.yml.j2', out: '/etc/loki/local-config.yaml' }
+
+- name: "Copy configuration files"
+  ansible.builtin.copy:
+    src: "{{ item.in }}"
+    dest: "{{ item.out }}"
+    owner: "root"
+    group: "root"
+    mode: 0644
+  become: true
+  with_items:
+    - { in: 'alerts.rules.yml.j2', out: '/etc/prometheus/alert.rules.yml' }
+    - { in: 'node-exporter-alerts.rules.yml.j2', out: '/etc/prometheus/node-exporter-alert.rules.yml' }
 
 - name: Set command args for prometheus
   ansible.builtin.lineinfile:

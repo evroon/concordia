@@ -1,0 +1,20 @@
+groups:
+- name: alert.rules
+  rules:
+  - alert: InstanceDown
+    expr: up == 0
+    for: 10s
+    labels:
+      severity: "critical"
+    annotations:
+      summary: "Endpoint {{ $labels.instance }} down"
+      description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minutes."
+
+  - alert: DockerContainerDown
+    expr: engine_daemon_container_states_containers{state="stopped"} > 0
+    for: 10s
+    labels:
+      severity: "critical"
+    annotations:
+      summary: "A Docker container on {{ $labels.instance }} is down"
+      description: "A Docker container on {{ $labels.instance }} has been down for more than 1 minutes."

@@ -1,9 +1,11 @@
 [webservers]
-webserver ansible_connection=local
+phoebe
 
 [pis]
+andromeda
 
 [dev_machines]
 dev_machine ansible_connection=local
 
 [vpn_pis]
+callisto

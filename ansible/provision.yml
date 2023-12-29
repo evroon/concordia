@@ -50,7 +50,9 @@
     - role: "homedir"
     - role: "sshd"
     - role: "ufw"
+    - role: "docker"
     - role: "unattended_upgrades"
+    - role: "wireguard-client"
 
 - hosts: vpn_pis
   handlers:
@@ -59,8 +61,10 @@
     - role: "common"
     - role: "fail2ban"
     - role: "node-exporter"
+    - role: "docker"
     - role: "promtail"
     - role: "homedir"
     - role: "sshd"
     - role: "ufw"
     - role: "unattended_upgrades"
+    - role: "wireguard-client"

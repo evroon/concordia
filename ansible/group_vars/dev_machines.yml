@@ -1,2 +1,5 @@
 extra_common_apt_packages:
   btop
+
+fail2ban_features:
+  nginx: false

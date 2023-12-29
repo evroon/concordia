@@ -1,6 +1,6 @@
     wg-easy:
         environment:
-            - WG_HOST={{ domain_name }}
+            - WG_HOST={{ domain_names[ansible_hostname].domain }}
             - PASSWORD={{ wg_easy_password }}
             - WG_PORT=51820
             - WG_MTU=1420

@@ -12,7 +12,7 @@
 - name: Copy wg-cloud conf
   ansible.builtin.template:
     src: "wg-cloud.conf"
-    dest: "/tmp/wg-cloud.conf"
+    dest: "/etc/wireguard/wg-cloud.conf"
   become: true
 
 - name: Install apt packages
