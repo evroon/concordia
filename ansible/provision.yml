@@ -25,7 +25,7 @@
     - role: "unattended_upgrades"
     - role: "gitea"
     - role: "bracket"
-    - role: "wireguard-server"
+    - role: "wireguard"
     - role: "restic-backup"
 
 - hosts: dev_machines
