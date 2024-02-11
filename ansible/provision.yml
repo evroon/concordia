@@ -25,12 +25,8 @@
     - role: "unattended_upgrades"
     - role: "gitea"
     - role: "bracket"
-<<<<<<< Updated upstream
-    - role: "wireguard"
-=======
     - role: "wireguard-server"
     - role: "restic-backup"
->>>>>>> Stashed changes
 
 - hosts: dev_machines
   handlers:

@@ -26,13 +26,10 @@
     mode: '0755'
   with_items:
     - "{{ docker_compose_dir }}"
-<<<<<<< Updated upstream
-=======
     - "{{ docker_compose_dir }}/volumes/wg-easy"
     - "{{ docker_compose_dir }}/volumes/dashy"
     - "{{ docker_compose_dir }}/volumes/pihole"
     - "{{ docker_compose_dir }}/volumes/uptime-kuma"
->>>>>>> Stashed changes
   become: true
 
 - name: "Create volume directories"

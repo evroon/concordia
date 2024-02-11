@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 fail2ban_features:
   nginx: true
 
@@ -66,4 +64,3 @@ certs:
     - bracket:
       nginx_config: bracket
       domain: "{{ bracket_api_domain_name }}"
->>>>>>> Stashed changes
