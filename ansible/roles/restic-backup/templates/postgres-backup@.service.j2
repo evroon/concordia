@@ -1,11 +1,16 @@
 [Unit]
 Description=Creates a backup of postgres database %i
-OnFailure=unit-status-mailer@%n.service
+#OnFailure=unit-status-mailer@%n.service
+Before=restic-check@.service
+After=syslog.target
+After=network-online.target
+After=postgresql.service
+Requires=postgresql.service
 
 [Service]
 Type=oneshot
 ExecStart=/usr/local/bin/postgres-backup
-User=postgres
+User=restic
 Environment=db_name=%i
 
 [Install]

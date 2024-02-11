@@ -5,7 +5,6 @@
     - role: "common"
     - role: "1password"
     - role: "authelia"
-    - role: "dashy"
     - role: "davfs2"
     - role: "grafana"
     - role: "docker"
@@ -18,7 +17,6 @@
     - role: "nginx"
     - role: "nix"
     - role: "postgres"
-    - role: "postgres_backup"
     - role: "node-exporter"
     - role: "selfoss"
     - role: "sshd"
@@ -27,7 +25,12 @@
     - role: "unattended_upgrades"
     - role: "gitea"
     - role: "bracket"
+<<<<<<< Updated upstream
     - role: "wireguard"
+=======
+    - role: "wireguard-server"
+    - role: "restic-backup"
+>>>>>>> Stashed changes
 
 - hosts: dev_machines
   handlers:

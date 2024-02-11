@@ -1,0 +1,117 @@
+---
+
+
+- name: Copy executables
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: /usr/local/bin/{{ item }}
+    owner: restic
+    group: postgres
+    mode: 0775
+  become: true
+  with_items:
+    - "postgres-backup"
+
+- name: Add restic permission to /etc/sudoers
+  ansible.builtin.blockinfile:
+    path: /etc/sudoers
+    block: |
+      restic ALL=(postgres) NOPASSWD:/usr/bin/pg_dump
+    create: true
+  become: true
+
+- name: Create postgres helper executables
+  copy:
+    dest: "/usr/local/bin/restic-{{ item }}"
+    owner: restic
+    group: postgres
+    mode: 0770
+    content: |
+      #!/bin/bash
+      set -eo pipefail
+      RESTIC_REPOSITORY={{ psql_backup_dir }}/{{ item }}/{{ ansible_hostname }} repo={{ item }} restic-with-secrets $@
+  become: true
+  with_items: "{{ postgres_backup_dbs }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: "Create postgres backup directory"
+  ansible.builtin.file:
+    path: "{{ psql_backup_dir }}"
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: '0755'
+  become: true
+
+- name: "Init postgres repositories"
+  command:
+    cmd: "restic init"
+    creates: "{{ psql_backup_dir }}/{{ item }}/{{ ansible_hostname }}/snapshots"
+  environment:
+    RESTIC_PASSWORD: "{{ restic_passwords[item] }}"
+    RESTIC_REPOSITORY: "{{ psql_backup_dir }}/{{ item }}/{{ ansible_hostname }}"
+  become: true
+  become_user: postgres
+  with_items: "{{ postgres_backup_dbs }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: "Copy systemd services and timers"
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/lib/systemd/system/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  notify: "reload systemd"
+  with_items:
+    - postgres-backup@.service
+    - postgres-backup@.timer
+    - postgres-backup-check@.service
+    - postgres-backup-check@.timer
+
+- name: "Flush handlers"
+  ansible.builtin.meta: "flush_handlers"
+
+
+- name: "Restart postgres backup services"
+  ansible.builtin.service:
+    name: "postgres-backup@{{ item }}.service"
+    state: restarted
+    enabled: true
+  become: true
+  with_items: "{{ postgres_backup_dbs }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: "Restart postgres backup timers"
+  ansible.builtin.service:
+    name: "postgres-backup@{{ item }}.timer"
+    state: started
+    enabled: true
+  become: true
+  with_items: "{{ postgres_backup_dbs }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: "Restart postgres check services"
+  ansible.builtin.service:
+    name: "postgres-backup-check@{{ item }}.service"
+    state: restarted
+    enabled: true
+  become: true
+  with_items: "{{ postgres_backup_dbs }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: "Restart postgres check timers"
+  ansible.builtin.service:
+    name: "postgres-backup-check@{{ item }}.timer"
+    state: started
+    enabled: true
+  become: true
+  with_items: "{{ postgres_backup_dbs }}"
+  loop_control:
+    label: "{{ item }}"

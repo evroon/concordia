@@ -1,0 +1,9 @@
+[Unit]
+Description=Creates a backup of repository %i
+
+[Timer]
+OnBootSec=15min
+OnUnitActiveSec=12h
+
+[Install]
+WantedBy=timers.target
