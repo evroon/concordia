@@ -1,6 +1,6 @@
 [Unit]
 Description=Checks snapshots of repository %i
-#OnFailure=unit-status-mailer@%n.service
+OnFailure=unit-status-mailer@%n.service
 
 [Service]
 Type=oneshot

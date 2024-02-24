@@ -42,3 +42,4 @@
     - "{{ certs }}"
   loop_control:
     label: "{{ item.name }}"
+  when: "is_ci|default(False) != True"

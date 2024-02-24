@@ -1,6 +1,5 @@
 ---
 
-
 - name: Copy executables
   ansible.builtin.template:
     src: "{{ item }}.j2"
@@ -74,7 +73,6 @@
 
 - name: "Flush handlers"
   ansible.builtin.meta: "flush_handlers"
-
 
 - name: "Restart postgres backup services"
   ansible.builtin.service:

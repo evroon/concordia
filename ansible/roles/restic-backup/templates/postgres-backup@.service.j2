@@ -1,6 +1,6 @@
 [Unit]
 Description=Creates a backup of postgres database %i
-#OnFailure=unit-status-mailer@%n.service
+OnFailure=unit-status-mailer@%n.service
 Before=restic-check@.service
 After=syslog.target
 After=network-online.target
