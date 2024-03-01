@@ -28,30 +28,31 @@
     content: |
       #!/bin/bash
       set -eo pipefail
-      RESTIC_REPOSITORY={{ psql_backup_dir }}/{{ item }}/{{ ansible_hostname }} repo={{ item }} restic-with-secrets $@
+      RESTIC_REPOSITORY=rclone:nextcloud:backups/postgres/{{ item }}/{{ ansible_hostname }} repo={{ item }} restic-with-secrets $@
   become: true
   with_items: "{{ postgres_backup_dbs }}"
   loop_control:
     label: "{{ item }}"
 
-- name: "Create postgres backup directory"
+- name: "Create tmp postgres backup directory"
   ansible.builtin.file:
-    path: "{{ psql_backup_dir }}"
+    path: "/home/restic/tmp"
     state: directory
-    owner: postgres
+    owner: restic
     group: postgres
-    mode: '0755'
+    mode: '0775'
   become: true
 
 - name: "Init postgres repositories"
   command:
     cmd: "restic init"
-    creates: "{{ psql_backup_dir }}/{{ item }}/{{ ansible_hostname }}/snapshots"
   environment:
     RESTIC_PASSWORD: "{{ restic_passwords[item] }}"
-    RESTIC_REPOSITORY: "{{ psql_backup_dir }}/{{ item }}/{{ ansible_hostname }}"
+    RESTIC_REPOSITORY: "rclone:nextcloud:backups/postgres/{{ item }}/{{ ansible_hostname }}"
   become: true
-  become_user: postgres
+  become_user: restic
+  register: "restic_output"
+  failed_when: restic_output.rc == 0 and "'config file already exists' not in restic_output.stderr"
   with_items: "{{ postgres_backup_dbs }}"
   loop_control:
     label: "{{ item }}"

@@ -1,12 +1,12 @@
 [Unit]
 Description=Creates a backup of directory %i
-OnFailure=unit-status-mailer@%n.service
+#OnFailure=unit-status-mailer@%n.service
 Before=restic-check@.service
 
 [Service]
 Type=oneshot
 ExecStart=/usr/local/bin/directory-backup
-User=root
+User=restic
 Environment=repo=%i
 EnvironmentFile=/etc/restic/%i-source
 

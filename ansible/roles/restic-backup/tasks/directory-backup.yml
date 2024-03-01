@@ -21,33 +21,23 @@
     content: |
       #!/bin/bash
       set -eo pipefail
-      RESTIC_REPOSITORY={{ directory_backup_dir }}/{{ item.key }}/{{ ansible_hostname }} repo={{ item.key }} restic-with-secrets $@
+      RESTIC_REPOSITORY=rclone:nextcloud:backups/directories/{{ item.key }}/{{ ansible_hostname }} repo={{ item.key }} restic-with-secrets $@
   become: true
   with_items: "{{ backup_directories | dict2items }}"
   loop_control:
     label: "{{ item.key }}"
 
-
-- name: "Create repository directory"
-  ansible.builtin.file:
-    path: "{{ directory_backup_dir }}"
-    state: directory
-    owner: restic
-    group: restic
-    mode: '0755'
-  become: true
-  become_user: restic
-
 - name: "Init repositories"
   command:
     cmd: "restic init"
-    creates: "{{ directory_backup_dir }}/{{ item.key }}/{{ ansible_hostname }}/snapshots"
   environment:
     RESTIC_PASSWORD: "{{ restic_passwords[item.key] }}"
-    RESTIC_REPOSITORY: "{{ directory_backup_dir }}/{{ item.key }}/{{ ansible_hostname }}"
+    RESTIC_REPOSITORY: "rclone:nextcloud:backups/directories/{{ item.key }}/{{ ansible_hostname }}"
   become: true
   become_user: restic
   with_items: "{{ backup_directories | dict2items }}"
+  register: "restic_output"
+  failed_when: restic_output.rc == 0 and "'config file already exists' not in restic_output.stderr"
   loop_control:
     label: "{{ item.key }}"
 

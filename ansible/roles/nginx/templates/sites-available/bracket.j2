@@ -23,6 +23,6 @@ server {
         proxy_pass http://localhost:8400;
     }
 
-    ssl_certificate /etc/letsencrypt/live/{{ bracket_api_domain_name }}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/{{ bracket_api_domain_name }}/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/{{ bracket_domain_name }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ bracket_domain_name }}/privkey.pem;
 }

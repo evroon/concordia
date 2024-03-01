@@ -58,9 +58,15 @@ certs:
     - wg_easy_ui:
       nginx_config: wg_easy_ui
       domain: "{{ wg_easy_ui_domain_name }}"
+    - umami:
+      nginx_config: umami-admin
+      domain: "{{ umami_admin_domain_name }}"
 
-  - name: "{{ bracket_api_domain_name }}"
+  - name: "{{ bracket_domain_name }}"
     alternative_names:
     - bracket:
       nginx_config: bracket
       domain: "{{ bracket_api_domain_name }}"
+    - umami:
+      nginx_config: umami-bracket
+      domain: "{{ umami_bracket_domain_name }}"

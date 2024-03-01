@@ -1,8 +1,9 @@
 ---
-- name: Install restic
+- name: Install restic and rclone
   apt:
     name:
       - restic
+      - rclone
     state: present
     update_cache: yes
   become: true
@@ -22,6 +23,15 @@
     owner: restic
     group: restic
     mode: '0755'
+  become: true
+
+- name: Copy rclone config
+  ansible.builtin.template:
+    src: "rclone.conf.j2"
+    dest: /home/restic/.config/rclone/rclone.conf
+    owner: restic
+    group: restic
+    mode: 0600
   become: true
 
 - name: Store secrets lookup files
@@ -63,7 +73,7 @@
 - name: "Run directory and postgres backup tasks"
   include_tasks: "{{ task_path }}"
   loop:
-    - "directory-backup.yml"
+    # - "directory-backup.yml"
     - "postgres-backup.yml"
   loop_control:
     loop_var: "task_path"

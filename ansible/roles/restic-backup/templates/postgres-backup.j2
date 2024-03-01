@@ -1,13 +1,11 @@
 #!/bin/bash
 set -evo pipefail
 
-backupfolder={{ psql_backup_dir }}
-
-psqlfile=$backupfolder/$db_name/$(hostname)/$db_name-$(date +%Y-%m-%d_%H-%M-%S).psql
+psqlfile=/home/restic/tmp/$db_name-$(date +%Y-%m-%d_%H-%M-%S).psql
 
 # Create a backup
 if /usr/bin/sudo -u postgres pg_dump $db_name > $psqlfile ; then
-   echo 'Psql dump created'
+   echo 'psql dump created'
 else
    echo 'pg_dump return non-zero code'
    exit 1
