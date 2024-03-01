@@ -1,19 +1,25 @@
 server {
-    server_name {{ grafana_domain_name }};
+    server_name {{ umami_admin_domain_name }};
 
     listen 443 ssl;
     listen [::]:443 ssl;
 
     include /etc/authelia/nginx/authelia-location.conf;
 
+    location /script.js {
+        proxy_pass http://localhost:8000;
+    }
+
+    location /api/send {
+        proxy_pass http://localhost:8000;
+    }
+
     location / {
         include /etc/authelia/nginx/proxy.conf;
         include /etc/authelia/nginx/authelia-authrequest.conf;
-        proxy_pass http://localhost:3000;
+        proxy_pass http://localhost:8000;
     }
 
     ssl_certificate /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/{{ domain_name }}/privkey.pem;
-
-    proxy_set_header Host {{ grafana_domain_name }};
 }

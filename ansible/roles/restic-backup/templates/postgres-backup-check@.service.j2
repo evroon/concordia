@@ -1,0 +1,12 @@
+[Unit]
+Description=Checks snapshots of repository %i
+OnFailure=unit-status-mailer@%n.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/restic-check
+User=restic
+Environment=repo=%i
+
+[Install]
+WantedBy=multi-user.target

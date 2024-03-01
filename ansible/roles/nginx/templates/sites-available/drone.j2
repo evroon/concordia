@@ -4,7 +4,11 @@ server {
     listen 443 ssl;
     listen [::]:443 ssl;
 
+    include /etc/authelia/nginx/authelia-location.conf;
+
     location / {
+        include /etc/authelia/nginx/proxy.conf;
+        include /etc/authelia/nginx/authelia-authrequest.conf;
         proxy_pass http://localhost:3030;
     }
 

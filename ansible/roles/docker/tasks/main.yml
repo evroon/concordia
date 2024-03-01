@@ -34,6 +34,9 @@
   with_items:
     - "{{ docker_compose_dir }}"
     - "{{ docker_compose_dir }}/volumes/wg-easy"
+    - "{{ docker_compose_dir }}/volumes/dashy"
+    - "{{ docker_compose_dir }}/volumes/pihole"
+    - "{{ docker_compose_dir }}/volumes/uptime-kuma"
   become: true
 
 - name: "Create Loki volume directories"
@@ -41,8 +44,9 @@
     path: "{{ item }}"
     state: directory
     owner: "10001"
-    group: "10001"
-    mode: '0755'
+    group: "restic"
+    mode: '0775'
+    recurse: true
   with_items:
     - "{{ docker_compose_dir }}/volumes/loki"
   become: true

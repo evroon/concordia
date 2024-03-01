@@ -1,4 +1,5 @@
 limit_req_zone $binary_remote_addr zone=ip:10m rate=5r/s;
+limit_req_zone $binary_remote_addr zone=login:10m rate=6r/m;
 
 server {
     server_name {{ bracket_api_domain_name }};
@@ -17,6 +18,11 @@ server {
         deny all;
     }
 
-    ssl_certificate /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/{{ domain_name }}/privkey.pem;
+    location /token {
+        limit_req zone=login burst=4 delay=2;
+        proxy_pass http://localhost:8400;
+    }
+
+    ssl_certificate /etc/letsencrypt/live/{{ bracket_domain_name }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ bracket_domain_name }}/privkey.pem;
 }

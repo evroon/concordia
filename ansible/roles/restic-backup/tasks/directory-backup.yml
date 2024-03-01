@@ -1,0 +1,100 @@
+---
+
+
+- name: Copy executables
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: /usr/local/bin/{{ item }}
+    owner: restic
+    group: postgres
+    mode: 0775
+  become: true
+  with_items:
+    - "directory-backup"
+
+- name: Create helper executables
+  copy:
+    dest: "/usr/local/bin/restic-{{ item.key }}"
+    owner: restic
+    group: postgres
+    mode: 0770
+    content: |
+      #!/bin/bash
+      set -eo pipefail
+      RESTIC_REPOSITORY=rclone:nextcloud:backups/directories/{{ item.key }}/{{ ansible_hostname }} repo={{ item.key }} restic-with-secrets $@
+  become: true
+  with_items: "{{ backup_directories | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+
+- name: "Init repositories"
+  command:
+    cmd: "restic init"
+  environment:
+    RESTIC_PASSWORD: "{{ restic_passwords[item.key] }}"
+    RESTIC_REPOSITORY: "rclone:nextcloud:backups/directories/{{ item.key }}/{{ ansible_hostname }}"
+  become: true
+  become_user: restic
+  with_items: "{{ backup_directories | dict2items }}"
+  register: "restic_output"
+  failed_when: restic_output.rc == 0 and "'config file already exists' not in restic_output.stderr"
+  loop_control:
+    label: "{{ item.key }}"
+
+- name: "Copy systemd services and timers"
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/lib/systemd/system/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  notify: "reload systemd"
+  with_items:
+    - directory-backup@.service
+    - directory-backup@.timer
+    - directory-backup-check@.service
+    - directory-backup-check@.timer
+
+- name: "Flush handlers"
+  ansible.builtin.meta: "flush_handlers"
+
+- name: "Restart backup services"
+  ansible.builtin.service:
+    name: "directory-backup@{{ item.key }}.service"
+    state: restarted
+    enabled: true
+  become: true
+  with_items: "{{ backup_directories | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+
+- name: "Restart backup timers"
+  ansible.builtin.service:
+    name: "directory-backup@{{ item.key }}.timer"
+    state: started
+    enabled: true
+  become: true
+  with_items: "{{ backup_directories | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+
+- name: "Restart check services"
+  ansible.builtin.service:
+    name: "directory-backup-check@{{ item.key }}.service"
+    state: restarted
+    enabled: true
+  become: true
+  with_items: "{{ backup_directories | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+
+- name: "Restart check timers"
+  ansible.builtin.service:
+    name: "directory-backup-check@{{ item.key }}.timer"
+    state: started
+    enabled: true
+  become: true
+  with_items: "{{ backup_directories | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"

@@ -11,8 +11,8 @@
             WEBPASSWORD: '{{ pihole_password }}'
             ServerIP: '192.168.178.234'
         volumes:
-            - '/home/pi/etc-pihole:/etc/pihole/'
-            - '/home/pi/etc-dnsmasq.d:/etc/dnsmasq.d/'
+            - '/var/lib/concordia-docker/pihole/etc-pihole:/etc/pihole/'
+            - '/var/lib/concordia-docker/pihole/etc-dnsmasq.d:/etc/dnsmasq.d/'
         cap_add:
             - NET_ADMIN
         restart: unless-stopped

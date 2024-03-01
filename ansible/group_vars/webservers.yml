@@ -1,2 +1,72 @@
 fail2ban_features:
   nginx: true
+
+backup_directories:
+  docker: /var/lib/concordia-docker/volumes
+  gitea: /var/lib/gitea/data
+  selfoss: /var/www/selfoss
+
+postgres_backup_dbs:
+  - gitea
+  - selfoss
+  - bracket
+  - authelia
+  - grafana
+
+certs:
+  - name: "{{ domain_name }}"
+    alternative_names:
+    - dashy:
+      nginx_config: dashy
+      domain: "www.{{ domain_name }}"
+    - gitea:
+      nginx_config: gitea
+      domain: "{{ gitea_domain_name }}"
+    - selfoss:
+      nginx_config: selfoss
+      domain: "{{ selfoss_domain_name }}"
+    - munin:
+      nginx_config: munin
+      domain: "{{ munin_domain_name }}"
+    - web1090:
+      nginx_config: web1090
+      domain: "{{ web1090_domain_name }}"
+    - uptime_kuma:
+      nginx_config: uptime_kuma
+      domain: "{{ uptime_kuma_domain_name }}"
+    - grafana:
+      nginx_config: grafana
+      domain: "{{ grafana_domain_name }}"
+    - drone:
+      nginx_config: drone
+      domain: "{{ drone_domain_name }}"
+    - shopware6:
+      nginx_config: shopware6
+      domain: "{{ shopware6_domain_name }}"
+    - wordpress:
+      nginx_config: wordpress
+      domain: "{{ wordpress_domain_name }}"
+    - authelia:
+      nginx_config: authelia
+      domain: "{{ authelia_domain_name }}"
+    - alertmanager:
+      nginx_config: alertmanager
+      domain: "{{ alertmanager_domain_name }}"
+    - prometheus:
+      nginx_config: prometheus
+      domain: "{{ prometheus_domain_name }}"
+    - wg_easy_ui:
+      nginx_config: wg_easy_ui
+      domain: "{{ wg_easy_ui_domain_name }}"
+    - umami:
+      nginx_config: umami-admin
+      domain: "{{ umami_admin_domain_name }}"
+
+  - name: "{{ bracket_domain_name }}"
+    alternative_names:
+    - bracket:
+      nginx_config: bracket
+      domain: "{{ bracket_api_domain_name }}"
+    - umami:
+      nginx_config: umami-bracket
+      domain: "{{ umami_bracket_domain_name }}"

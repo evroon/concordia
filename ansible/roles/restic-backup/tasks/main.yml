@@ -1,0 +1,79 @@
+---
+- name: Install restic and rclone
+  apt:
+    name:
+      - restic
+      - rclone
+    state: present
+    update_cache: yes
+  become: true
+
+- name: "Create Restic user"
+  ansible.builtin.user:
+    name: "restic"
+    comment: "Restic user"
+    shell: "/bin/bash"
+    system: true
+  become: true
+
+- name: "Create config directory"
+  ansible.builtin.file:
+    path: "/etc/restic"
+    state: directory
+    owner: restic
+    group: restic
+    mode: '0755'
+  become: true
+
+- name: Copy rclone config
+  ansible.builtin.template:
+    src: "rclone.conf.j2"
+    dest: /home/restic/.config/rclone/rclone.conf
+    owner: restic
+    group: restic
+    mode: 0600
+  become: true
+
+- name: Store secrets lookup files
+  copy:
+    dest: "/etc/restic/{{ item.key }}-password"
+    owner: restic
+    group: restic
+    mode: 0440
+    content: "{{ item.value }}"
+  become: true
+  with_items: "{{ restic_passwords | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+
+- name: Store backup source lookup files
+  copy:
+    dest: "/etc/restic/{{ item.key }}-source"
+    owner: restic
+    group: root
+    mode: 0400
+    content: "source={{ item.value }}"
+  become: true
+  with_items: "{{ backup_directories | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+
+- name: Copy executables
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: /usr/local/bin/{{ item }}
+    owner: restic
+    group: postgres
+    mode: 0775
+  become: true
+  with_items:
+    - "restic-with-secrets"
+    - "restic-check"
+
+- name: "Run directory and postgres backup tasks"
+  include_tasks: "{{ task_path }}"
+  loop:
+    # - "directory-backup.yml"
+    - "postgres-backup.yml"
+  loop_control:
+    loop_var: "task_path"

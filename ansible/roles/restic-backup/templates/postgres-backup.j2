@@ -1,0 +1,20 @@
+#!/bin/bash
+set -evo pipefail
+
+psqlfile=/home/restic/tmp/$db_name-$(date +%Y-%m-%d_%H-%M-%S).psql
+
+# Create a backup
+if /usr/bin/sudo -u postgres pg_dump $db_name > $psqlfile ; then
+   echo 'psql dump created'
+else
+   echo 'pg_dump return non-zero code'
+   exit 1
+fi
+
+restic-$db_name backup $psqlfile
+restic-$db_name forget \
+    --keep-within-daily 31d \
+    --keep-within-monthly 1y \
+    --keep-within-yearly 100y
+
+rm -f $psqlfile

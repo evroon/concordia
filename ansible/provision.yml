@@ -6,7 +6,6 @@
     - role: "1password"
     - role: "redis"
     - role: "authelia"
-    - role: "dashy"
     - role: "davfs2"
     - role: "grafana"
     - role: "docker"
@@ -19,7 +18,6 @@
     - role: "nginx"
     - role: "nix"
     - role: "postgres"
-    - role: "postgres_backup"
     - role: "node-exporter"
     - role: "selfoss"
     - role: "sshd"
@@ -28,6 +26,7 @@
     - role: "unattended_upgrades"
     - role: "gitea"
     - role: "bracket"
+    - role: "restic-backup"
     - role: "wireguard-server"
 
 - hosts: dev_machines
