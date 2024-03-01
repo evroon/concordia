@@ -6,6 +6,13 @@
     proto: udp
   with_items:
     - '51820'
+    - '51920'
+  become: true
+
+- name: Copy wg-cloud conf
+  ansible.builtin.template:
+    src: "wg-cloud.conf"
+    dest: "/etc/wireguard/wg-cloud.conf"
   become: true
 
 - name: Install apt packages
@@ -30,3 +37,14 @@
     line: "net.ipv4.conf.all.src_valid_mark=1"
     create: true
   become: true
+
+- name: "Restart wg-quick services"
+  ansible.builtin.service:
+    name: '{{ item }}'
+    state: restarted
+    enabled: true
+  become: true
+  notify: "reload systemd"
+  with_items:
+    - 'wg-quick@wg0.service'
+    - 'wg-quick@wg-cloud.service'

@@ -1,7 +1,7 @@
     wordpress_db:
         container_name: wordpress_db
         image: mysql:5.7
-        restart: always
+        restart: unless-stopped
         environment:
             MYSQL_DATABASE: {{ wordpress_db_name }}
             MYSQL_USER: {{ wordpress_db_user }}

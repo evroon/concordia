@@ -1,4 +1,12 @@
 ---
+- ufw:
+    state: enabled
+    rule: allow
+    port: '{{ item }}'
+  with_items:
+    - '9323'
+  become: true
+
 - name: Install apt packages
   apt:
     state: present
@@ -11,7 +19,6 @@
     src: "scripts/{{ item }}.j2"
     dest: "/usr/local/bin/{{ item }}"
     mode: '0755'
-    remote_src: true
   become: true
   with_items:
     - "restart-docker-services.sh"
@@ -32,7 +39,7 @@
     - "{{ docker_compose_dir }}/volumes/uptime-kuma"
   become: true
 
-- name: "Create volume directories"
+- name: "Create Loki volume directories"
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
@@ -53,6 +60,17 @@
     mode: '0644'
   with_items:
     - ".env"
+  become: true
+
+# Note that the docker daemon has to be restarted when this file changed.
+# We probably don't want to automate the restart because all containers will be down.
+- name: "Copy daemon.json"
+  ansible.builtin.template:
+    src: "daemon.json.j2"
+    dest: "/etc/docker/daemon.json"
+    owner: "root"
+    group: "root"
+    mode: '0644'
   become: true
 
 # Assume every host is in exactly one group.

@@ -1,10 +1,11 @@
     alertmanager:
         container_name: alertmanager
         image: prom/alertmanager:latest
+        restart: unless-stopped
         ports:
             - 9093:9093
         volumes:
             - /etc/prometheus/alertmanager.yml:/etc/alertmanager/config.yml
         command:
             - '--config.file=/etc/alertmanager/config.yml'
-            # - '--web.external-url=https://dev.monitor.example.com/alertmanager'
+            - '--web.external-url=https://{{ alertmanager_domain_name }}'

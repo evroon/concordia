@@ -1,33 +1,61 @@
 global:
-  scrape_interval:     15s
+  scrape_interval: 15s
   evaluation_interval: 15s
+
+rule_files:
+  - alert.rules.yml
+  - node-exporter-alert.rules.yml
 
 alerting:
   alertmanagers:
-  - static_configs:
-    - targets: ['localhost:9093']
+    - static_configs:
+        - targets: ["localhost:9093"]
 
 scrape_configs:
-  - job_name: 'prometheus'
+  - job_name: "prometheus"
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ["localhost:9090"]
+
+    relabel_configs: &instance_relabel_config
+      - source_labels: [__address__]
+        regex: "([^:]+):\\d+"
+        target_label: instance
+      - source_labels: [__address__]
+        regex: "^(localhost).*$"
+        replacement: "{{ ansible_hostname }}"
+        target_label: instance
 
   - job_name: node
     static_configs:
-      - targets: ['localhost:9100', '10.8.0.3:9100']
+      - targets: ["localhost:9100", "andromeda:9100", "callisto:9100"]
+    relabel_configs: *instance_relabel_config
 
   - job_name: alertmanager
     static_configs:
-      - targets: ['localhost:9093']
+      - targets: ["localhost:9093"]
+    relabel_configs: *instance_relabel_config
 
-  - job_name: esp32
-    static_configs:
-      - targets: ['{{ esp32_host }}:80']
+  # - job_name: esp32
+  #   static_configs:
+  #     - targets: ["{{ esp32_host }}:80"]
+  #   relabel_configs: *instance_relabel_config
 
   - job_name: wireguard-exporter
     static_configs:
-      - targets: ['localhost:9586']
+      - targets: ["localhost:9586", "andromeda:9586", "callisto:9586"]
+    relabel_configs: *instance_relabel_config
 
   - job_name: bracket
     static_configs:
-      - targets: ['localhost:8400']
+      - targets: ["localhost:8400"]
+    relabel_configs: *instance_relabel_config
+
+  - job_name: docker
+    static_configs:
+      - targets: ["localhost:9323", "andromeda:9323", "callisto:9323"]
+    relabel_configs: *instance_relabel_config
+
+  - job_name: dump1090
+    static_configs:
+      - targets: ["andromeda:9105"]
+    relabel_configs: *instance_relabel_config

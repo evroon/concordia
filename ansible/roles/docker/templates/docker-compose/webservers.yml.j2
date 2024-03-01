@@ -6,8 +6,6 @@ services:
 # Drone disabled
 {{ lookup("template", "services/loki.yml.j2") }}
 {{ lookup("template", "services/mc.yml.j2") }}
-{{ lookup("template", "services/openldap.yml.j2") }}
-{{ lookup("template", "services/pihole.yml.j2") }}
 {{ lookup("template", "services/uptime-kuma.yml.j2") }}
 {{ lookup("template", "services/watchtower.yml.j2") }}
 {{ lookup("template", "services/wg-easy.yml.j2") }}

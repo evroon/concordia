@@ -1,0 +1,16 @@
+---
+
+- name: Install redis-server
+  apt:
+    name:
+      - redis-server
+    state: present
+    update_cache: yes
+  become: true
+
+- name: Update redis admin password
+  ansible.builtin.lineinfile:
+    path: "/etc/redis/redis.conf"
+    regexp: '^# requirepass '
+    line: "requirepass {{ redis_admin_password }}"
+  become: true
