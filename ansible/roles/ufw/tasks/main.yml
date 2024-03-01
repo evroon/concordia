@@ -7,21 +7,17 @@
       - iptables
   become: true
 
+- ufw:
+    state: enabled
+    rule: allow
+    port: '22'
+    proto: tcp
+  become: true
+
 - name: "Set legacy iptables version on rpi"
   command: "update-alternatives --set iptables /usr/sbin/iptables-legacy"
   become: true
   when: inventory_hostname == 'pi'
-
-- ufw:
-    state: enabled
-    rule: allow
-    port: '{{ item }}'
-    proto: tcp
-  with_items:
-    - '80'
-    - '443'
-    - '22'
-  become: true
 
 - ufw:
     state: enabled

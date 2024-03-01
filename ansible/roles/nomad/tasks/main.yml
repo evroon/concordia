@@ -1,0 +1,19 @@
+---
+- name: Add hashicorp gpg key
+  shell: curl https://apt.releases.hashicorp.com/gpg | apt-key add -
+  become: true
+
+- name: Add hashicorp repo
+  apt_repository:
+    repo: deb https://apt.releases.hashicorp.com stable main
+    state: present
+    filename: hashicorp
+  become: true
+
+- name: Install Nomad
+  apt:
+    name:
+      - nomad
+    state: present
+    update_cache: yes
+  become: true

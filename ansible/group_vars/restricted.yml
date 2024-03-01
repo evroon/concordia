@@ -1,0 +1,9 @@
+fail2ban_features:
+  nginx: false
+
+postgres_backup_dbs:
+  - gitea
+  - selfoss
+  - bracket
+  - authelia
+  - grafana

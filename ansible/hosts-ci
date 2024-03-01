@@ -1,4 +1,4 @@
-[webservers]
+[dmz]
 webserver ansible_connection=local
 
 [pis]

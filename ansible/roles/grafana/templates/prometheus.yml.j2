@@ -35,10 +35,10 @@ scrape_configs:
       - targets: ["localhost:9093"]
     relabel_configs: *instance_relabel_config
 
-  # - job_name: esp32
-  #   static_configs:
-  #     - targets: ["{{ esp32_host }}:80"]
-  #   relabel_configs: *instance_relabel_config
+  - job_name: esp32
+    static_configs:
+      - targets: ["{{ esp32_host }}:4040"]
+    relabel_configs: *instance_relabel_config
 
   - job_name: wireguard-exporter
     static_configs:

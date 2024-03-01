@@ -8,10 +8,30 @@
       - pgpdump
   become: true
 
+- ufw:
+    state: enabled
+    rule: allow
+    port: '5432'
+    proto: tcp
+  become: true
+
 - name: Start postgresql
   ansible.builtin.service:
     name: postgresql
     state: started
+  become: true
+
+- name: Allow outside access
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/14/main/postgresql.conf"
+    regexp: 'listen_addresses ='
+    line: "listen_addresses = '*'"
+  become: true
+
+- name: Copy pg_hba.conf
+  ansible.builtin.template:
+    src: pg_hba.conf.j2
+    dest: /etc/postgresql/14/main/pg_hba.conf
   become: true
 
 - include: create_db.yml db_name='selfoss' db_user='selfoss' db_pass='{{ selfoss_psql_password }}'

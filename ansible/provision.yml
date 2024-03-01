@@ -1,4 +1,4 @@
-- hosts: webservers
+- hosts: dmz
   handlers:
     - import_tasks: "roles/common/handlers/main.yml"
   roles:
@@ -8,6 +8,7 @@
     - role: "authelia"
     - role: "davfs2"
     - role: "grafana"
+    - role: "restic-backup"
     - role: "docker"
     - role: "email"
     - role: "fail2ban"
@@ -15,6 +16,7 @@
     - role: "homedir"
     - role: "letsencrypt"
     - role: "munin"
+    - role: "nomad"
     - role: "nginx"
     - role: "nix"
     - role: "postgres"
@@ -26,7 +28,6 @@
     - role: "unattended_upgrades"
     - role: "gitea"
     - role: "bracket"
-    - role: "restic-backup"
     - role: "wireguard-server"
 
 - hosts: dev_machines
@@ -68,3 +69,15 @@
     - role: "ufw"
     - role: "unattended_upgrades"
     - role: "wireguard-client"
+
+- hosts: restricted
+  handlers:
+    - import_tasks: "roles/common/handlers/main.yml"
+  roles:
+    - role: "common"
+    - role: "fail2ban"
+    - role: "node-exporter"
+    - role: "postgres"
+    - role: "promtail"
+    - role: "sshd"
+    - role: "ufw"

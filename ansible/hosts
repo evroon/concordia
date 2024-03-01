@@ -1,4 +1,4 @@
-[webservers]
+[dmz]
 phoebe
 
 [pis]
@@ -9,3 +9,6 @@ dev_machine ansible_connection=local
 
 [vpn_pis]
 callisto
+
+[restricted]
+rhea
