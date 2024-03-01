@@ -1,21 +1,69 @@
 ---
-- name: Add grafana gpg key
-  shell: curl https://packages.grafana.com/gpg.key | apt-key add -
+- name: "Check promtail version"
+  shell: "set -eo pipefail; /usr/bin/promtail --version | head -n 1 | cut -d' ' -f 3"
+  args:
+    executable: /bin/bash
+  register: promtail_active_version
+  changed_when: false
+  failed_when: false
+
+- name: "Get latest Promtail version"
+  shell: "/usr/local/bin/get_latest_github_release --repo 'grafana/loki'"
+  register: promtail_version
+
+- name: Get DEB architecture
+  shell: dpkg --print-architecture
+  register: deb_architecture
+
+- debug:
+    msg: "{{ promtail_version.stdout }}"
+
+- set_fact: architecture="{{ deb_architecture.stdout | regex_replace('armhf', 'arm') }}"
+- set_fact: promtail_version="{{ promtail_version.stdout | regex_replace('v', '') }}"
+- set_fact: promtail_dl_url="https://github.com/grafana/loki/releases/download/v{{ promtail_version }}/promtail-linux-{{ architecture }}.zip"
+
+- name: "Create Promtail user"
+  ansible.builtin.user:
+    name: "promtail"
+    comment: "Promtail user"
+    shell: "/bin/bash"
+    system: true
   become: true
 
-- name: Add grafana repo
-  apt_repository:
-    repo: deb https://packages.grafana.com/oss/deb stable main
-    state: present
-    filename: grafana
+- name: "Create promtail directories"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: promtail
+    mode: 'u=rwX,g=rX,o='
+    recurse: true
+  with_items:
+    - "/etc/promtail/"
   become: true
 
-- name: Install promtail
-  apt:
-    name:
-      - promtail
-    state: present
-    update_cache: yes
+- block:
+  - name: Download promtail archive
+    get_url:
+      url: "{{ promtail_dl_url }}"
+      dest: "/tmp/promtail-{{ promtail_version }}.linux-{{ architecture }}"
+    register: _download_archive
+    until: _download_archive is succeeded
+    retries: 5
+    delay: 2
+
+  - name: Extract promtail download
+    unarchive:
+      remote_src: true
+      src: "/tmp/promtail-{{ promtail_version }}.linux-{{ architecture }}"
+      dest: "/usr/bin"
+      owner: promtail
+      mode: 0755
+    become: true
+
+  - name: Rename executable
+    command: mv /usr/bin/promtail-linux-{{ architecture }} /usr/bin/promtail
+
+  when: promtail_active_version.stdout != promtail_version
   become: true
 
 - name: "Copy systemd service"
@@ -28,17 +76,6 @@
   become: true
   with_items:
     - promtail.service
-
-- name: "Create config directories"
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: "promtail"
-    mode: 'u=rwX,g=rX,o='
-    recurse: true
-  with_items:
-    - "/etc/promtail/"
-  become: true
 
 - name: "Copy configuration files"
   ansible.builtin.template:

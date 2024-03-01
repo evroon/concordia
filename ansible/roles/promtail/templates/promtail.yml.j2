@@ -8,7 +8,7 @@ positions:
   filename: /etc/promtail/positions.yaml
 
 clients:
-  - url: http://localhost:3100/loki/api/v1/push
+  - url: http://phoebe:3100/loki/api/v1/push
 
 scrape_configs:
   - job_name: journal
@@ -18,8 +18,9 @@ scrape_configs:
     relabel_configs:
       - source_labels: ['__journal__systemd_unit']
         target_label: 'unit'
-      - source_labels: ['__journal__hostname']
-        target_label: "hostname"
+    pipeline_stages:
+      - static_labels:
+          hostname: "{{ ansible_hostname }}"
 
   - job_name: system
     static_configs:
@@ -28,6 +29,9 @@ scrape_configs:
       labels:
         job: varlogs
         __path__: /var/log/*log
+    pipeline_stages:
+      - static_labels:
+          hostname: "{{ ansible_hostname }}"
 
   - job_name: flog_scrape
     docker_sd_configs:
@@ -44,3 +48,5 @@ scrape_configs:
           selector: '{container="loki"}'
           action: drop
           drop_counter_reason: loki_logs_too_much
+      - static_labels:
+          hostname: "{{ ansible_hostname }}"

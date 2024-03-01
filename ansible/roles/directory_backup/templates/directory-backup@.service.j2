@@ -1,0 +1,12 @@
+[Unit]
+Description=Creates a backup of postgres database %i
+OnFailure=unit-status-mailer@%n.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/postgres-backup
+User=postgres
+Environment=db_name=%i
+
+[Install]
+WantedBy=multi-user.target

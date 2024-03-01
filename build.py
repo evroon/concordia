@@ -12,6 +12,10 @@ def get_secrets(args: argparse.Namespace) -> list[str]:
     return [secrets_file, 'inventory.yml', 'installed_versions.yml']
 
 
+def get_hosts(args: argparse.Namespace) -> list[str]:
+    return ['hosts' if not args.ci else 'hosts-ci']
+
+
 def get_environment(args: argparse.Namespace) -> dict[str, str]:
     environment = {
         'ANSIBLE_CONFIG': 'ansible.cfg',
@@ -30,7 +34,7 @@ def change_working_directory() -> None:
 def build_all(args: argparse.Namespace) -> None:
     extras = get_secrets(args)
     environment = get_environment(args)
-    inventories = ['hosts']
+    inventories = get_hosts(args)
     command = ['ansible-playbook']
 
     for extra in extras:

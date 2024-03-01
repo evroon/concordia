@@ -1,0 +1,9 @@
+    dump1090-exporter:
+        container_name: dump1090-exporter
+        image: ghcr.io/mateuszdrab/dump1090-exporter:master
+        restart: unless-stopped
+        stop_signal: SIGINT
+        network_mode: host
+        command: [
+            "--resource-path=http://localhost:8080/data"
+        ]

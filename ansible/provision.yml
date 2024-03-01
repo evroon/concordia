@@ -28,7 +28,7 @@
     - role: "unattended_upgrades"
     - role: "gitea"
     - role: "bracket"
-    - role: "wireguard"
+    - role: "wireguard-server"
 
 - hosts: dev_machines
   handlers:
@@ -51,7 +51,9 @@
     - role: "homedir"
     - role: "sshd"
     - role: "ufw"
+    - role: "docker"
     - role: "unattended_upgrades"
+    - role: "wireguard-client"
 
 - hosts: vpn_pis
   handlers:
@@ -60,8 +62,10 @@
     - role: "common"
     - role: "fail2ban"
     - role: "node-exporter"
+    - role: "docker"
     - role: "promtail"
     - role: "homedir"
     - role: "sshd"
     - role: "ufw"
     - role: "unattended_upgrades"
+    - role: "wireguard-client"

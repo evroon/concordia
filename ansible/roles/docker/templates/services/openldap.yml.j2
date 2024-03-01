@@ -1,6 +1,7 @@
     openldap:
         image: osixia/openldap:1.5.0
         container_name: openldap
+        restart: unless-stopped
         environment:
             - LDAP_ORGANISATION={{ ldap_organisation }}
             - LDAP_DOMAIN={{ ldap_domain }}

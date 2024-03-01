@@ -79,3 +79,45 @@
     group: "{{ ansible_user_id }}"
     mode: 0744
   become: true
+
+- name: Add server to /etc/hosts
+  ansible.builtin.blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ wireguard_server.address }} {{ wireguard_server.hostname }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ wireguard_server.hostname }}"
+    create: true
+  become: true
+
+- name: Add clients to /etc/hosts
+  ansible.builtin.blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ item.value.address }} {{ item.key }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item.key }}"
+  become: true
+  loop: "{{ wireguard_clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+
+- name: Add server to SSH config
+  ansible.builtin.blockinfile:
+    path: "/home/{{ username }}/.ssh/config"
+    block: |
+      Host {{ wireguard_server.address }}
+        HostName {{ wireguard_server.hostname }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ wireguard_server.hostname }}"
+    create: true
+  become: true
+
+- name: Add clients to SSH config
+  ansible.builtin.blockinfile:
+    path: "/home/{{ username }}/.ssh/config"
+    block: |
+      Host {{ item.value.address }}
+        HostName {{ item.key }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item.key }}"
+  become: true
+  loop: "{{ wireguard_clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
