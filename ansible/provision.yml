@@ -4,6 +4,7 @@
   roles:
     - role: "common"
     - role: "1password"
+    - role: "redis"
     - role: "authelia"
     - role: "dashy"
     - role: "davfs2"

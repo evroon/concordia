@@ -48,6 +48,15 @@ session:
   same_site: lax
   remember_me_duration: 7d
 
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    username:
+    password: {{ redis_admin_password }}
+    database_index: 0
+    maximum_active_connections: 8
+    minimum_idle_connections: 0
+
 regulation:
   max_retries: 3
   find_time: 120

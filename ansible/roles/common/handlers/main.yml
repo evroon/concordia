@@ -31,3 +31,11 @@
   environment:
     PATH: "{{ ansible_env.PATH|default('')}}:/usr/local/bin:/usr/bin"
   become: true
+
+- name: "reload redis"
+  systemd:
+    name: "redis.service"
+    state: "reloaded"
+  environment:
+    PATH: "{{ ansible_env.PATH|default('')}}:/usr/local/bin:/usr/bin"
+  become: true

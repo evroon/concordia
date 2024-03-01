@@ -19,6 +19,7 @@ Installation:
 callback_plugins = plugins/callbacks
 callback_whitelist = auto_tags
 """
+
 from __future__ import print_function
 
 from typing import Any
