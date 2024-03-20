@@ -61,6 +61,9 @@ certs:
     - umami:
       nginx_config: umami-admin
       domain: "{{ umami_admin_domain_name }}"
+    - nomad:
+      nginx_config: nomad
+      domain: "{{ nomad_domain_name }}"
 
   - name: "{{ bracket_domain_name }}"
     alternative_names:

@@ -19,10 +19,3 @@
     dest: /etc/nginx/nginx.conf
   become: true
   notify: "reload nginx"
-
-- name: "Install certificates"
-  ansible.builtin.include_tasks: "get-certificates.yml"
-  with_items:
-    - "{{ certs }}"
-  loop_control:
-    loop_var: cert

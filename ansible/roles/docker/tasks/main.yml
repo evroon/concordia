@@ -29,8 +29,9 @@
     path: "{{ item }}"
     state: directory
     owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
-    mode: '0755'
+    group: "restic"
+    mode: '0775'
+    recurse: true
   with_items:
     - "{{ docker_compose_dir }}"
     - "{{ docker_compose_dir }}/volumes/wg-easy"
