@@ -1,0 +1,7 @@
+server {
+    listen 4040;
+
+    location / {
+        proxy_pass {{ esp32_host_addr }};
+    }
+}

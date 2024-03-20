@@ -14,7 +14,7 @@
 
 - name: "Disable all site configs"
   ansible.builtin.file:
-    path: "/etc/nginx/sites-available/{{ item }}"
+    path: "/etc/nginx/sites-enabled/{{ item }}"
     state: absent
   with_fileglob:
     - "/etc/nginx/sites-enabled/*"

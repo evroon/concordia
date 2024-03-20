@@ -1,0 +1,33 @@
+---
+- ufw:
+    state: enabled
+    rule: allow
+    port: '{{ item }}'
+    proto: tcp
+  with_items:
+    - '4040'
+  become: true
+
+- name: "Copy site configs"
+  ansible.builtin.template:
+    src: "sites-available/{{ item }}.j2"
+    dest: "/etc/nginx/sites-available/{{ item }}"
+    owner: "www-data"
+    group: "www-data"
+    mode: '0644'
+  with_items:
+    - "prometheus-proxy"
+  become: true
+
+- name: "Enable site configs"
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/{{ item }}"
+    dest: "/etc/nginx/sites-enabled/{{ item }}"
+    owner: "www-data"
+    group: "www-data"
+    mode: '0644'
+    state: link
+  with_items:
+    - "prometheus-proxy"
+  become: true
+  notify: "reload nginx"
